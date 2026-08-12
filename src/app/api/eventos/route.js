@@ -60,3 +60,79 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Error al crear evento' }, { status: 500 });
   }
 }
+
+export async function PUT(request) {
+  try {
+    const cookieStore = await cookies();
+    const adminId = cookieStore.get('auth_user_id')?.value;
+
+    if (!adminId) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const admin = await prisma.user.findUnique({ where: { id: adminId } });
+    if (!admin || admin.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Permisos de administrador requeridos' }, { status: 403 });
+    }
+
+    const { id, title, date, location, type, description } = await request.json();
+
+    if (!id || !title || !date || !location) {
+      return NextResponse.json({ error: 'ID, Título, fecha y lugar son requeridos' }, { status: 400 });
+    }
+
+    const updatedEvent = await prisma.event.update({
+      where: { id },
+      data: {
+        title,
+        date: new Date(date),
+        location,
+        type,
+        description
+      }
+    });
+
+    return NextResponse.json({ success: true, event: updatedEvent });
+  } catch (error) {
+    console.error('Error al actualizar evento:', error);
+    return NextResponse.json({ error: 'Error al actualizar evento' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const cookieStore = await cookies();
+    const adminId = cookieStore.get('auth_user_id')?.value;
+
+    if (!adminId) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const admin = await prisma.user.findUnique({ where: { id: adminId } });
+    if (!admin || admin.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Permisos de administrador requeridos' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const eventId = searchParams.get('id');
+
+    if (!eventId) {
+      return NextResponse.json({ error: 'ID del evento requerido' }, { status: 400 });
+    }
+
+    // Eliminar asistencias asociadas al evento primero
+    await prisma.attendance.deleteMany({
+      where: { eventId }
+    });
+
+    // Eliminar el evento
+    await prisma.event.delete({
+      where: { id: eventId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error al eliminar evento:', error);
+    return NextResponse.json({ error: 'Error al eliminar evento' }, { status: 500 });
+  }
+}
