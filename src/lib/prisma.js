@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
     prisma = new PrismaClient({
       datasources: {
         db: {
-          url: fs.existsSync('/tmp/dev.db') ? 'file:/tmp/dev.db' : 'file:./prisma/dev.db',
+          url: fs.existsSync('/tmp/dev.db') ? 'file:/tmp/dev.db' : (process.env.DATABASE_URL || 'file:./prisma/dev.db'),
         },
       },
     });
@@ -37,3 +37,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export { prisma };
+export default prisma;
