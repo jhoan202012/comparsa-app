@@ -1,0 +1,39 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import PagosAdmin from './PagosAdmin';
+import PagosMiembro from './PagosMiembro';
+
+export const dynamic = 'force-dynamic';
+
+export default async function PagosPage() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get('auth_user_id')?.value;
+
+  if (!userId) redirect('/login');
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  
+  // Músicos no deben acceder a esta vista (sus cuotas están exoneradas)
+  if (!user || user.role === 'MUSICIAN') redirect('/'); 
+
+  if (user.role === 'ADMIN') {
+    // Vista ADMIN: Obtener todos los pagos registrados
+    const allPayments = await prisma.paymentRecord.findMany({
+      include: {
+        user: true,
+        fee: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    return <PagosAdmin records={allPayments} currentUserId={user.id} />;
+  } else {
+    // Vista MIEMBRO: Obtener solo sus propios pagos
+    const myPayments = await prisma.paymentRecord.findMany({
+      where: { userId: user.id },
+      include: { fee: true },
+      orderBy: { createdAt: 'desc' }
+    });
+    return <PagosMiembro records={myPayments} currentUserId={user.id} />;
+  }
+}

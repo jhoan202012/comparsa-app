@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  name           String
+  email          String?         @unique
+  phone          String?         @unique
+  role           String          @default("MEMBER") // ADMIN, MEMBER, MUSICIAN
+  avatarUrl      String?
+  qr_code_hash   String          @unique
+  createdAt      DateTime        @default(now())
+  
+  attendances       Attendance[]
+  payments          PaymentRecord[]
+  validatedPayments PaymentRecord[] @relation("ValidatedBy")
+  announcements     Announcement[]
+}
+
+model Event {
+  id          String       @id @default(uuid())
+  title       String
+  date        DateTime
+  location    String
+  type        String       @default("ENSAYO") // ENSAYO, PRESENTACION, REUNION
+  description String?
+  createdAt   DateTime     @default(now())
+
+  attendances Attendance[]
+}
+
+model Attendance {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  event       Event    @relation(fields: [eventId], references: [id])
+  eventId     String
+  status      String   @default("PRESENT") // PRESENT, LATE, ABSENT
+  timestamp   DateTime @default(now())
+  markedBy    String?  // ID del admin que lo marcó manualmente, null si fue por QR
+
+  @@unique([userId, eventId])
+}
+
+model PaymentFee {
+  id          String          @id @default(uuid())
+  title       String
+  amount      Float
+  dueDate     DateTime
+  createdAt   DateTime        @default(now())
+
+  records     PaymentRecord[]
+}
+
+model PaymentRecord {
+  id            String     @id @default(uuid())
+  user          User       @relation(fields: [userId], references: [id])
+  userId        String
+  fee           PaymentFee @relation(fields: [feeId], references: [id])
+  feeId         String
+  status        String     @default("PENDING") // PENDING, VALIDATING, PAID
+  proofUrl      String?    // URL/Path de la captura de pantalla de Yape/Plin
+  validatedBy   User?      @relation("ValidatedBy", fields: [validatorId], references: [id])
+  validatorId   String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([userId, feeId])
+}
+
+model Song {
+  id        String   @id @default(uuid())
+  title     String
+  lyrics    String
+  createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  category  String   @default("GENERAL") // URGENTE, ENSAYO, VESTUARIO, GENERAL
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}

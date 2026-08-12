@@ -1,0 +1,48 @@
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: #FFFFFF;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  width: 33%;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+.icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  transition: transform 0.2s ease;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-inter);
+}
+
+.active {
+  color: var(--color-asistencia);
+}
+
+.active .icon {
+  transform: translateY(-3px);
+}

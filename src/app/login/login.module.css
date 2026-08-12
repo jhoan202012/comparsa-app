@@ -1,0 +1,62 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.loginCard h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.userList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.userBtn {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  padding: 1.25rem 1.5rem;
+  height: auto;
+  border-color: rgba(255,255,255,0.2);
+}
+
+.userBtn:hover {
+  border-color: var(--accent-secondary);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userInfo strong {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.userInfo span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

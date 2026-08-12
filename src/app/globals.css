@@ -1,34 +1,37 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Carnaval Ayacuchano Palette */
+  --bg-primary: #F7F3E9; /* Fondo Crema cálido */
+  --bg-card: #FFFFFF; /* Fondo de tarjetas */
+  
+  --text-primary: #161B14; /* Texto principal oscuro */
+  --text-secondary: #5C625B; /* Texto secundario gris */
+  
+  --color-asistencia: #13603A; /* Verde oscuro (Asistencia) */
+  --color-aportes: #E1B12C; /* Dorado (Aportes) */
+  --color-cancionero: #3D47A1; /* Azul (Cancionero) */
+  --color-accent: #B71C1C; /* Rojo (Acentos) */
+  
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --success: #13603A;
+  --danger: #B71C1C;
+  --pattern-color: rgba(183, 28, 28, 0.025); /* Rojo sutil para el fondo claro */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Modo Oscuro Alternativo */
+.dark-theme {
+  --bg-primary: #121512; /* Gris verdoso muy oscuro */
+  --bg-card: #1D231D;
+  
+  --text-primary: #E8EAE6;
+  --text-secondary: #9FA49E;
+  
+  --color-asistencia: #1A7A4A; 
+  --color-aportes: #D9AE1A; 
+  --color-cancionero: #5C6AE3; 
+  --color-accent: #E53935;
+  
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --pattern-color: rgba(255, 255, 255, 0.02); /* Blanco sutil para fondo oscuro */
 }
 
 * {
@@ -37,13 +40,553 @@ body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+  font-family: var(--font-inter), sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  
+  /* Patrón textil andino geométrico CSS */
+  background-image: 
+    linear-gradient(45deg, var(--pattern-color) 25%, transparent 25%, transparent 75%, var(--pattern-color) 75%, var(--pattern-color)),
+    linear-gradient(45deg, var(--pattern-color) 25%, transparent 25%, transparent 75%, var(--pattern-color) 75%, var(--pattern-color));
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), serif;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Panel estilo tarjeta limpia */
+.glass-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Textos principales */
+.title-main {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+/* Base button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Botones Específicos de Módulos */
+.btn-green {
+  background-color: var(--color-asistencia);
+  color: white;
+}
+.btn-green:hover { background-color: #0d4a2b; }
+
+.btn-gold {
+  background-color: var(--color-aportes);
+  color: #161B14;
+}
+.btn-gold:hover { background-color: #c49921; }
+
+.btn-blue {
+  background-color: var(--color-cancionero);
+  color: white;
+}
+.btn-blue:hover { background-color: #2b3378; }
+
+.btn-primary {
+  background-color: var(--color-asistencia);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--text-primary);
+  color: var(--text-primary);
+}
+.btn-outline:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Layout con animación suave de transición de página */
+main {
+  flex: 1;
+  padding-bottom: 90px;
+  animation: pageSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Transiciones de Página (Page Transitions) */
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Microinteracciones táctiles (Feedback de presión en botones y tarjetas) */
+.btn, .dash-pill-btn, .dash-outline-btn, button {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:active, .dash-pill-btn:active, .dash-outline-btn:active, button:active {
+  transform: scale(0.96) !important;
+}
+
+/* Fix para el video del escáner de cámara HTML5 */
+#reader video {
+  width: 100% !important;
+  max-height: 320px !important;
+  object-fit: cover !important;
+  border-radius: 12px !important;
+}
+
+#reader__scan_region {
+  background: transparent !important;
+}
+
+.dash-card, .glass-panel, .dash-hero-card, .dash-info-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dash-card:active, .glass-panel:active {
+  transform: scale(0.99);
+}
+
+/* ===================================================
+   DASHBOARD STYLES (GARANTIZADOS EN GLOBALS.CSS)
+   =================================================== */
+
+.dash-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  padding-bottom: 100px;
+}
+
+/* Header Navbar */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dash-logo-icon {
+  font-size: 2.2rem;
+}
+
+.dash-logo-title {
+  font-family: var(--font-playfair), serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+  display: block;
+}
+
+.dash-logo-year {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  display: block;
+}
+
+.dash-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dash-user-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-asistencia);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Top Grid (Hero on left, Cards on right) */
+.dash-top-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 992px) {
+  .dash-top-grid {
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+/* Hero Card (Left) */
+.dash-hero-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.dash-hero-welcome {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.dash-hero-title {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.dash-hero-subtitle {
+  font-family: var(--font-playfair), serif;
+  color: var(--color-accent);
+  font-style: italic;
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-hero-img-wrapper {
+  width: 100%;
+  height: 160px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.dash-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Right Side: 3 Module Cards Grid */
+.dash-modules-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .dash-modules-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Base Card Style for Modules */
+.dash-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* Card Headers */
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dash-card-icon {
+  font-size: 1.4rem;
+}
+
+.dash-card-header h2 {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.dash-card-green .dash-card-header h2 { color: var(--color-asistencia); }
+.dash-card-gold .dash-card-header h2 { color: var(--color-aportes); }
+.dash-card-blue .dash-card-header h2 { color: var(--color-cancionero); }
+
+.dash-card-stat {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+
+.dash-card-subtext {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Progress bar inside cards */
+.dash-progress-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.dash-progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+.dash-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #EFEFEF;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dash-progress-fill-green {
+  height: 100%;
+  background: var(--color-asistencia);
+  border-radius: 10px;
+}
+
+.dash-progress-fill-gold {
+  height: 100%;
+  background: var(--color-aportes);
+  border-radius: 10px;
+}
+
+/* Pill Action Buttons */
+.dash-pill-btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.dash-pill-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.dash-btn-green { background: var(--color-asistencia); color: #FFFFFF; }
+.dash-btn-gold { background: var(--color-aportes); color: #161B14; }
+.dash-btn-blue { background: var(--color-cancionero); color: #FFFFFF; }
+
+/* Bottom Grid (Actividad Reciente & Próxima Actividad) */
+.dash-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dash-bottom-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.dash-info-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.dash-info-card h3 {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text-primary);
+}
+
+.dash-activity-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.dash-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #F3F3F3;
+}
+
+.dash-activity-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.dash-activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.dash-activity-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-activity-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.dash-activity-time {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Event Box */
+.dash-event-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-primary);
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+}
+
+.dash-event-date-badge {
+  background: var(--color-accent);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 1;
+}
+
+.dash-event-day {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-family: var(--font-playfair), serif;
+  display: block;
+}
+
+.dash-event-month {
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: block;
+  margin-top: 2px;
+}
+
+.dash-event-info strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.dash-event-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.dash-outline-btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.dash-outline-btn:hover {
+  background: var(--color-accent);
+  color: white;
 }
