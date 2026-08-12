@@ -77,42 +77,45 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
     }
   };
 
-  // Encender la cámara en vivo (Laptop o navegadores con soporte HTTPS/localhost)
+  // Encender la cámara en vivo
   const startCameraStream = async () => {
     setCameraError(null);
-    try {
-      const readerElement = document.getElementById('reader');
-      if (readerElement) {
-        readerElement.innerHTML = '';
-      }
+    setIsCameraActive(true); // Activar primero para garantizar que <div id="reader"> esté en el DOM
 
-      if (html5QrCodeRef.current) {
-        try {
-          await html5QrCodeRef.current.stop();
-        } catch (e) {
-          // Silencioso
+    // Esperar un frame de React para asegurar el render de #reader
+    setTimeout(async () => {
+      try {
+        const readerElement = document.getElementById('reader');
+        if (readerElement) {
+          readerElement.innerHTML = '';
         }
+
+        if (html5QrCodeRef.current) {
+          try {
+            await html5QrCodeRef.current.stop();
+          } catch (e) {
+            // Silencioso
+          }
+        }
+
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCodeRef.current = html5QrCode;
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          { 
+            fps: 10, 
+            qrbox: { width: 230, height: 230 } 
+          },
+          onScanSuccess,
+          () => {}
+        );
+      } catch (err) {
+        console.error('Error al encender cámara:', err);
+        setIsCameraActive(false);
+        setCameraError('No se pudo abrir la cámara. Revisa que hayas concedido el permiso de cámara en tu navegador.');
       }
-
-      const html5QrCode = new Html5Qrcode("reader");
-      html5QrCodeRef.current = html5QrCode;
-
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        { 
-          fps: 10, 
-          qrbox: { width: 220, height: 220 } 
-        },
-        onScanSuccess,
-        () => {}
-      );
-
-      setIsCameraActive(true);
-    } catch (err) {
-      console.error('Error al encender cámara:', err);
-      setIsCameraActive(false);
-      setCameraError('Apple iOS / Safari restringe la cámara en vivo continua sobre HTTP local. Usa el botón verde "📸 Tomar Foto con Cámara del Celular" para escanear al instante.');
-    }
+    }, 100);
   };
 
   // Apagar la cámara de forma segura
@@ -121,11 +124,11 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
       try {
         await html5QrCodeRef.current.stop();
         html5QrCodeRef.current = null;
-        setIsCameraActive(false);
       } catch (e) {
         console.error(e);
       }
     }
+    setIsCameraActive(false);
   };
 
   // Limpiar cámara al salir de la página
@@ -180,7 +183,7 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
     });
   };
 
-  // Escanear foto procesada
+  // Escanear foto procesada o cámara nativa
   const handleScanImageFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -409,10 +412,10 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {/* OPCIÓN 1: Cámara Nativa del Celular / iPhone (100% Garantizada en cualquier smartphone) */}
+              {/* OPCIÓN 1: Cámara en Vivo Continua (Ideal para Laptops o Celulares en HTTPS) */}
               <button 
                 type="button"
-                onClick={() => cameraDirectInputRef.current?.click()} 
+                onClick={startCameraStream} 
                 className="btn btn-green"
                 style={{ 
                   padding: '0.85rem 1.25rem', 
@@ -425,13 +428,13 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
                   gap: '0.5rem'
                 }}
               >
-                📸 Tomar Foto con Cámara del Celular
+                📹 Encender Cámara en Vivo
               </button>
 
-              {/* OPCIÓN 2: Cámara en Vivo Continua (Ideal para Laptops o Localhost) */}
+              {/* OPCIÓN 2: Cámara Nativa del Celular / iPhone */}
               <button 
                 type="button"
-                onClick={startCameraStream} 
+                onClick={() => cameraDirectInputRef.current?.click()} 
                 className="btn btn-outline"
                 style={{ 
                   padding: '0.75rem 1.25rem', 
@@ -443,7 +446,7 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
                   gap: '0.5rem'
                 }}
               >
-                📹 Cámara en Vivo Continua (Laptop / Web)
+                📸 Tomar Foto de QR con Celular
               </button>
             </div>
           </div>
@@ -460,19 +463,22 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
                 ⏹ Apagar Cámara
               </button>
             </div>
-
-            <div 
-              id="reader" 
-              style={{ 
-                width: '100%', 
-                minHeight: '260px',
-                background: '#111', 
-                borderRadius: '16px', 
-                overflow: 'hidden'
-              }}
-            ></div>
           </div>
         )}
+
+        {/* Visor de Video de la Cámara en el DOM siempre disponible */}
+        <div 
+          id="reader" 
+          style={{ 
+            width: '100%', 
+            minHeight: isCameraActive ? '260px' : '0px',
+            height: isCameraActive ? 'auto' : '0px',
+            background: '#111', 
+            borderRadius: '16px', 
+            overflow: 'hidden',
+            display: isCameraActive ? 'block' : 'none'
+          }}
+        ></div>
 
         {cameraError && (
           <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--color-accent)', borderRadius: '12px', color: 'var(--color-accent)', fontSize: '0.85rem', marginTop: '1rem' }}>
