@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -23,89 +24,77 @@ model User {
   attendances       Attendance[]
   payments          PaymentRecord[]
   validatedPayments PaymentRecord[] @relation("ValidatedBy")
-  announcements     Announcement[]
+  feedbacks         Feedback[]
 }
 
 model Event {
-  id          String       @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
+  type        String   // ENSAYO, PASACALLE, REUNIÓN
   date        DateTime
   location    String
-  type        String       @default("ENSAYO") // ENSAYO, PRESENTACION, REUNION
-  description String?
-  createdAt   DateTime     @default(now())
-
+  qr_token    String   @unique
+  createdAt   DateTime @default(now())
+  
   attendances Attendance[]
 }
 
 model Attendance {
-  id          String   @id @default(uuid())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  event       Event    @relation(fields: [eventId], references: [id])
-  eventId     String
-  status      String   @default("PRESENT") // PRESENT, LATE, ABSENT
-  timestamp   DateTime @default(now())
-  markedBy    String?  // ID del admin que lo marcó manualmente, null si fue por QR
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  timestamp DateTime @default(now())
+  status    String   // PRESENT, LATE, ABSENT
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
 }
 
 model PaymentFee {
-  id           String          @id @default(uuid())
-  title        String
-  amount       Float
-  dueDate      DateTime?
-  category     String          @default("VESTUARIO") // VESTUARIO, CUOTA, ACCESORIOS
-  targetGender String          @default("ALL")       // ALL, VARON, MUJER
-  sizes        String?         @default("S, M, L, XL") // Tallas disponibles (ej. "S, M, L, XL", "Única")
-  stock        Int             @default(50)            // Stock o unidades disponibles
-  imageUrl     String?         // Foto de la prenda en catálogo
-  createdAt    DateTime        @default(now())
+  id          String   @id @default(uuid())
+  title       String
+  amount      Float
+  category    String   @default("OTRO") // VESTUARIO, CUOTA_MENSUAL, EVENTO, OTRO
+  description String?
+  stock       Int?     @default(100)
+  gender      String?  @default("UNISEX") // VARON, MUJER, UNISEX
+  availableSizes String? @default("S,M,L,XL")
+  createdAt   DateTime @default(now())
 
-  records      PaymentRecord[]
+  payments PaymentRecord[]
 }
 
 model PaymentRecord {
-  id            String      @id @default(uuid())
-  user          User        @relation(fields: [userId], references: [id])
+  id            String    @id @default(uuid())
   userId        String
-  fee           PaymentFee? @relation(fields: [feeId], references: [id])
   feeId         String?
-  itemsDetail   String?     // Detalle de prendas/productos solicitados con talla (ej. "Camisa Varón - Talla: L")
-  totalAmount   Float       @default(0.0) // Monto total a pagar
-  status        String      @default("VALIDATING") // VALIDATING, PAID, REJECTED
-  proofUrl      String?     // URL de la captura de pantalla Yape/Plin
-  validatedBy   User?       @relation("ValidatedBy", fields: [validatorId], references: [id])
-  validatorId   String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-}
+  amount        Float
+  status        String    @default("PENDING") // PENDING, VALIDATING, PAID, REJECTED
+  receiptUrl    String?
+  validatedById String?
+  validatedAt   DateTime?
+  itemsDetail   String?   // Detalle del producto (ej: "Camisa Bordada Talla L")
+  deliveryStatus String?  @default("PENDIENTE") // PENDIENTE, ENTREGADO
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-model Song {
-  id        String   @id @default(uuid())
-  title     String
-  lyrics    String
-  createdAt DateTime @default(now())
-}
-
-model Announcement {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  category  String   @default("GENERAL") // URGENTE, ENSAYO, VESTUARIO, GENERAL
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fee         PaymentFee? @relation(fields: [feeId], references: [id], onDelete: SetNull)
+  validatedBy User?       @relation("ValidatedBy", fields: [validatedById], references: [id])
 }
 
 model Feedback {
   id          String   @id @default(uuid())
-  type        String   @default("SUGERENCIA") // SUGERENCIA, RECLAMO, CONSULTA
+  userId      String?
+  type        String   // SUGERENCIA, RECLAMO, CONSULTA
   message     String
   isAnonymous Boolean  @default(false)
-  userName    String?  // Nombre del socio si no es anónimo
-  userRole    String?  // MEMBER, MUSICIAN
+  userName    String?
+  userRole    String?
   status      String   @default("PENDIENTE") // PENDIENTE, REVISADO
   createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
