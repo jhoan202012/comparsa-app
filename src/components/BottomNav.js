@@ -39,9 +39,13 @@ export default function BottomNav({ userRole }) {
         <span className={styles.label}>Calendario</span>
       </Link>
       
-      {/* Los Admins tienen acceso directo al escáner y reportes */}
+      {/* Los Admins tienen acceso directo al padrón de integrantes, reportes y escáner */}
       {userRole === 'ADMIN' && (
         <>
+          <Link href="/integrantes" className={`${styles.navItem} ${pathname === '/integrantes' ? styles.active : ''}`}>
+            <span className={styles.icon}>👥</span>
+            <span className={styles.label}>Padrón</span>
+          </Link>
           <Link href="/reportes" className={`${styles.navItem} ${pathname === '/reportes' ? styles.active : ''}`}>
             <span className={styles.icon}>📊</span>
             <span className={styles.label}>Reportes</span>
