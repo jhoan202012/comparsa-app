@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingIncludes: {
+    '/*': ['./prisma/dev.db', './prisma/schema.prisma'],
+  },
   allowedDevOrigins: [
     '10.101.4.219',
     '10.101.4.219:3000',
