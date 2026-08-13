@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 
-export default function LoginForm({ users, initialMode = 'login' }) {
+export default function LoginForm({ users: propsUsers, initialUsers, initialMode = 'login' }) {
+  const users = propsUsers || initialUsers || [];
   const [mode, setMode] = useState(initialMode); // 'login' | 'register' | 'pending_success'
   
   // Login form state
