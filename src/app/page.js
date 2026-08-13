@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import LogoutButton from '@/components/LogoutButton';
 import Link from 'next/link';
+import LoginPage from './login/page';
 import { IconUsers, IconShirt, IconWallet, IconMusic, IconMask, IconQrCode, IconInbox } from '@/components/Icons';
 
 export const dynamic = 'force-dynamic';
@@ -11,16 +11,19 @@ export default async function Home() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('auth_user_id')?.value;
 
-  if (!userId) redirect('/login');
-
   let user = null;
-  try {
-    user = await prisma.user.findUnique({ where: { id: userId } });
-  } catch (e) {
-    console.error('Error al buscar usuario:', e);
+  if (userId) {
+    try {
+      user = await prisma.user.findUnique({ where: { id: userId } });
+    } catch (e) {
+      console.error('Error al buscar usuario en BD:', e);
+    }
   }
 
-  if (!user) redirect('/login');
+  // Si no está autenticado o la sesión expiró, renderizar la pantalla de Login directamente sin redirecciones HTTP
+  if (!userId || !user) {
+    return <LoginPage searchParams={{}} />;
+  }
 
   let unreadFeedbackCount = 0;
   let myPayments = [];
@@ -80,7 +83,7 @@ export default async function Home() {
   }
 
   // Extraer el primer nombre del usuario
-  const firstName = user.name.split(' ')[0];
+  const firstName = user.name ? user.name.split(' ')[0] : 'Socio';
 
   // Avatar del usuario o imagen por defecto de la comparsa
   const userAvatar = user.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg';
