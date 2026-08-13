@@ -13,61 +13,73 @@ export default async function Home() {
 
   if (!userId) redirect('/login');
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) redirect('/login');
+  let user = null;
+  let unreadFeedbackCount = 0;
+  let myPayments = [];
+  let myAttendances = [];
+  let nextEvent = null;
+  let totalEventsCount = 1;
+  let totalMembersCount = 1;
+  let todayAttendancesCount = 0;
+  let globalParticipationPct = 0;
+  let userPresentCount = 0;
+  let userAttendancePct = 0;
+  let countValidating = 0;
 
-  // Obtener conteo de mensajes no leídos en el buzón si es admin
-  const unreadFeedbackCount = user.role === 'ADMIN' 
-    ? await prisma.feedback.count({ where: { status: 'PENDIENTE' } })
-    : 0;
+  try {
+    user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) redirect('/login');
 
-  // Obtener aportes o pedidos del usuario si es miembro
-  const myPayments = user.role === 'MEMBER'
-    ? await prisma.paymentRecord.findMany({
-        where: { userId: user.id },
-        include: { fee: true },
-        orderBy: { createdAt: 'desc' },
-        take: 2
-      })
-    : [];
+    unreadFeedbackCount = user.role === 'ADMIN' 
+      ? await prisma.feedback.count({ where: { status: 'PENDIENTE' } }).catch(() => 0)
+      : 0;
 
-  // Obtener asistencias reales del usuario registradas en la BD
-  const myAttendances = await prisma.attendance.findMany({
-    where: { userId: user.id },
-    include: { event: true },
-    orderBy: { timestamp: 'desc' },
-    take: 2
-  });
+    myPayments = user.role === 'MEMBER'
+      ? await prisma.paymentRecord.findMany({
+          where: { userId: user.id },
+          include: { fee: true },
+          orderBy: { createdAt: 'desc' },
+          take: 2
+        }).catch(() => [])
+      : [];
 
-  // Obtener el evento más reciente o agendado en el calendario
-  const nextEvent = await prisma.event.findFirst({
-    orderBy: { date: 'desc' }
-  });
+    myAttendances = await prisma.attendance.findMany({
+      where: { userId: user.id },
+      include: { event: true },
+      orderBy: { timestamp: 'desc' },
+      take: 2
+    }).catch(() => []);
 
-  // Calcular métricas diferenciadas por rol (Admin vs Integrante)
-  const totalEventsCount = (await prisma.event.count()) || 1;
-  const totalMembersCount = (await prisma.user.count({ where: { role: { in: ['MEMBER', 'MUSICIAN'] } } })) || 1;
-  
-  // Asistencias globales de hoy para el Administrador
-  const todayAttendancesCount = nextEvent ? await prisma.attendance.count({
-    where: { eventId: nextEvent.id, status: { in: ['PRESENT', 'LATE'] } }
-  }) : 0;
-  const globalParticipationPct = Math.round((todayAttendancesCount / totalMembersCount) * 100);
+    nextEvent = await prisma.event.findFirst({
+      orderBy: { date: 'desc' }
+    }).catch(() => null);
 
-  // Asistencias personales para Socio / Músico
-  const userPresentCount = await prisma.attendance.count({
-    where: { userId: user.id, status: { in: ['PRESENT', 'LATE'] } }
-  });
-  const userAttendancePct = Math.min(100, Math.round((userPresentCount / totalEventsCount) * 100));
+    totalEventsCount = (await prisma.event.count().catch(() => 1)) || 1;
+    totalMembersCount = (await prisma.user.count({ where: { role: { in: ['MEMBER', 'MUSICIAN'] } } }).catch(() => 1)) || 1;
+    
+    todayAttendancesCount = nextEvent ? await prisma.attendance.count({
+      where: { eventId: nextEvent.id, status: { in: ['PRESENT', 'LATE'] } }
+    }).catch(() => 0) : 0;
+    
+    globalParticipationPct = Math.round((todayAttendancesCount / totalMembersCount) * 100);
 
-  // Pedidos y vouchers por validar para el Admin
-  const countValidating = user.role === 'ADMIN' ? await prisma.paymentRecord.count({ where: { status: 'VALIDATING' } }) : 0;
+    userPresentCount = await prisma.attendance.count({
+      where: { userId: user.id, status: { in: ['PRESENT', 'LATE'] } }
+    }).catch(() => 0);
+    
+    userAttendancePct = Math.min(100, Math.round((userPresentCount / totalEventsCount) * 100));
+
+    countValidating = user.role === 'ADMIN' ? await prisma.paymentRecord.count({ where: { status: 'VALIDATING' } }).catch(() => 0) : 0;
+  } catch (err) {
+    console.error('Error al cargar datos en Home:', err);
+    if (!user) redirect('/login');
+  }
 
   // Extraer el primer nombre del usuario
-  const firstName = user.name.split(' ')[0];
+  const firstName = user ? user.name.split(' ')[0] : 'Socio';
 
   // Avatar del usuario o imagen por defecto de la comparsa
-  const userAvatar = user.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg';
+  const userAvatar = user?.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg';
   const heroImage = '/images/cangallo_1.jpg';
   const officialLogo = '/images/Logo_1.jpg';
 
@@ -98,7 +110,7 @@ export default async function Home() {
         <div className="dash-header-actions">
           <Link href="/perfil" title="Editar Mi Perfil" style={{ textDecoration: 'none' }}>
             <div className="dash-user-badge" style={{ overflow: 'hidden', padding: 0, cursor: 'pointer' }}>
-              <img src={userAvatar} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={userAvatar} alt={user?.name || 'Socio'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </Link>
           <LogoutButton />
@@ -128,7 +140,7 @@ export default async function Home() {
                 flexShrink: 0,
                 cursor: 'pointer'
               }}>
-                <img src={userAvatar} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={userAvatar} alt={user?.name || 'Socio'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             </Link>
           </div>
@@ -150,7 +162,7 @@ export default async function Home() {
               <h2>ASISTENCIA & PADRÓN</h2>
             </div>
             
-            {user.role === 'ADMIN' ? (
+            {user?.role === 'ADMIN' ? (
               <>
                 <div>
                   <div className="dash-card-stat">{todayAttendancesCount}</div>
@@ -203,7 +215,7 @@ export default async function Home() {
           </div>
 
           {/* TARJETA 2: APORTES & TIENDA DE VESTUARIO */}
-          {user.role !== 'MUSICIAN' && (
+          {user?.role !== 'MUSICIAN' && (
             <div className="dash-card dash-card-gold">
               <div className="dash-card-header">
                 <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -212,7 +224,7 @@ export default async function Home() {
                 <h2>APORTES & VESTUARIO</h2>
               </div>
 
-              {user.role === 'ADMIN' ? (
+              {user?.role === 'ADMIN' ? (
                 <>
                   <div>
                     <div className="dash-card-stat">{countValidating}</div>
@@ -289,7 +301,7 @@ export default async function Home() {
               <h2>BUZÓN DIRECTIVO</h2>
             </div>
 
-            {user.role === 'ADMIN' ? (
+            {user?.role === 'ADMIN' ? (
               <>
                 <div>
                   <div className="dash-card-stat">{unreadFeedbackCount}</div>
@@ -328,10 +340,10 @@ export default async function Home() {
         
         {/* Actividad */}
         <div className="dash-info-card">
-          <h3>{user.role === 'ADMIN' ? 'Actividad reciente (General)' : 'Mi actividad reciente'}</h3>
+          <h3>{user?.role === 'ADMIN' ? 'Actividad reciente (General)' : 'Mi actividad reciente'}</h3>
           <ul className="dash-activity-list">
             
-            {user.role === 'ADMIN' && (
+            {user?.role === 'ADMIN' && (
               <>
                 <li className="dash-activity-item">
                   <div className="dash-activity-icon">
@@ -354,7 +366,7 @@ export default async function Home() {
               </>
             )}
 
-            {user.role === 'MEMBER' && (
+            {user?.role === 'MEMBER' && (
               <>
                 {myPayments.length > 0 ? (
                   myPayments.map(p => (

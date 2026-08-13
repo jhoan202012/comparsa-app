@@ -21,9 +21,13 @@ export default async function LoginPage({ searchParams }) {
       orderBy: { role: 'asc' }
     });
   } catch (e) {
-    users = await prisma.user.findMany({
-      orderBy: { role: 'asc' }
-    });
+    try {
+      users = await prisma.user.findMany({
+        orderBy: { role: 'asc' }
+      });
+    } catch (err) {
+      users = [];
+    }
   }
 
   return (
