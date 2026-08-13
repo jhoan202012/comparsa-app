@@ -33,50 +33,85 @@ export default async function Home() {
   let userAttendancePct = 0;
   let countValidating = 0;
 
+  // Consultas defensivas protegidas individualmente
+  if (user.role === 'ADMIN') {
+    try {
+      unreadFeedbackCount = await prisma.feedback.count({ where: { status: 'PENDIENTE' } });
+    } catch (e) {
+      unreadFeedbackCount = 0;
+    }
+    try {
+      countValidating = await prisma.paymentRecord.count({ where: { status: 'VALIDATING' } });
+    } catch (e) {
+      countValidating = 0;
+    }
+  }
+
+  if (user.role === 'MEMBER') {
+    try {
+      myPayments = await prisma.paymentRecord.findMany({
+        where: { userId: user.id },
+        include: { fee: true },
+        orderBy: { createdAt: 'desc' },
+        take: 2
+      });
+    } catch (e) {
+      myPayments = [];
+    }
+  }
+
   try {
-    unreadFeedbackCount = user.role === 'ADMIN' 
-      ? await prisma.feedback.count({ where: { status: 'PENDIENTE' } }).catch(() => 0)
-      : 0;
-
-    myPayments = user.role === 'MEMBER'
-      ? await prisma.paymentRecord.findMany({
-          where: { userId: user.id },
-          include: { fee: true },
-          orderBy: { createdAt: 'desc' },
-          take: 2
-        }).catch(() => [])
-      : [];
-
     myAttendances = await prisma.attendance.findMany({
       where: { userId: user.id },
       include: { event: true },
       orderBy: { timestamp: 'desc' },
       take: 2
-    }).catch(() => []);
+    });
+  } catch (e) {
+    myAttendances = [];
+  }
 
+  try {
     nextEvent = await prisma.event.findFirst({
       orderBy: { date: 'desc' }
-    }).catch(() => null);
+    });
+  } catch (e) {
+    nextEvent = null;
+  }
 
-    totalEventsCount = (await prisma.event.count().catch(() => 1)) || 1;
-    totalMembersCount = (await prisma.user.count({ where: { role: { in: ['MEMBER', 'MUSICIAN'] } } }).catch(() => 1)) || 1;
-    
-    todayAttendancesCount = nextEvent ? await prisma.attendance.count({
-      where: { eventId: nextEvent.id, status: { in: ['PRESENT', 'LATE'] } }
-    }).catch(() => 0) : 0;
-    
-    globalParticipationPct = Math.round((todayAttendancesCount / totalMembersCount) * 100);
+  try {
+    totalEventsCount = (await prisma.event.count()) || 1;
+  } catch (e) {
+    totalEventsCount = 1;
+  }
 
+  try {
+    totalMembersCount = (await prisma.user.count({ where: { role: { in: ['MEMBER', 'MUSICIAN'] } } })) || 1;
+  } catch (e) {
+    totalMembersCount = 1;
+  }
+
+  if (nextEvent) {
+    try {
+      todayAttendancesCount = await prisma.attendance.count({
+        where: { eventId: nextEvent.id, status: { in: ['PRESENT', 'LATE'] } }
+      });
+    } catch (e) {
+      todayAttendancesCount = 0;
+    }
+  }
+
+  globalParticipationPct = Math.round((todayAttendancesCount / totalMembersCount) * 100);
+
+  try {
     userPresentCount = await prisma.attendance.count({
       where: { userId: user.id, status: { in: ['PRESENT', 'LATE'] } }
-    }).catch(() => 0);
-    
-    userAttendancePct = Math.min(100, Math.round((userPresentCount / totalEventsCount) * 100));
-
-    countValidating = user.role === 'ADMIN' ? await prisma.paymentRecord.count({ where: { status: 'VALIDATING' } }).catch(() => 0) : 0;
-  } catch (err) {
-    console.error('Error al cargar datos en Home:', err);
+    });
+  } catch (e) {
+    userPresentCount = 0;
   }
+
+  userAttendancePct = Math.min(100, Math.round((userPresentCount / totalEventsCount) * 100));
 
   // Extraer el primer nombre del usuario
   const firstName = user.name ? user.name.split(' ')[0] : 'Socio';
