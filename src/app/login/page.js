@@ -1,12 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import LoginForm from './LoginForm';
 import Link from 'next/link';
-import { IconMask } from '@/components/Icons';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage({ searchParams }) {
-  const params = await searchParams;
+  const params = searchParams ? await searchParams : {};
   const initialMode = params?.mode || 'login';
 
   const fallbackUsers = [
@@ -73,7 +72,7 @@ export default async function LoginPage({ searchParams }) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'inherit' }}>
       
-      {/* Header Superior Limpio (Sin botones innecesarios en la esquina) */}
+      {/* Header Superior Limpio */}
       <header style={{
         display: 'flex',
         alignItems: 'center',
@@ -98,7 +97,7 @@ export default async function LoginPage({ searchParams }) {
         </div>
       </header>
 
-      {/* Hero Section con alineación perfecta de base */}
+      {/* Hero Section */}
       <main style={{ 
         maxWidth: '1140px', 
         margin: '0 auto', 
@@ -109,7 +108,7 @@ export default async function LoginPage({ searchParams }) {
         alignItems: 'stretch'
       }}>
         
-        {/* Lado Izquierdo: Presentación Cultural & Señorial */}
+        {/* Lado Izquierdo */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
@@ -153,7 +152,6 @@ export default async function LoginPage({ searchParams }) {
             </p>
           </div>
 
-          {/* Fotografía de Danzantes Inmediatamente Debajo del Texto y Alineada a la Base */}
           <div style={{ 
             marginTop: '0.5rem',
             borderRadius: '24px', 
@@ -189,14 +187,13 @@ export default async function LoginPage({ searchParams }) {
           </div>
         </div>
 
-        {/* Lado Derecho: Formulario de Ingreso */}
+        {/* Lado Derecho */}
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'stretch' }}>
           <LoginForm initialUsers={users} initialMode={initialMode} />
         </div>
 
       </main>
 
-      {/* Footer Limpio */}
       <footer style={{
         textAlign: 'center',
         padding: '1.5rem',

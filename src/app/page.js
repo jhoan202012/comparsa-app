@@ -11,6 +11,42 @@ export default async function Home() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('auth_user_id')?.value;
 
+  const fallbackUsers = [
+    {
+      id: 'd16daa56-6856-46f7-b3cc-82e75f412f88',
+      name: 'Admin Tesorero',
+      dni: '99999999',
+      phone: '999999999',
+      role: 'ADMIN',
+      status: 'ACTIVE',
+      pin: '1234',
+      avatarUrl: '/images/637900571_1346802750815312_4641331560730932914_n.jpg',
+      qr_code_hash: 'admin-qr-hash-permanent-001'
+    },
+    {
+      id: 'dda2d513-87c3-4933-b81e-4e1e641ba89c',
+      name: 'Juan Perez',
+      dni: '98888888',
+      phone: '988888888',
+      role: 'MEMBER',
+      status: 'ACTIVE',
+      pin: '1234',
+      avatarUrl: '/images/634076865_1346800880815499_5762101862002171797_n.jpg',
+      qr_code_hash: 'juan-perez-qr-hash-permanent-002'
+    },
+    {
+      id: '7806cb12-fb9c-4888-9ab6-c34e0028cc6c',
+      name: 'Carlos Trompeta',
+      dni: '97777777',
+      phone: '977777777',
+      role: 'MUSICIAN',
+      status: 'ACTIVE',
+      pin: '1234',
+      avatarUrl: '/images/634378036_1346802200815367_7429235445478519296_n.jpg',
+      qr_code_hash: 'carlos-musico-qr-hash-permanent-003'
+    }
+  ];
+
   let user = null;
   if (userId) {
     try {
@@ -18,11 +54,14 @@ export default async function Home() {
     } catch (e) {
       console.error('Error al buscar usuario en BD:', e);
     }
+    if (!user) {
+      user = fallbackUsers.find(u => u.id === userId) || null;
+    }
   }
 
   // Si no está autenticado o la sesión expiró, renderizar la pantalla de Login directamente sin redirecciones HTTP
   if (!userId || !user) {
-    return <LoginPage searchParams={{}} />;
+    return <LoginPage searchParams={Promise.resolve({})} />;
   }
 
   let unreadFeedbackCount = 0;
