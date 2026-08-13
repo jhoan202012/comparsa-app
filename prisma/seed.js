@@ -3,13 +3,14 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Sembrando base de datos en Supabase...');
+  console.log('Sembrando base de datos SQLite oficial...');
 
   try {
     const existingAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
     if (!existingAdmin) {
       await prisma.user.create({
         data: {
+          id: 'd16daa56-6856-46f7-b3cc-82e75f412f88',
           name: 'Admin Tesorero',
           dni: '99999999',
           email: 'admin@comparsa.com',
@@ -27,6 +28,7 @@ async function main() {
     if (!existingMember) {
       await prisma.user.create({
         data: {
+          id: 'dda2d513-87c3-4933-b81e-4e1e641ba89c',
           name: 'Juan Perez',
           dni: '98888888',
           email: 'juan@comparsa.com',
@@ -44,6 +46,7 @@ async function main() {
     if (!existingMusician) {
       await prisma.user.create({
         data: {
+          id: '7806cb12-fb9c-4888-9ab6-c34e0028cc6c',
           name: 'Carlos Trompeta',
           dni: '97777777',
           email: 'carlos@comparsa.com',
@@ -61,35 +64,37 @@ async function main() {
     if (eventCount === 0) {
       await prisma.event.create({
         data: {
+          id: 'event-001-ensayo-general',
           title: 'Ensayo General - Plaza Principal',
           date: new Date('2026-02-14T19:00:00Z'),
           location: 'Plaza de Armas',
           type: 'ENSAYO',
+          qr_token: 'token-qr-ensayo-001',
         },
       });
     }
 
-    // Actualizar o crear catálogo con Varón, Mujer y Todos
+    // Actualizar o crear catálogo de vestuario y cuotas
     await prisma.paymentFee.deleteMany({});
     await prisma.paymentFee.createMany({
       data: [
-        { title: '👕 Camisa Bordada de Comparsa', amount: 60.0, category: 'VESTUARIO', targetGender: 'VARON', sizes: 'S, M, L, XL', stock: 50 },
-        { title: '👗 Pollera Ayacuchana Bordada', amount: 120.0, category: 'VESTUARIO', targetGender: 'MUJER', sizes: 'S, M, L', stock: 40 },
-        { title: '🎩 Sombrero Tradicional de Comparsa', amount: 35.0, category: 'ACCESORIOS', targetGender: 'ALL', sizes: 'Estándar', stock: 60 },
-        { title: '🧣 Faja / Pañuelo de Comparsa', amount: 25.0, category: 'ACCESORIOS', targetGender: 'ALL', sizes: 'Única', stock: 100 },
-        { title: '💰 Cuota Mensual de Ensayo Febrero', amount: 50.0, category: 'CUOTA', targetGender: 'ALL', sizes: 'Única', stock: 999 },
+        { title: '👕 Camisa Bordada de Comparsa', amount: 60.0, category: 'VESTUARIO', gender: 'VARON', availableSizes: 'S, M, L, XL', stock: 50 },
+        { title: '👗 Pollera Ayacuchana Bordada', amount: 120.0, category: 'VESTUARIO', gender: 'MUJER', availableSizes: 'S, M, L', stock: 40 },
+        { title: '🎩 Sombrero Tradicional de Comparsa', amount: 35.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Estándar', stock: 60 },
+        { title: '🧣 Faja / Pañuelo de Comparsa', amount: 25.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Única', stock: 100 },
+        { title: '💰 Cuota Mensual de Ensayo Febrero', amount: 50.0, category: 'CUOTA', gender: 'ALL', availableSizes: 'Única', stock: 999 },
       ]
     });
 
-    console.log('¡Base de datos verificada y catálogo actualizado!');
+    console.log('¡Base de datos SQLite sincronizada y sembrada con éxito!');
   } catch (e) {
-    console.log('Modo de compatibilidad de seed activo:', e.message);
+    console.error('Error en seed:', e.message);
   }
 }
 
 main()
   .catch((e) => {
-    console.error('Error en seed:', e);
+    console.error('Error fatal en seed:', e);
   })
   .finally(async () => {
     await prisma.$disconnect();
