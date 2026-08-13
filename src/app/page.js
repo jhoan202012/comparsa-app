@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { prisma, getDbUser } from '@/lib/prisma';
 import LogoutButton from '@/components/LogoutButton';
 import Link from 'next/link';
-import LoginPage from './login/page';
 import { IconUsers, IconShirt, IconWallet, IconMusic, IconMask, IconQrCode, IconInbox } from '@/components/Icons';
 
 export const dynamic = 'force-dynamic';
@@ -11,14 +11,13 @@ export default async function Home() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('auth_user_id')?.value;
 
-  let user = null;
-  if (userId) {
-    user = await getDbUser(userId);
+  if (!userId) {
+    redirect('/login');
   }
 
-  // Si no está autenticado o la sesión expiró, renderizar la pantalla de Login directamente sin redirecciones HTTP
-  if (!userId || !user) {
-    return <LoginPage searchParams={Promise.resolve({})} />;
+  const user = await getDbUser(userId);
+  if (!user) {
+    redirect('/login');
   }
 
   let unreadFeedbackCount = 0;
