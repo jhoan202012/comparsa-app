@@ -1,80 +1,613 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import styles from './pagos.module.css';
 import { useState } from 'react';
+import Link from 'next/link';
 
-export default function PagosAdmin({ records }) {
-  const router = useRouter();
+export default function PagosAdmin({ fees = [], records = [] }) {
+  const [paymentRecords, setPaymentRecords] = useState(records);
+  const [paymentFees, setPaymentFees] = useState(fees);
+  const [filterStatus, setFilterStatus] = useState('VALIDATING'); // 'VALIDATING' | 'PAID' | 'DELIVERED' | 'ALL'
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Modal Publicar Nuevo Producto o Aporte
+  const [showFeeModal, setShowFeeModal] = useState(false);
+  const [modalMode, setModalMode] = useState('VESTUARIO'); // 'VESTUARIO' | 'APORTE'
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('60.00');
+  const [category, setCategory] = useState('VESTUARIO');
+  const [targetGender, setTargetGender] = useState('ALL'); // 'ALL' | 'VARON' | 'MUJER'
+  const [sizes, setSizes] = useState('S, M, L, XL');
+  const [stock, setStock] = useState('50');
+  const [feeLoading, setFeeLoading] = useState(false);
+
+  // Modal Ver Voucher HD
+  const [selectedProofUrl, setSelectedProofUrl] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
 
-  const handleApprove = async (recordId) => {
-    setLoadingId(recordId);
-    await fetch('/api/pagos/approve', {
-      method: 'POST',
-      body: JSON.stringify({ recordId }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    setLoadingId(null);
-    router.refresh();
+  const handleOpenCreateModal = (mode) => {
+    setModalMode(mode);
+    if (mode === 'VESTUARIO') {
+      setTitle('');
+      setAmount('60.00');
+      setCategory('VESTUARIO');
+      setTargetGender('ALL');
+      setSizes('S, M, L, XL');
+      setStock('50');
+    } else {
+      setTitle('Cuota Mensual de Ensayo Febrero');
+      setAmount('50.00');
+      setCategory('CUOTA');
+      setTargetGender('ALL');
+      setSizes('Única');
+      setStock('999');
+    }
+    setShowFeeModal(true);
   };
 
-  const handleRevert = async (recordId) => {
-    setLoadingId(recordId);
-    await fetch('/api/pagos/revert', {
-      method: 'POST',
-      body: JSON.stringify({ recordId }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    setLoadingId(null);
-    router.refresh();
+  const handleCreateFee = async (e) => {
+    e.preventDefault();
+    setFeeLoading(true);
+
+    try {
+      const res = await fetch('/api/pagos/cuotas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          title, 
+          amount, 
+          category,
+          targetGender,
+          sizes: modalMode === 'VESTUARIO' ? sizes : 'Única',
+          stock: modalMode === 'VESTUARIO' ? stock : 999
+        })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert(`¡${modalMode === 'VESTUARIO' ? 'Prenda' : 'Aporte'} "${title}" publicado exitosamente!`);
+        window.location.reload();
+      } else {
+        alert(data.error || 'Error al publicar');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    } finally {
+      setFeeLoading(false);
+    }
   };
+
+  const handleDeleteFee = async (feeId, feeTitle) => {
+    if (!confirm(`¿Eliminar "${feeTitle}" del catálogo?`)) return;
+
+    try {
+      const res = await fetch(`/api/pagos/cuotas?id=${feeId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPaymentFees(prev => prev.filter(f => f.id !== feeId));
+      } else {
+        alert(data.error || 'Error al eliminar');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    }
+  };
+
+  const handleValidationAction = async (recordId, action) => {
+    setLoadingId(recordId);
+    try {
+      const res = await fetch('/api/pagos/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recordId, action })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setPaymentRecords(prev => prev.map(r => r.id === recordId ? { ...r, ...data.record } : r));
+      } else {
+        alert(data.error || 'Error al procesar validación');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const getGenderBadge = (g) => {
+    if (g === 'VARON') return { label: '👨 Varones', bg: '#DBEAFE', color: '#1E40AF' };
+    if (g === 'MUJER') return { label: '👩 Mujeres', bg: '#FCE7F3', color: '#9D174D' };
+    return { label: '👫 Unisex', bg: '#E2E8F0', color: '#334155' };
+  };
+
+  // Contadores de Estado
+  const countValidating = paymentRecords.filter(r => r.status === 'VALIDATING' || r.status === 'PENDING').length;
+  const countPaid = paymentRecords.filter(r => r.status === 'PAID' || r.status === 'APPROVED').length;
+  const countDelivered = paymentRecords.filter(r => r.status === 'DELIVERED').length;
+
+  // Filtrado por Pestaña de Estado + Buscador
+  const filteredRecords = paymentRecords.filter(r => {
+    // 1. Filtro por Pestaña
+    let matchesTab = true;
+    if (filterStatus === 'VALIDATING') matchesTab = (r.status === 'VALIDATING' || r.status === 'PENDING');
+    else if (filterStatus === 'PAID') matchesTab = (r.status === 'PAID' || r.status === 'APPROVED');
+    else if (filterStatus === 'DELIVERED') matchesTab = (r.status === 'DELIVERED');
+
+    if (!matchesTab) return false;
+
+    // 2. Filtro por Buscador
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    const userName = (r.user?.name || '').toLowerCase();
+    const userDni = (r.user?.dni || '').toLowerCase();
+    const itemDetail = (r.itemsDetail || '').toLowerCase();
+
+    return userName.includes(searchLower) || userDni.includes(searchLower) || itemDetail.includes(searchLower);
+  });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className="gradient-text">Validación de Pagos</h2>
-        <p style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Aprueba los vouchers subidos por los miembros.</p>
+    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '1.5rem', paddingBottom: '100px' }}>
+      
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', paddingTop: '0.5rem' }}>
+        <Link href="/" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>← Volver</Link>
+        <h2 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', margin: 0 }}>
+          Tesorería & Entrega de Vestuario 🛍️
+        </h2>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            onClick={() => handleOpenCreateModal('VESTUARIO')} 
+            className="btn btn-blue"
+            style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem', background: '#2563EB', color: 'white' }}
+          >
+            👗 + Agregar Vestuario
+          </button>
+          <button 
+            onClick={() => handleOpenCreateModal('APORTE')} 
+            className="btn btn-gold"
+            style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem' }}
+          >
+            💰 + Crear Aporte
+          </button>
+        </div>
       </div>
 
-      <div className={styles.list}>
-        {records.length === 0 && <p className={styles.empty}>No hay pagos registrados.</p>}
-        {records.map(record => (
-          <div key={record.id} className={`glass-panel animate-fade-in ${styles.paymentCard}`}>
-            <div className={styles.cardHeader}>
-              <div>
-                <h3 className={styles.title}>{record.user.name}</h3>
-                <p className={styles.subtitle}>{record.fee.title}</p>
-              </div>
-              <div className={styles.amount}>S/ {record.fee.amount.toFixed(2)}</div>
-            </div>
-            
-            <div className={styles.cardFooter}>
-              <span className={`${styles.statusBadge} ${styles[record.status.toLowerCase()]}`}>
-                {record.status === 'PENDING' ? 'Pendiente' : record.status === 'VALIDATING' ? 'En Revisión' : 'Aprobado'}
-              </span>
-              
-              {record.status !== 'PAID' ? (
-                <button 
-                  className={`btn btn-primary ${styles.actionBtn}`} 
-                  onClick={() => handleApprove(record.id)}
-                  disabled={loadingId === record.id}
-                >
-                  {loadingId === record.id ? 'Procesando...' : 'Aprobar Pago'}
-                </button>
-              ) : (
-                <button 
-                  className={`btn btn-outline ${styles.actionBtn}`} 
-                  onClick={() => handleRevert(record.id)}
-                  disabled={loadingId === record.id}
-                  style={{borderColor: 'var(--danger)', color: 'var(--danger)'}}
-                >
-                  {loadingId === record.id ? '...' : 'Deshacer'}
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+      {/* BARRA DE BÚSQUEDA INSTANTÁNEA */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <input
+          type="text"
+          placeholder="🔍 Buscar por nombre del socio, DNI o vestuario/aporte..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '0.8rem 1rem',
+            borderRadius: '12px',
+            border: '1px solid var(--glass-border)',
+            background: '#FFFFFF',
+            color: 'var(--text-primary)',
+            fontSize: '0.95rem',
+            outline: 'none',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+          }}
+        />
       </div>
+
+      {/* Alerta de Pedidos y Vouchers por Validar */}
+      {countValidating > 0 && (
+        <div className="glass-panel animate-fade-in" style={{
+          marginBottom: '1.5rem',
+          padding: '1.25rem',
+          borderLeft: '4px solid var(--color-aportes)',
+          background: 'rgba(225, 177, 44, 0.08)'
+        }}>
+          <strong style={{ color: '#161B14', fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>
+            🟡 TIENES {countValidating} COMPROBANTE(S) PENDIENTES DE VALIDACIÓN
+          </strong>
+          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            Verifica el comprobante Yape/Plin enviado por los socios para aprobar el pago o marcar la entrega de prendas.
+          </span>
+        </div>
+      )}
+
+      {/* Resumen de Métricas Filtro */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <button 
+          type="button"
+          onClick={() => setFilterStatus('VALIDATING')}
+          className="glass-panel" 
+          style={{
+            padding: '0.75rem',
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: filterStatus === 'VALIDATING' ? '2px solid var(--color-aportes)' : '1px solid var(--glass-border)',
+            background: filterStatus === 'VALIDATING' ? '#FFFBEB' : '#FFFFFF'
+          }}
+        >
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#D97706' }}>{countValidating}</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>Por Validar</span>
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setFilterStatus('PAID')}
+          className="glass-panel" 
+          style={{
+            padding: '0.75rem',
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: filterStatus === 'PAID' ? '2px solid var(--color-asistencia)' : '1px solid var(--glass-border)',
+            background: filterStatus === 'PAID' ? '#F0FDF4' : '#FFFFFF'
+          }}
+        >
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#166534' }}>{countPaid}</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>Aprobados</span>
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setFilterStatus('DELIVERED')}
+          className="glass-panel" 
+          style={{
+            padding: '0.75rem',
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: filterStatus === 'DELIVERED' ? '2px solid #2563EB' : '1px solid var(--glass-border)',
+            background: filterStatus === 'DELIVERED' ? '#EFF6FF' : '#FFFFFF'
+          }}
+        >
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#1D4ED8' }}>{countDelivered}</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>📦 Entregados</span>
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setFilterStatus('ALL')}
+          className="glass-panel" 
+          style={{
+            padding: '0.75rem',
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: filterStatus === 'ALL' ? '2px solid var(--text-primary)' : '1px solid var(--glass-border)',
+            background: filterStatus === 'ALL' ? '#F8FAFC' : '#FFFFFF'
+          }}
+        >
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: 'var(--text-primary)' }}>{paymentRecords.length}</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>Todos</span>
+        </button>
+      </div>
+
+      {/* Catálogo de Vestuario y Aportes Activos */}
+      {paymentFees.length > 0 && (
+        <div className="glass-panel" style={{ marginBottom: '1.5rem', padding: '1rem', background: '#FFFFFF' }}>
+          <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)', display: 'block', marginBottom: '0.75rem' }}>
+            🏷️ ELEMENTOS PUBLICADOS EN EL CATÁLOGO:
+          </strong>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {paymentFees.map(f => {
+              const isVestuario = f.category === 'VESTUARIO' || f.category === 'ACCESORIOS';
+              const genderBadge = getGenderBadge(f.targetGender);
+              return (
+                <div key={f.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid var(--glass-border)' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '0.1rem 0.5rem', borderRadius: '6px', background: isVestuario ? '#EFF6FF' : '#FEF3C7', color: isVestuario ? '#1D4ED8' : '#92400E' }}>
+                        {isVestuario ? '👗 VESTUARIO' : '💰 APORTE'}
+                      </span>
+                      <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>{f.title}</strong>
+                      {isVestuario && (
+                        <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.1rem 0.45rem', borderRadius: '8px', background: genderBadge.bg, color: genderBadge.color }}>
+                          {genderBadge.label}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                      <strong>Monto: S/ {f.amount.toFixed(2)}</strong> {isVestuario ? `• Tallas: ${f.sizes || 'S, M, L, XL'} • Stock: ${f.stock ?? 50}` : '• Aporte Oficial de Dinero'}
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleDeleteFee(f.id, f.title)}
+                    style={{ background: 'none', border: 'none', color: 'var(--color-accent)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* LISTA ROBUSTA DE PEDIDOS Y APORTES */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        {filteredRecords.length === 0 && (
+          <div className="glass-panel" style={{ textAlign: 'center', padding: '2.5rem', background: '#FFFFFF', borderRadius: '16px' }}>
+            <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.35rem' }}>📋</span>
+            <p style={{ color: 'var(--text-secondary)', fontWeight: 600, margin: 0 }}>No hay comprobantes en esta sección.</p>
+          </div>
+        )}
+
+        {filteredRecords.map(r => {
+          const userName = r.user?.name || 'Socio Registrado';
+          const userDni = r.user?.dni || 'Sin DNI';
+          const userPhone = r.user?.phone || 'Sin tel';
+          
+          const isPaid = r.status === 'PAID' || r.status === 'APPROVED';
+          const isDelivered = r.status === 'DELIVERED';
+          const isValidating = r.status === 'VALIDATING' || r.status === 'PENDING';
+          const isVestuario = r.itemsDetail?.includes('Vestuario') || r.fee?.category === 'VESTUARIO';
+
+          return (
+            <div key={r.id} className="glass-panel animate-fade-in" style={{ padding: '1.1rem', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px' }}>
+              
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                <div>
+                  <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)', display: 'block' }}>{userName}</strong>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                    🪪 DNI: {userDni} • 📞 {userPhone}
+                  </span>
+                  
+                  <div style={{ marginTop: '0.5rem', background: '#F8FAFC', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', fontWeight: 700, textTransform: 'uppercase' }}>
+                      DETALLE REGISTRADO:
+                    </span>
+                    <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)', display: 'block', marginTop: '0.15rem' }}>
+                      {r.itemsDetail || (r.fee ? r.fee.title : 'Comprobante de Pago')}
+                    </strong>
+                    <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--color-asistencia)', marginTop: '0.2rem' }}>
+                      Total: S/ {(r.totalAmount || (r.fee ? r.fee.amount : 0)).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+
+                <span style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  padding: '0.3rem 0.75rem',
+                  borderRadius: '14px',
+                  background: isDelivered ? '#EFF6FF' : isPaid ? '#D1FAE5' : isValidating ? '#FEF3C7' : '#FEE2E2',
+                  color: isDelivered ? '#1D4ED8' : isPaid ? '#065F46' : isValidating ? '#92400E' : '#991B1B',
+                  border: isDelivered ? '1px solid #BFDBFE' : isPaid ? '1px solid #A7F3D0' : isValidating ? '1px solid #FDE68A' : '1px solid #FECACA'
+                }}>
+                  {isDelivered ? '📦 ENTREGADO Y RECIBIDO' : isPaid ? '🟢 APROBADO (Pendiente Entrega)' : isValidating ? '🟡 POR VALIDAR' : '🔴 RECHAZADO'}
+                </span>
+              </div>
+
+              {/* Fotografía del Voucher Yape */}
+              {r.proofUrl && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#F8FAFC', padding: '0.75rem', borderRadius: '12px', marginBottom: '0.85rem', border: '1px solid #E2E8F0' }}>
+                  <img 
+                    src={r.proofUrl} 
+                    alt="Voucher Yape" 
+                    onClick={() => setSelectedProofUrl(r.proofUrl)}
+                    style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover', cursor: 'pointer', border: '2px solid var(--color-aportes)' }}
+                  />
+                  <div>
+                    <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', display: 'block' }}>Comprobante Yape/Plin enviado</strong>
+                    <button 
+                      onClick={() => setSelectedProofUrl(r.proofUrl)}
+                      style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', padding: 0, marginTop: '0.2rem' }}
+                    >
+                      🔍 Ver voucher en HD
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Acciones de Aprobación y Entrega de Ropa */}
+              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                {isValidating && (
+                  <>
+                    <button
+                      onClick={() => handleValidationAction(r.id, 'APPROVE')}
+                      disabled={loadingId === r.id}
+                      className="btn btn-green"
+                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', fontWeight: 700 }}
+                    >
+                      ✓ Aprobar Pago
+                    </button>
+
+                    <button
+                      onClick={() => handleValidationAction(r.id, 'REJECT')}
+                      disabled={loadingId === r.id}
+                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      ✕ Rechazar Voucher
+                    </button>
+                  </>
+                )}
+
+                {isPaid && (
+                  <>
+                    <button
+                      onClick={() => handleValidationAction(r.id, 'DELIVER')}
+                      disabled={loadingId === r.id}
+                      className="btn btn-blue"
+                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', fontWeight: 700, background: '#2563EB', color: 'white' }}
+                    >
+                      📦 Marcar como ENTREGADO AL SOCIO
+                    </button>
+
+                    <button
+                      onClick={() => handleValidationAction(r.id, 'REJECT')}
+                      disabled={loadingId === r.id}
+                      style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid var(--color-accent)', color: 'var(--color-accent)', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      ↩️ Deshacer Aprobación
+                    </button>
+                  </>
+                )}
+
+                {isDelivered && (
+                  <button
+                    onClick={() => handleValidationAction(r.id, 'UNDELIVER')}
+                    disabled={loadingId === r.id}
+                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#334155', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    ↩️ Deshacer Entrega
+                  </button>
+                )}
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+      {/* MODAL CREAR VESTUARIO O APORTE */}
+      {showFeeModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: '1rem'
+        }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '460px', background: '#FFFFFF', padding: '1.75rem', borderRadius: '18px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', marginBottom: '1.25rem' }}>
+              {modalMode === 'VESTUARIO' ? '👗 Publicar Prenda de Vestuario' : '💰 Crear Aporte o Cuota'}
+            </h3>
+
+            <form onSubmit={handleCreateFee} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                  Nombre del {modalMode === 'VESTUARIO' ? 'Vestuario' : 'Aporte'}:
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder={modalMode === 'VESTUARIO' ? 'Ej. Camisa Bordada o Pollera Ayacuchana' : 'Ej. Cuota Mensual de Ensayo Febrero'} 
+                  value={title} 
+                  onChange={e => setTitle(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                  Monto Oficial (S/):
+                </label>
+                <input 
+                  type="number" 
+                  step="0.5"
+                  required
+                  placeholder="60.00" 
+                  value={amount} 
+                  onChange={e => setAmount(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              {/* Si es vestuario, pide género, tallas y stock */}
+              {modalMode === 'VESTUARIO' ? (
+                <>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                      ¿Para quién es la prenda? (Género):
+                    </label>
+                    <select
+                      value={targetGender}
+                      onChange={e => setTargetGender(e.target.value)}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem', background: 'white' }}
+                    >
+                      <option value="VARON">👨 Solo Varones (Camisas, Chalecos)</option>
+                      <option value="MUJER">👩 Solo Mujeres (Polleras, Mantas, Blusas)</option>
+                      <option value="ALL">👫 Unisex / Todos (Sombreros, Fajas)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                      Tallas Disponibles:
+                    </label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="S, M, L, XL" 
+                      value={sizes} 
+                      onChange={e => setSizes(e.target.value)}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                      Stock / Cantidad disponible:
+                    </label>
+                    <input 
+                      type="number" 
+                      required
+                      value={stock} 
+                      onChange={e => setStock(e.target.value)}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                    Tipo de Aporte Monetario:
+                  </label>
+                  <select
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem', background: 'white' }}
+                  >
+                    <option value="CUOTA">💰 Cuota Mensual de Ensayo</option>
+                    <option value="APORTE_CARNAVAL">🎉 Aporte Extraordinario Carnaval</option>
+                    <option value="BANDA">🎺 Cuota de Banda & Músicos</option>
+                    <option value="TRANSPORTE">🚌 Cuota de Pasajes / Transporte</option>
+                    <option value="PROFONDOS">🍲 Aporte Pro-Fondos / Actividad</option>
+                  </select>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowFeeModal(false)}
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', border: '1px solid #ccc', background: 'transparent', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Cancelar
+                </button>
+
+                <button 
+                  type="submit" 
+                  disabled={feeLoading}
+                  className="btn btn-gold"
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', fontSize: '0.95rem' }}
+                >
+                  {feeLoading ? 'Guardando...' : 'Publicar'}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Zoom Voucher en HD */}
+      {selectedProofUrl && (
+        <div 
+          onClick={() => setSelectedProofUrl(null)}
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 2000, padding: '1rem', cursor: 'zoom-out'
+          }}
+        >
+          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
+            <img src={selectedProofUrl} alt="Voucher Zoom HD" style={{ width: '100%', maxHeight: '85vh', objectFit: 'contain', borderRadius: '14px' }} />
+            <p style={{ color: 'white', textAlign: 'center', marginTop: '0.75rem', fontSize: '0.9rem' }}>✕ Toca para cerrar</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

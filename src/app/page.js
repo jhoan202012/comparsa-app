@@ -2,8 +2,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import LogoutButton from '@/components/LogoutButton';
-import OfficialAnnouncements from '@/components/OfficialAnnouncements';
 import Link from 'next/link';
+import { IconUsers, IconShirt, IconWallet, IconMusic, IconMask, IconQrCode, IconInbox } from '@/components/Icons';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,12 @@ export default async function Home() {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) redirect('/login');
 
-  // Obtener aportes del usuario si es miembro para mostrar su actividad real personal
+  // Obtener conteo de mensajes no leídos en el buzón si es admin
+  const unreadFeedbackCount = user.role === 'ADMIN' 
+    ? await prisma.feedback.count({ where: { status: 'PENDIENTE' } })
+    : 0;
+
+  // Obtener aportes o pedidos del usuario si es miembro
   const myPayments = user.role === 'MEMBER'
     ? await prisma.paymentRecord.findMany({
         where: { userId: user.id },
@@ -32,17 +37,6 @@ export default async function Home() {
     include: { event: true },
     orderBy: { timestamp: 'desc' },
     take: 2
-  });
-
-  // Obtener comunicados oficiales para la comparsa
-  const announcements = await prisma.announcement.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 3,
-    include: {
-      author: {
-        select: { name: true, role: true, avatarUrl: true }
-      }
-    }
   });
 
   // Obtener el evento más reciente o agendado en el calendario
@@ -66,24 +60,38 @@ export default async function Home() {
   });
   const userAttendancePct = Math.min(100, Math.round((userPresentCount / totalEventsCount) * 100));
 
+  // Pedidos y vouchers por validar para el Admin
+  const countValidating = user.role === 'ADMIN' ? await prisma.paymentRecord.count({ where: { status: 'VALIDATING' } }) : 0;
+
   // Extraer el primer nombre del usuario
   const firstName = user.name.split(' ')[0];
 
   // Avatar del usuario o imagen por defecto de la comparsa
   const userAvatar = user.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg';
-
-  const heroImage = '/images/634041989_1346800734148847_7655715541676484146_n.jpg';
+  const heroImage = '/images/cangallo_1.jpg';
+  const officialLogo = '/images/Logo_1.jpg';
 
   return (
     <div className="dash-container">
       
-      {/* Header superior con logo e info de usuario */}
+      {/* Header superior con logo oficial e info de usuario */}
       <header className="dash-header">
         <div className="dash-logo">
-          <span className="dash-logo-icon">🎭</span>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            border: '2px solid #D99B00',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            flexShrink: 0,
+            background: '#FFF'
+          }}>
+            <img src={officialLogo} alt="Logo Cangallo Señorial" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </div>
           <div>
-            <span className="dash-logo-title">CARNAVAL AYACUCHANO</span>
-            <span className="dash-logo-year">2027</span>
+            <span className="dash-logo-title">CANGALLO SEÑORIAL</span>
+            <span className="dash-logo-year">CARNAVAL AYACUCHANO 2027</span>
           </div>
         </div>
         
@@ -100,7 +108,7 @@ export default async function Home() {
       {/* Grid Principal: Hero a la izquierda, 3 tarjetas a la derecha */}
       <div className="dash-top-grid">
         
-        {/* Lado Izquierdo: Tarjeta Hero con Fotografía del Usuario arriba a la derecha */}
+        {/* Lado Izquierdo: Tarjeta Hero */}
         <div className="dash-hero-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
@@ -109,7 +117,6 @@ export default async function Home() {
               <p className="dash-hero-subtitle">Sigamos haciendo historia, juntos.</p>
             </div>
 
-            {/* Foto de perfil del usuario activa */}
             <Link href="/perfil" title="Cambiar mi foto de perfil" style={{ textDecoration: 'none' }}>
               <div style={{
                 width: '54px',
@@ -131,13 +138,15 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Lado Derecho: 3 Tarjetas Operativas (Asistencia, Aportes, Cancionero) */}
+        {/* Lado Derecho: 3 Tarjetas Operativas */}
         <div className="dash-modules-grid">
           
           {/* TARJETA 1: ASISTENCIA */}
           <div className="dash-card dash-card-green">
             <div className="dash-card-header">
-              <span className="dash-card-icon">👥</span>
+              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#D1FAE5', color: '#065F46', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconUsers size={20} color="#065F46" />
+              </div>
               <h2>ASISTENCIA & PADRÓN</h2>
             </div>
             
@@ -159,11 +168,12 @@ export default async function Home() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <Link href="/escaner" className="dash-pill-btn dash-btn-green">
+                  <Link href="/escaner" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <IconQrCode size={18} color="#FFF" />
                     Escanear Asistencia (QR)
                   </Link>
                   <Link href="/integrantes" style={{ fontSize: '0.8rem', color: 'var(--color-asistencia)', textDecoration: 'underline', fontWeight: 600, textAlign: 'center' }}>
-                    👥 Administrar Integrantes
+                    Administrar Integrantes
                   </Link>
                 </div>
               </>
@@ -184,26 +194,29 @@ export default async function Home() {
                   </div>
                 </div>
 
-                <Link href="/qr" className="dash-pill-btn dash-btn-green">
+                <Link href="/qr" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconQrCode size={18} color="#FFF" />
                   Mostrar mi Código QR
                 </Link>
               </>
             )}
           </div>
 
-          {/* TARJETA 2: APORTES */}
+          {/* TARJETA 2: APORTES & TIENDA DE VESTUARIO */}
           {user.role !== 'MUSICIAN' && (
             <div className="dash-card dash-card-gold">
               <div className="dash-card-header">
-                <span className="dash-card-icon">💰</span>
-                <h2>APORTES</h2>
+                <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IconShirt size={20} color="#B45309" />
+                </div>
+                <h2>APORTES & VESTUARIO</h2>
               </div>
 
               {user.role === 'ADMIN' ? (
                 <>
                   <div>
-                    <div className="dash-card-stat">1</div>
-                    <p className="dash-card-subtext">pago pendiente por revisar</p>
+                    <div className="dash-card-stat">{countValidating}</div>
+                    <p className="dash-card-subtext">pedido(s) o pago(s) por revisar</p>
                   </div>
                   <div className="dash-progress-wrap">
                     <div className="dash-progress-text">
@@ -214,27 +227,29 @@ export default async function Home() {
                       <div className="dash-progress-fill-gold" style={{ width: '81%' }}></div>
                     </div>
                   </div>
-                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold">
-                    Validar Aportes
+                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <IconWallet size={18} color="#FFF" />
+                    Validar Aportes & Pedidos
                   </Link>
                 </>
               ) : (
                 <>
                   <div>
-                    <div className="dash-card-stat">S/ 50</div>
-                    <p className="dash-card-subtext">cuota de Febrero pendiente</p>
+                    <div className="dash-card-stat">TIENDA</div>
+                    <p className="dash-card-subtext">Ropa, Vestuario & Aportes</p>
                   </div>
                   <div className="dash-progress-wrap">
                     <div className="dash-progress-text">
-                      <span>Mi estado</span>
-                      <span>81% de la meta</span>
+                      <span>Catálogo Disponible</span>
+                      <span>Varones & Mujeres</span>
                     </div>
                     <div className="dash-progress-bar">
-                      <div className="dash-progress-fill-gold" style={{ width: '81%' }}></div>
+                      <div className="dash-progress-fill-gold" style={{ width: '100%' }}></div>
                     </div>
                   </div>
-                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold">
-                    Ver o Subir Voucher
+                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <IconShirt size={18} color="#FFF" />
+                    Adquirir Vestuario & Pagar
                   </Link>
                 </>
               )}
@@ -244,7 +259,9 @@ export default async function Home() {
           {/* TARJETA 3: CANCIONERO */}
           <div className="dash-card dash-card-blue">
             <div className="dash-card-header">
-              <span className="dash-card-icon">🎵</span>
+              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#DBEAFE', color: '#1E40AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconMusic size={20} color="#1E40AF" />
+              </div>
               <h2>CANCIONERO</h2>
             </div>
 
@@ -257,9 +274,50 @@ export default async function Home() {
               Nuestro cancionero oficial con letras de ensayos.
             </p>
 
-            <Link href="/canciones" className="dash-pill-btn dash-btn-blue">
+            <Link href="/canciones" className="dash-pill-btn dash-btn-blue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <IconMusic size={18} color="#FFF" />
               Ver Canciones
             </Link>
+          </div>
+
+          {/* TARJETA 4: BUZÓN DIRECTIVO */}
+          <div className="dash-card" style={{ borderTop: '4px solid #B45309' }}>
+            <div className="dash-card-header">
+              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconInbox size={20} color="#B45309" />
+              </div>
+              <h2>BUZÓN DIRECTIVO</h2>
+            </div>
+
+            {user.role === 'ADMIN' ? (
+              <>
+                <div>
+                  <div className="dash-card-stat">{unreadFeedbackCount}</div>
+                  <p className="dash-card-subtext">mensaje(s) o sugerencia(s) en buzón</p>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                  Revisa sugerencias, reclamos y observaciones enviadas por los socios.
+                </p>
+                <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconInbox size={18} color="#FFF" />
+                  Leer Sugerencias Recibidas
+                </Link>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className="dash-card-stat">100%</div>
+                  <p className="dash-card-subtext">Canal confidencial directivo</p>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                  Envía tus opiniones, reclamos o sugerencias a la junta directiva (Oficial o Anónimo).
+                </p>
+                <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconInbox size={18} color="#FFF" />
+                  Enviar Sugerencia / Reclamo
+                </Link>
+              </>
+            )}
           </div>
 
         </div>
@@ -273,126 +331,65 @@ export default async function Home() {
           <h3>{user.role === 'ADMIN' ? 'Actividad reciente (General)' : 'Mi actividad reciente'}</h3>
           <ul className="dash-activity-list">
             
-            {/* Si es ADMIN ve los movimientos generales de la comparsa */}
             {user.role === 'ADMIN' && (
               <>
                 <li className="dash-activity-item">
-                  <div className="dash-activity-icon">👥</div>
+                  <div className="dash-activity-icon">
+                    <IconUsers size={16} color="var(--text-primary)" />
+                  </div>
                   <div className="dash-activity-content">
                     <span className="dash-activity-text">María Quispe registró su asistencia</span>
                     <time className="dash-activity-time">Hoy 6:02 p.m.</time>
                   </div>
                 </li>
                 <li className="dash-activity-item">
-                  <div className="dash-activity-icon">💰</div>
+                  <div className="dash-activity-icon">
+                    <IconWallet size={16} color="var(--text-primary)" />
+                  </div>
                   <div className="dash-activity-content">
                     <span className="dash-activity-text">Juan Pérez realizó un aporte de S/ 50</span>
                     <time className="dash-activity-time">Hoy 5:58 p.m.</time>
                   </div>
                 </li>
-                <li className="dash-activity-item">
-                  <div className="dash-activity-icon">🎵</div>
-                  <div className="dash-activity-content">
-                    <span className="dash-activity-text">Se añadió una nueva canción al cancionero</span>
-                    <time className="dash-activity-time">Hoy 5:40 p.m.</time>
-                  </div>
-                </li>
               </>
             )}
 
-            {/* Si es MEMBER ve sus propios pagos e asistencias reales con fecha y hora */}
             {user.role === 'MEMBER' && (
               <>
                 {myPayments.length > 0 ? (
                   myPayments.map(p => (
                     <li key={p.id} className="dash-activity-item">
-                      <div className="dash-activity-icon">💰</div>
+                      <div className="dash-activity-icon">
+                        <IconShirt size={16} color="var(--text-primary)" />
+                      </div>
                       <div className="dash-activity-content">
                         <span className="dash-activity-text">
-                          {p.fee?.title || 'Cuota de Febrero'} - S/ {p.fee?.amount ? p.fee.amount.toFixed(2) : '50.00'} ({p.status === 'PAID' || p.status === 'APPROVED' ? 'Aprobado' : p.status === 'VALIDATING' ? 'En revisión' : 'Pendiente'})
+                          {p.itemsDetail || (p.fee ? p.fee.title : 'Pedido de Vestuario')} ({p.status === 'PAID' ? 'Aprobado' : p.status === 'VALIDATING' ? 'En revisión' : 'Pendiente'})
                         </span>
                         <time className="dash-activity-time">
-                          {new Date(p.updatedAt || p.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} {new Date(p.updatedAt || p.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(p.updatedAt || p.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
                         </time>
                       </div>
                     </li>
                   ))
                 ) : (
                   <li className="dash-activity-item">
-                    <div className="dash-activity-icon">💰</div>
+                    <div className="dash-activity-icon">
+                      <IconShirt size={16} color="var(--text-primary)" />
+                    </div>
                     <div className="dash-activity-content">
-                      <span className="dash-activity-text">Cuota de Febrero (S/ 50) - Pendiente de pago</span>
+                      <span className="dash-activity-text">Sin pedidos recientes</span>
                       <time className="dash-activity-time">Hoy</time>
                     </div>
                   </li>
                 )}
-
-                {myAttendances.length > 0 ? (
-                  myAttendances.map(att => (
-                    <li key={att.id} className="dash-activity-item">
-                      <div className="dash-activity-icon">👥</div>
-                      <div className="dash-activity-content">
-                        <span className="dash-activity-text">
-                          Asistencia en {att.event?.title || 'Ensayo General'} ({att.status === 'PRESENT' ? 'Presente' : 'Tarde'})
-                        </span>
-                        <time className="dash-activity-time">
-                          {new Date(att.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} {new Date(att.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </time>
-                      </div>
-                    </li>
-                  ))
-                ) : (
-                  <li className="dash-activity-item">
-                    <div className="dash-activity-icon">👥</div>
-                    <div className="dash-activity-content">
-                      <span className="dash-activity-text">Sin registros de asistencia aún</span>
-                      <time className="dash-activity-time">Hoy</time>
-                    </div>
-                  </li>
-                )}
-              </>
-            )}
-
-            {/* Si es MUSICIAN ve sus asistencias reales con fecha y hora */}
-            {user.role === 'MUSICIAN' && (
-              <>
-                {myAttendances.length > 0 ? (
-                  myAttendances.map(att => (
-                    <li key={att.id} className="dash-activity-item">
-                      <div className="dash-activity-icon">👥</div>
-                      <div className="dash-activity-content">
-                        <span className="dash-activity-text">
-                          Asistencia en {att.event?.title || 'Ensayo General'} ({att.status === 'PRESENT' ? 'Presente' : 'Tarde'})
-                        </span>
-                        <time className="dash-activity-time">
-                          {new Date(att.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} {new Date(att.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </time>
-                      </div>
-                    </li>
-                  ))
-                ) : (
-                  <li className="dash-activity-item">
-                    <div className="dash-activity-icon">👥</div>
-                    <div className="dash-activity-content">
-                      <span className="dash-activity-text">Sin registros de asistencia aún</span>
-                      <time className="dash-activity-time">Hoy</time>
-                    </div>
-                  </li>
-                )}
-                <li className="dash-activity-item">
-                  <div className="dash-activity-icon">🎵</div>
-                  <div className="dash-activity-content">
-                    <span className="dash-activity-text">Letras consultadas en el Cancionero</span>
-                    <time className="dash-activity-time">Hace 1 hora</time>
-                  </div>
-                </li>
               </>
             )}
 
           </ul>
         </div>
 
-        {/* Próxima Actividad (Para todos) */}
+        {/* Próxima Actividad */}
         <div className="dash-info-card">
           <h3>Próxima actividad</h3>
           {nextEvent ? (

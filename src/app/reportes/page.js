@@ -30,7 +30,8 @@ export default async function ReportesPage() {
   const fees = await prisma.paymentFee.findMany();
 
   const payments = await prisma.paymentRecord.findMany({
-    include: { fee: true }
+    include: { fee: true, user: true },
+    orderBy: { createdAt: 'desc' }
   });
 
   return (

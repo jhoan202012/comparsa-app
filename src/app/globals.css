@@ -1,37 +1,34 @@
 :root {
-  /* Carnaval Ayacuchano Palette */
-  --bg-primary: #F7F3E9; /* Fondo Crema cálido */
+  /* Carnaval Ayacuchano Palette Tradicional */
+  --bg-primary: #FAF7F2; /* Fondo Lino / Crema cálido artesanal */
   --bg-card: #FFFFFF; /* Fondo de tarjetas */
   
-  --text-primary: #161B14; /* Texto principal oscuro */
-  --text-secondary: #5C625B; /* Texto secundario gris */
+  --text-primary: #111827; /* Texto principal oscuro de alto contraste */
+  --text-secondary: #4B5563; /* Texto secundario gris slate */
   
-  --color-asistencia: #13603A; /* Verde oscuro (Asistencia) */
-  --color-aportes: #E1B12C; /* Dorado (Aportes) */
-  --color-cancionero: #3D47A1; /* Azul (Cancionero) */
-  --color-accent: #B71C1C; /* Rojo (Acentos) */
+  --color-asistencia: #13603A; /* Verde Esmeralda Tradicional */
+  --color-aportes: #D99B00; /* Dorado Festivo */
+  --color-cancionero: #1E40AF; /* Azul Real */
+  --color-accent: #B71C1C; /* Rojo Ayacucho */
   
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border: #E5E7EB;
   --success: #13603A;
   --danger: #B71C1C;
-  --pattern-color: rgba(183, 28, 28, 0.025); /* Rojo sutil para el fondo claro */
+  --pattern-color: rgba(183, 28, 28, 0.03);
 }
 
 /* Modo Oscuro Alternativo */
 .dark-theme {
-  --bg-primary: #121512; /* Gris verdoso muy oscuro */
+  --bg-primary: #121512;
   --bg-card: #1D231D;
-  
-  --text-primary: #E8EAE6;
-  --text-secondary: #9FA49E;
-  
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
   --color-asistencia: #1A7A4A; 
   --color-aportes: #D9AE1A; 
-  --color-cancionero: #5C6AE3; 
-  --color-accent: #E53935;
-  
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --pattern-color: rgba(255, 255, 255, 0.02); /* Blanco sutil para fondo oscuro */
+  --color-cancionero: #3B82F6; 
+  --color-accent: #EF4444;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --pattern-color: rgba(255, 255, 255, 0.02);
 }
 
 * {
@@ -51,12 +48,11 @@ body {
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
   
-  /* Patrón textil andino geométrico CSS */
-  background-image: 
-    linear-gradient(45deg, var(--pattern-color) 25%, transparent 25%, transparent 75%, var(--pattern-color) 75%, var(--pattern-color)),
-    linear-gradient(45deg, var(--pattern-color) 25%, transparent 25%, transparent 75%, var(--pattern-color) 75%, var(--pattern-color));
-  background-size: 32px 32px;
-  background-position: 0 0, 16px 16px;
+  /* Fondo de lino cálido con excelente contraste para resaltar las tarjetas */
+  background-color: #F4F0EA;
+  background-image: radial-gradient(at 0% 0%, rgba(217, 155, 0, 0.05) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(19, 96, 58, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -65,21 +61,18 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
 }
 
-/* Panel estilo tarjeta limpia */
+/* Panel estilo tarjeta artesanal con bordes bien definidos */
 .glass-panel {
   background: var(--bg-card);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 18px;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Textos principales */
-.title-main {
-  font-family: var(--font-playfair), serif;
-  font-size: 2.2rem;
-  line-height: 1.1;
-  color: var(--text-primary);
+.glass-panel:hover {
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.07);
 }
 
 /* Base button styles */
@@ -89,46 +82,35 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
   font-size: 0.95rem;
+  letter-spacing: 0.3px;
 }
 
-/* Botones Específicos de Módulos */
 .btn-green {
   background-color: var(--color-asistencia);
   color: white;
+  box-shadow: 0 4px 12px rgba(19, 96, 58, 0.2);
 }
-.btn-green:hover { background-color: #0d4a2b; }
+.btn-green:hover { background-color: #0d4a2b; transform: translateY(-1px); }
 
 .btn-gold {
-  background-color: var(--color-aportes);
-  color: #161B14;
+  background-color: #D99B00;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(217, 155, 0, 0.25);
 }
-.btn-gold:hover { background-color: #c49921; }
+.btn-gold:hover { background-color: #b88300; transform: translateY(-1px); }
 
 .btn-blue {
-  background-color: var(--color-cancionero);
+  background-color: #2563EB;
   color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
-.btn-blue:hover { background-color: #2b3378; }
-
-.btn-primary {
-  background-color: var(--color-asistencia);
-  color: white;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 1px solid var(--text-primary);
-  color: var(--text-primary);
-}
-.btn-outline:hover {
-  background: rgba(0,0,0,0.05);
-}
+.btn-blue:hover { background-color: #1d4ed8; transform: translateY(-1px); }
 
 /* Animations */
 @keyframes fadeIn {
@@ -140,14 +122,12 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Layout con animación suave de transición de página */
 main {
   flex: 1;
   padding-bottom: 90px;
   animation: pageSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Transiciones de Página (Page Transitions) */
 @keyframes pageSlideIn {
   from {
     opacity: 0;
@@ -159,7 +139,6 @@ main {
   }
 }
 
-/* Microinteracciones táctiles (Feedback de presión en botones y tarjetas) */
 .btn, .dash-pill-btn, .dash-outline-btn, button {
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -167,30 +146,6 @@ main {
 .btn:active, .dash-pill-btn:active, .dash-outline-btn:active, button:active {
   transform: scale(0.96) !important;
 }
-
-/* Fix para el video del escáner de cámara HTML5 */
-#reader video {
-  width: 100% !important;
-  max-height: 320px !important;
-  object-fit: cover !important;
-  border-radius: 12px !important;
-}
-
-#reader__scan_region {
-  background: transparent !important;
-}
-
-.dash-card, .glass-panel, .dash-hero-card, .dash-info-card {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.dash-card:active, .glass-panel:active {
-  transform: scale(0.99);
-}
-
-/* ===================================================
-   DASHBOARD STYLES (GARANTIZADOS EN GLOBALS.CSS)
-   =================================================== */
 
 .dash-container {
   max-width: 1200px;
@@ -206,7 +161,7 @@ main {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 2px solid #CBD5E1;
 }
 
 .dash-logo {
@@ -221,8 +176,8 @@ main {
 
 .dash-logo-title {
   font-family: var(--font-playfair), serif;
-  font-weight: 700;
-  font-size: 1.15rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   line-height: 1.1;
   color: var(--text-primary);
   display: block;
@@ -231,7 +186,7 @@ main {
 .dash-logo-year {
   font-size: 0.8rem;
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
   display: block;
 }
 
@@ -242,8 +197,8 @@ main {
 }
 
 .dash-user-badge {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: var(--color-asistencia);
   color: white;
@@ -252,10 +207,10 @@ main {
   justify-content: center;
   font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  border: 2px solid #FFFFFF;
 }
 
-/* Main Top Grid (Hero on left, Cards on right) */
 .dash-top-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -269,23 +224,24 @@ main {
   }
 }
 
-/* Hero Card (Left) */
+/* Hero Card (Left) con acento dorado superior y bordes nítidos */
 .dash-hero-card {
   background: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1.5px solid #CBD5E1;
+  border-top: 4px solid var(--color-aportes);
   border-radius: 20px;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  justify: space-between;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
 }
 
 .dash-hero-welcome {
   font-size: 0.85rem;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .dash-hero-title {
@@ -309,7 +265,8 @@ main {
   height: 160px;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
 }
 
 .dash-hero-img {
@@ -319,7 +276,6 @@ main {
   display: block;
 }
 
-/* Right Side: 3 Module Cards Grid */
 .dash-modules-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -328,30 +284,33 @@ main {
 
 @media (min-width: 640px) {
   .dash-modules-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Base Card Style for Modules */
+/* Tarjetas de Módulos con Borde Superior Distintivo y Delimitación Nítida */
 .dash-card {
   background: #FFFFFF;
   border-radius: 20px;
   padding: 1.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1.5px solid #CBD5E1;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 240px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 250px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.dash-card-green { border-top: 4px solid var(--color-asistencia); }
+.dash-card-gold { border-top: 4px solid #D99B00; }
+.dash-card-blue { border-top: 4px solid #2563EB; }
 
 .dash-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
 }
 
-/* Card Headers */
 .dash-card-header {
   display: flex;
   align-items: center;
@@ -366,15 +325,15 @@ main {
 .dash-card-header h2 {
   font-family: var(--font-inter), sans-serif;
   font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
   margin: 0;
   text-transform: uppercase;
 }
 
 .dash-card-green .dash-card-header h2 { color: var(--color-asistencia); }
-.dash-card-gold .dash-card-header h2 { color: var(--color-aportes); }
-.dash-card-blue .dash-card-header h2 { color: var(--color-cancionero); }
+.dash-card-gold .dash-card-header h2 { color: #D99B00; }
+.dash-card-blue .dash-card-header h2 { color: #2563EB; }
 
 .dash-card-stat {
   font-family: var(--font-playfair), serif;
@@ -389,9 +348,9 @@ main {
   font-size: 0.8rem;
   color: var(--text-secondary);
   margin-bottom: 1rem;
+  font-weight: 500;
 }
 
-/* Progress bar inside cards */
 .dash-progress-wrap {
   margin-bottom: 1.25rem;
 }
@@ -402,13 +361,13 @@ main {
   font-size: 0.75rem;
   color: var(--text-secondary);
   margin-bottom: 0.3rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dash-progress-bar {
   width: 100%;
-  height: 6px;
-  background: #EFEFEF;
+  height: 7px;
+  background: #E5E7EB;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -421,34 +380,28 @@ main {
 
 .dash-progress-fill-gold {
   height: 100%;
-  background: var(--color-aportes);
+  background: #D99B00;
   border-radius: 10px;
 }
 
-/* Pill Action Buttons */
 .dash-pill-btn {
   display: block;
   width: 100%;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.88rem;
   text-decoration: none;
   text-align: center;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
   font-family: var(--font-inter), sans-serif;
+  letter-spacing: 0.2px;
 }
 
-.dash-pill-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+.dash-btn-green { background: var(--color-asistencia); color: #FFFFFF; boxShadow: 0 4px 12px rgba(19, 96, 58, 0.25); }
+.dash-btn-gold { background: #D99B00; color: #FFFFFF; boxShadow: 0 4px 12px rgba(217, 155, 0, 0.25); }
+.dash-btn-blue { background: #2563EB; color: #FFFFFF; boxShadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
 
-.dash-btn-green { background: var(--color-asistencia); color: #FFFFFF; }
-.dash-btn-gold { background: var(--color-aportes); color: #161B14; }
-.dash-btn-blue { background: var(--color-cancionero); color: #FFFFFF; }
-
-/* Bottom Grid (Actividad Reciente & Próxima Actividad) */
 .dash-bottom-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -465,16 +418,17 @@ main {
   background: #FFFFFF;
   border-radius: 20px;
   padding: 1.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
 }
 
 .dash-info-card h3 {
   font-family: var(--font-inter), sans-serif;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 1.25rem;
   color: var(--text-primary);
+  letter-spacing: 0.2px;
 }
 
 .dash-activity-list {
@@ -489,7 +443,7 @@ main {
   align-items: center;
   gap: 0.75rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #F3F3F3;
+  border-bottom: 1px solid #F3F4F6;
 }
 
 .dash-activity-item:last-child {
@@ -498,15 +452,16 @@ main {
 }
 
 .dash-activity-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   flex-shrink: 0;
+  border: 1px solid #E5E7EB;
 }
 
 .dash-activity-content {
@@ -519,7 +474,7 @@ main {
 .dash-activity-text {
   font-size: 0.85rem;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .dash-activity-time {
@@ -527,7 +482,6 @@ main {
   color: var(--text-secondary);
 }
 
-/* Event Box */
 .dash-event-box {
   display: flex;
   align-items: center;
@@ -536,6 +490,7 @@ main {
   padding: 1rem 1.25rem;
   border-radius: 14px;
   margin-bottom: 1.25rem;
+  border: 1px solid #E5E7EB;
 }
 
 .dash-event-date-badge {
@@ -545,6 +500,7 @@ main {
   border-radius: 10px;
   text-align: center;
   line-height: 1;
+  box-shadow: 0 3px 8px rgba(183, 28, 28, 0.2);
 }
 
 .dash-event-day {
@@ -556,7 +512,7 @@ main {
 
 .dash-event-month {
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 700;
   display: block;
   margin-top: 2px;
 }
@@ -575,11 +531,11 @@ main {
 
 .dash-outline-btn {
   display: inline-block;
-  padding: 0.6rem 1.25rem;
+  padding: 0.65rem 1.25rem;
   border-radius: 9999px;
-  border: 1px solid var(--color-accent);
+  border: 1.5px solid var(--color-accent);
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
   text-align: center;

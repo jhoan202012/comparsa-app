@@ -52,29 +52,34 @@ model Attendance {
 }
 
 model PaymentFee {
-  id          String          @id @default(uuid())
-  title       String
-  amount      Float
-  dueDate     DateTime
-  createdAt   DateTime        @default(now())
+  id           String          @id @default(uuid())
+  title        String
+  amount       Float
+  dueDate      DateTime?
+  category     String          @default("VESTUARIO") // VESTUARIO, CUOTA, ACCESORIOS
+  targetGender String          @default("ALL")       // ALL, VARON, MUJER
+  sizes        String?         @default("S, M, L, XL") // Tallas disponibles (ej. "S, M, L, XL", "Única")
+  stock        Int             @default(50)            // Stock o unidades disponibles
+  imageUrl     String?         // Foto de la prenda en catálogo
+  createdAt    DateTime        @default(now())
 
-  records     PaymentRecord[]
+  records      PaymentRecord[]
 }
 
 model PaymentRecord {
-  id            String     @id @default(uuid())
-  user          User       @relation(fields: [userId], references: [id])
+  id            String      @id @default(uuid())
+  user          User        @relation(fields: [userId], references: [id])
   userId        String
-  fee           PaymentFee @relation(fields: [feeId], references: [id])
-  feeId         String
-  status        String     @default("PENDING") // PENDING, VALIDATING, PAID
-  proofUrl      String?    // URL/Path de la captura de pantalla de Yape/Plin
-  validatedBy   User?      @relation("ValidatedBy", fields: [validatorId], references: [id])
+  fee           PaymentFee? @relation(fields: [feeId], references: [id])
+  feeId         String?
+  itemsDetail   String?     // Detalle de prendas/productos solicitados con talla (ej. "Camisa Varón - Talla: L")
+  totalAmount   Float       @default(0.0) // Monto total a pagar
+  status        String      @default("VALIDATING") // VALIDATING, PAID, REJECTED
+  proofUrl      String?     // URL de la captura de pantalla Yape/Plin
+  validatedBy   User?       @relation("ValidatedBy", fields: [validatorId], references: [id])
   validatorId   String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  @@unique([userId, feeId])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Song {
@@ -92,4 +97,15 @@ model Announcement {
   authorId  String
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model Feedback {
+  id          String   @id @default(uuid())
+  type        String   @default("SUGERENCIA") // SUGERENCIA, RECLAMO, CONSULTA
+  message     String
+  isAnonymous Boolean  @default(false)
+  userName    String?  // Nombre del socio si no es anónimo
+  userRole    String?  // MEMBER, MUSICIAN
+  status      String   @default("PENDIENTE") // PENDIENTE, REVISADO
+  createdAt   DateTime @default(now())
 }

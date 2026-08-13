@@ -17,8 +17,13 @@ export default async function PagosPage() {
   // Músicos no deben acceder a esta vista (sus cuotas están exoneradas)
   if (!user || user.role === 'MUSICIAN') redirect('/'); 
 
+  // Catálogo disponible de prendas y cuotas publicado por Tesorería
+  const catalogFees = await prisma.paymentFee.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
+
   if (user.role === 'ADMIN') {
-    // Vista ADMIN: Obtener todos los pagos registrados
+    // Vista ADMIN: Obtener todos los pedidos y comprobantes registrados
     const allPayments = await prisma.paymentRecord.findMany({
       include: {
         user: true,
@@ -26,14 +31,14 @@ export default async function PagosPage() {
       },
       orderBy: { createdAt: 'desc' }
     });
-    return <PagosAdmin records={allPayments} currentUserId={user.id} />;
+    return <PagosAdmin fees={catalogFees} records={allPayments} currentUserId={user.id} />;
   } else {
-    // Vista MIEMBRO: Obtener solo sus propios pagos
+    // Vista MIEMBRO: Obtener sus propios pedidos realizados
     const myPayments = await prisma.paymentRecord.findMany({
       where: { userId: user.id },
       include: { fee: true },
       orderBy: { createdAt: 'desc' }
     });
-    return <PagosMiembro records={myPayments} currentUserId={user.id} />;
+    return <PagosMiembro catalog={catalogFees} records={myPayments} currentUser={user} />;
   }
 }
