@@ -3,15 +3,17 @@ import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import Link from 'next/link';
 
-export default function QRScannerClient({ members, events = [], initialActiveEvent, activeAttendances }) {
+export default function QRScannerClient({ members, events: initialEvents = [], initialActiveEvent, activeAttendances }) {
+  const [eventsList, setEventsList] = useState(initialEvents || []);
+  const [selectedEventId, setSelectedEventId] = useState(initialActiveEvent?.id || initialEvents[0]?.id || '');
   const [scanResult, setScanResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [attendances, setAttendances] = useState(activeAttendances || {});
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedEventId, setSelectedEventId] = useState(initialActiveEvent?.id || '');
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
+  const [refreshingEvents, setRefreshingEvents] = useState(false);
   
   const isProcessing = useRef(false);
   const fileQrInputRef = useRef(null);
@@ -22,6 +24,30 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
   useEffect(() => {
     selectedEventIdRef.current = selectedEventId;
   }, [selectedEventId]);
+
+  // Cargar lista fresca de eventos al entrar al escáner
+  const fetchLatestEvents = async () => {
+    setRefreshingEvents(true);
+    try {
+      const res = await fetch('/api/eventos');
+      const data = await res.json();
+      if (res.ok && data.events && data.events.length > 0) {
+        setEventsList(data.events);
+        // Si no hay evento seleccionado o el evento actual fue borrado, seleccionar el más reciente
+        if (!selectedEventId || !data.events.some(ev => ev.id === selectedEventId)) {
+          setSelectedEventId(data.events[0].id);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRefreshingEvents(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestEvents();
+  }, []);
 
   // Al cambiar de evento en el desplegable, cargar las asistencias de ese evento
   useEffect(() => {
@@ -80,9 +106,8 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
   // Encender la cámara en vivo
   const startCameraStream = async () => {
     setCameraError(null);
-    setIsCameraActive(true); // Activar primero para garantizar que <div id="reader"> esté en el DOM
+    setIsCameraActive(true);
 
-    // Esperar un frame de React para asegurar el render de #reader
     setTimeout(async () => {
       try {
         const readerElement = document.getElementById('reader');
@@ -189,17 +214,13 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
     if (!file) return;
 
     try {
-      // 1. Normalizar foto de alta resolución
       const optimizedFile = await optimizeImageForQrScan(file);
-      
       let decodedText = null;
 
-      // 2. Intentar decodificar en la imagen optimizada
       try {
         const html5QrcodeTemp = new Html5Qrcode("file-qr-temp");
         decodedText = await html5QrcodeTemp.scanFile(optimizedFile, true);
       } catch (err1) {
-        // 3. Fallback: intentar en la imagen original
         const html5QrcodeTemp = new Html5Qrcode("file-qr-temp");
         decodedText = await html5QrcodeTemp.scanFile(file, true);
       }
@@ -283,49 +304,65 @@ export default function QRScannerClient({ members, events = [], initialActiveEve
       </div>
 
       {/* Tarjeta de Control del Tesorero: Selector de Evento Monitoreado */}
-      {events.length > 0 && (
-        <div className="glass-panel" style={{
-          marginBottom: '1.5rem',
-          padding: '1.25rem',
-          borderLeft: '4px solid var(--color-asistencia)',
-          background: 'var(--bg-primary)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-asistencia)', letterSpacing: '0.5px' }}>
-              🔴 MONITOREANDO ASISTENCIA EN VIVO
-            </span>
-            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-              👥 {presentCount} Presentes • {lateCount} Tarde
-            </span>
-          </div>
+      <div className="glass-panel" style={{
+        marginBottom: '1.5rem',
+        padding: '1.25rem',
+        borderLeft: '4px solid var(--color-asistencia)',
+        background: 'var(--bg-primary)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-asistencia)', letterSpacing: '0.5px' }}>
+            🔴 MONITOREANDO ASISTENCIA EN VIVO
+          </span>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+            👥 {presentCount} Presentes • {lateCount} Tarde
+          </span>
+        </div>
 
-          <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+          <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
             Selecciona el Ensayo o Evento que estás escaneando:
           </label>
-
-          <select 
-            value={selectedEventId} 
-            onChange={e => setSelectedEventId(e.target.value)}
+          <button 
+            type="button" 
+            onClick={fetchLatestEvents} 
+            disabled={refreshingEvents}
             style={{
-              width: '100%',
-              padding: '0.75rem 0.9rem',
-              borderRadius: '12px',
-              border: '1px solid var(--glass-border)',
-              background: 'white',
-              color: '#111',
-              fontSize: '0.95rem',
+              background: 'none',
+              border: 'none',
+              color: 'var(--color-accent)',
+              fontSize: '0.8rem',
               fontWeight: 600,
               cursor: 'pointer'
             }}
           >
-            {events.map(ev => (
-              <option key={ev.id} value={ev.id}>
-                📍 {ev.title} — {new Date(ev.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} ({ev.location})
-              </option>
-            ))}
-          </select>
+            {refreshingEvents ? '⌛ Cargando...' : '🔄 Actualizar Ensayos'}
+          </button>
         </div>
-      )}
+
+        <select 
+          value={selectedEventId} 
+          onChange={e => setSelectedEventId(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '0.75rem 0.9rem',
+            borderRadius: '12px',
+            border: '1px solid var(--glass-border)',
+            background: 'white',
+            color: '#111',
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          {eventsList.length === 0 && <option value="">No hay eventos agendados</option>}
+          {eventsList.map(ev => (
+            <option key={ev.id} value={ev.id}>
+              📍 {ev.title} — {new Date(ev.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} ({ev.location})
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Banner de Éxito o Advertencia de Escaneo Repetido */}
       {scanResult && (
