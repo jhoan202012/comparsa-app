@@ -11,6 +11,7 @@ export default function LoginForm({ users, initialMode = 'login' }) {
 
   // Register form state
   const [regName, setRegName] = useState('');
+  const [regDni, setRegDni] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regRole, setRegRole] = useState('MEMBER');
@@ -25,15 +26,16 @@ export default function LoginForm({ users, initialMode = 'login' }) {
     setLoading(true);
 
     try {
-      // Buscar usuario coincidente por teléfono, email o nombre
+      // Buscar usuario coincidente por DNI, teléfono, email o nombre
       const foundUser = users.find(u => 
+        (u.dni && u.dni === loginInput.trim()) ||
         (u.phone && u.phone === loginInput.trim()) ||
         (u.email && u.email.toLowerCase() === loginInput.trim().toLowerCase()) ||
         u.name.toLowerCase().includes(loginInput.trim().toLowerCase())
       );
 
       if (!foundUser) {
-        setLoginError('No se encontró ningún integrante activo con ese teléfono o correo. Solicita tu registro si eres nuevo.');
+        setLoginError('No se encontró ningún integrante activo con ese DNI, teléfono o correo. Solicita tu registro si eres nuevo.');
         setLoading(false);
         return;
       }
@@ -58,6 +60,7 @@ export default function LoginForm({ users, initialMode = 'login' }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: regName,
+          dni: regDni,
           phone: regPhone,
           email: regEmail,
           role: regRole
@@ -101,7 +104,7 @@ export default function LoginForm({ users, initialMode = 'login' }) {
         </h3>
 
         <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-          Tus datos fueron recibidos con éxito. El Tesorero o Presidente habilitará tu cuenta y te enviará la notificación por <strong>WhatsApp</strong> para ingresar a tu carnet QR.
+          Tus datos y DNI fueron recibidos con éxito. El Tesorero o Presidente habilitará tu cuenta y te notificará por <strong>WhatsApp</strong> para ingresar a tu carnet QR.
         </p>
 
         <button
@@ -166,13 +169,13 @@ export default function LoginForm({ users, initialMode = 'login' }) {
       </div>
 
       {mode === 'login' ? (
-        /* FORMULARIO DE INGRESO ESTILO HAPI CON COLORES OFICIALES */
+        /* FORMULARIO DE INGRESO */
         <form onSubmit={handleLoginSubmit}>
           <h2 style={{ fontSize: '1.5rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
             ¡Hola de nuevo! 👋
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-            Ingresa tu teléfono o correo registrado en la comparsa:
+            Ingresa tu DNI, teléfono o correo registrado en la comparsa:
           </p>
 
           {loginError && (
@@ -183,12 +186,12 @@ export default function LoginForm({ users, initialMode = 'login' }) {
 
           <div style={{ marginBottom: '1.1rem' }}>
             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-              Teléfono o Correo electrónico:
+              DNI, Celular o Correo electrónico:
             </label>
             <input
               type="text"
               required
-              placeholder="Ej. 988888888 o juan@comparsa.com"
+              placeholder="Ej. 74839201 o 988888888"
               value={loginInput}
               onChange={e => setLoginInput(e.target.value)}
               style={{
@@ -244,7 +247,7 @@ export default function LoginForm({ users, initialMode = 'login' }) {
             {loading ? 'Ingresando...' : 'Ingresar a mi Perfil ➔'}
           </button>
 
-          {/* Acceso Rápido para Ensayos (Desplegable de Pruebas) */}
+          {/* Acceso Rápido para Ensayos */}
           <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', textAlign: 'center' }}>
             <button
               type="button"
@@ -283,13 +286,13 @@ export default function LoginForm({ users, initialMode = 'login' }) {
           </div>
         </form>
       ) : (
-        /* FORMULARIO DE SOLICITUD DE REGISTRO CON COLORES OFICIALES */
+        /* FORMULARIO DE SOLICITUD DE REGISTRO CON DNI ÚNICO */
         <form onSubmit={handleRegisterSubmit}>
           <h2 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
             Solicitud de Inscripción 📝
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-            La Directiva evaluará tu registro para autorizar tu carnet QR:
+            La Directiva evaluará tu DNI para autorizar tu carnet QR único:
           </p>
 
           {regError && (
@@ -308,6 +311,21 @@ export default function LoginForm({ users, initialMode = 'login' }) {
               placeholder="Ej. Carmen Rosa Mendoza"
               value={regName}
               onChange={e => setRegName(e.target.value)}
+              style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '12px', border: '1px solid var(--glass-border)', background: 'var(--bg-primary)', fontSize: '0.9rem', color: 'var(--text-primary)', outline: 'none' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '0.9rem' }}>
+            <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.3rem' }}>
+              Nº de DNI (8 dígitos):
+            </label>
+            <input
+              type="text"
+              required
+              maxLength={8}
+              placeholder="Ej. 74839201"
+              value={regDni}
+              onChange={e => setRegDni(e.target.value.replace(/\D/g, ''))}
               style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '12px', border: '1px solid var(--glass-border)', background: 'var(--bg-primary)', fontSize: '0.9rem', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>

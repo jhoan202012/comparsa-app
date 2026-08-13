@@ -6,6 +6,11 @@ export default function FormPerfil({ user, defaultAvatars }) {
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatarUrl || defaultAvatars[0]);
   const [loading, setLoading] = useState(false);
 
+  // Estado para cambio de contraseña
+  const [pin, setPin] = useState(user.pin || '1234');
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinSuccess, setPinSuccess] = useState(false);
+
   // Redimensionar automáticamente la imagen elegida a 300x300px JPEG
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -45,7 +50,7 @@ export default function FormPerfil({ user, defaultAvatars }) {
     }
   };
 
-  const handleSave = async () => {
+  const handleSaveAvatar = async () => {
     if (!selectedAvatar) return;
     setLoading(true);
     
@@ -58,9 +63,6 @@ export default function FormPerfil({ user, defaultAvatars }) {
 
       if (res.ok) {
         window.location.href = '/';
-      } else if (res.status === 404 || res.status === 401) {
-        alert('Tu sesión ha vencido. Te redirigiremos a la pantalla de login para ingresar nuevamente.');
-        window.location.href = '/login';
       } else {
         const data = await res.json();
         alert(`Error al guardar: ${data.error || 'Intenta con otra imagen.'}`);
@@ -73,8 +75,35 @@ export default function FormPerfil({ user, defaultAvatars }) {
     }
   };
 
+  const handleSavePin = async (e) => {
+    e.preventDefault();
+    setPinLoading(true);
+    setPinSuccess(false);
+
+    try {
+      const res = await fetch('/api/user/pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPin: pin })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setPinSuccess(true);
+      } else {
+        alert(data.error || 'Error al cambiar contraseña');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+      
       {/* Previsualización del Avatar en Vivo */}
       <div style={{
         width: '130px',
@@ -98,9 +127,53 @@ export default function FormPerfil({ user, defaultAvatars }) {
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
           Rol: {user.role === 'ADMIN' ? 'Tesorero / Directiva' : user.role === 'MUSICIAN' ? 'Músico de Banda' : 'Socio Activo'}
         </p>
+        {user.phone && <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>📞 {user.phone}</p>}
       </div>
 
-      {/* Botón para Subir Foto Personalizada desde el Dispositivo */}
+      {/* SECCIÓN 1: CAMBIAR CONTRASEÑA O PIN */}
+      <div className="glass-panel" style={{ width: '100%', padding: '1.25rem', background: 'var(--bg-primary)' }}>
+        <h4 style={{ fontSize: '1rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+          🔑 Cambiar mi Contraseña o PIN
+        </h4>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+          Configura una contraseña sencilla para ingresar a tu cuenta:
+        </p>
+
+        {pinSuccess && (
+          <div style={{ padding: '0.65rem', background: 'var(--color-asistencia)', color: 'white', borderRadius: '10px', fontSize: '0.85rem', marginBottom: '0.85rem', textAlign: 'center' }}>
+            ✓ ¡Contraseña actualizada exitosamente!
+          </div>
+        )}
+
+        <form onSubmit={handleSavePin} style={{ display: 'flex', gap: '0.5rem' }}>
+          <input
+            type="text"
+            required
+            placeholder="Nueva contraseña (ej. 1234)"
+            value={pin}
+            onChange={e => setPin(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '0.65rem 0.85rem',
+              borderRadius: '10px',
+              border: '1px solid var(--glass-border)',
+              background: 'white',
+              color: '#111',
+              fontSize: '0.9rem'
+            }}
+          />
+          <button
+            type="submit"
+            disabled={pinLoading}
+            className="btn btn-green"
+            style={{ padding: '0.65rem 1rem', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+          >
+            {pinLoading ? 'Guardando...' : 'Actualizar'}
+          </button>
+        </form>
+      </div>
+
+      {/* SECCIÓN 2: SELECCIÓN DE FOTO DE PERFIL */}
       <div style={{ width: '100%' }}>
         <input 
           type="file" 
@@ -114,16 +187,16 @@ export default function FormPerfil({ user, defaultAvatars }) {
           type="button" 
           onClick={() => fileInputRef.current?.click()} 
           className="btn btn-outline" 
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}
         >
-          📷 Subir Foto
+          📷 Subir Foto de Perfil
         </button>
       </div>
 
       {/* Galería Alternativa de Fotos de la Comparsa */}
       <div style={{ width: '100%', textAlign: 'left' }}>
         <label style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.75rem', display: 'block', color: 'var(--text-secondary)' }}>
-          O si prefieres, elige una foto oficial de la comparsa:
+          O elige una foto oficial de la comparsa:
         </label>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
@@ -149,7 +222,7 @@ export default function FormPerfil({ user, defaultAvatars }) {
       </div>
 
       <button 
-        onClick={handleSave} 
+        onClick={handleSaveAvatar} 
         className="btn btn-green" 
         style={{ width: '100%' }}
         disabled={loading}

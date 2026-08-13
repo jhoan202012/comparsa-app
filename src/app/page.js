@@ -138,7 +138,7 @@ export default async function Home() {
           <div className="dash-card dash-card-green">
             <div className="dash-card-header">
               <span className="dash-card-icon">👥</span>
-              <h2>ASISTENCIA</h2>
+              <h2>ASISTENCIA & PADRÓN</h2>
             </div>
             
             {user.role === 'ADMIN' ? (
@@ -158,9 +158,14 @@ export default async function Home() {
                   </div>
                 </div>
 
-                <Link href="/escaner" className="dash-pill-btn dash-btn-green">
-                  Escanear Asistencia (QR)
-                </Link>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <Link href="/escaner" className="dash-pill-btn dash-btn-green">
+                    Escanear Asistencia (QR)
+                  </Link>
+                  <Link href="/integrantes" style={{ fontSize: '0.8rem', color: 'var(--color-asistencia)', textDecoration: 'underline', fontWeight: 600, textAlign: 'center' }}>
+                    👥 Administrar Integrantes
+                  </Link>
+                </div>
               </>
             ) : (
               <>
@@ -260,7 +265,7 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Grid Inferior: Actividad (Global para Admin, Personal para Usuarios) & Próxima Actividad */}
+      {/* Grid Inferior: Actividad & Próxima Actividad */}
       <div className="dash-bottom-grid">
         
         {/* Actividad */}

@@ -29,7 +29,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Se requieren permisos de administrador' }, { status: 403 });
     }
 
-    const { name, phone, email, role = 'MEMBER', avatarUrl } = await request.json();
+    const { name, dni, phone, email, role = 'MEMBER', pin = '1234', avatarUrl } = await request.json();
 
     if (!name) {
       return NextResponse.json({ error: 'El nombre completo es requerido' }, { status: 400 });
@@ -41,9 +41,11 @@ export async function POST(request) {
     const newUser = await prisma.user.create({
       data: {
         name,
+        dni: dni || null,
         phone: phone || null,
         email: email || null,
         role,
+        pin: pin || '1234',
         avatarUrl: avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg',
         qr_code_hash
       }
@@ -52,7 +54,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true, user: newUser });
   } catch (error) {
     console.error('Error al crear usuario:', error);
-    return NextResponse.json({ error: 'Error al crear usuario. Verifica que el teléfono o correo no estén duplicados.' }, { status: 500 });
+    return NextResponse.json({ error: 'Error al crear usuario. Verifica que el DNI, teléfono o correo no estén duplicados.' }, { status: 500 });
   }
 }
 
@@ -70,7 +72,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Se requieren permisos de administrador' }, { status: 403 });
     }
 
-    const { id, name, phone, email, role, avatarUrl } = await request.json();
+    const { id, name, dni, phone, email, role, pin, avatarUrl } = await request.json();
 
     if (!id || !name) {
       return NextResponse.json({ error: 'ID y Nombre son requeridos' }, { status: 400 });
@@ -80,9 +82,11 @@ export async function PUT(request) {
       where: { id },
       data: {
         name,
+        dni: dni || null,
         phone: phone || null,
         email: email || null,
         role,
+        ...(pin && { pin }),
         ...(avatarUrl && { avatarUrl })
       }
     });

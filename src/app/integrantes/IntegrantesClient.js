@@ -14,17 +14,21 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
 
   // Form states
   const [name, setName] = useState('');
+  const [dni, setDni] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('MEMBER');
+  const [pin, setPin] = useState('1234');
   const [avatarUrl, setAvatarUrl] = useState('/images/634076865_1346800880815499_5762101862002171797_n.jpg');
 
   const openCreateModal = () => {
     setEditingUserId(null);
     setName('');
+    setDni('');
     setPhone('');
     setEmail('');
     setRole('MEMBER');
+    setPin('1234');
     setAvatarUrl('/images/634076865_1346800880815499_5762101862002171797_n.jpg');
     setShowModal(true);
   };
@@ -32,9 +36,11 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
   const openEditModal = (member) => {
     setEditingUserId(member.id);
     setName(member.name || '');
+    setDni(member.dni || '');
     setPhone(member.phone || '');
     setEmail(member.email || '');
     setRole(member.role || 'MEMBER');
+    setPin(member.pin || '1234');
     setAvatarUrl(member.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg');
     setShowModal(true);
   };
@@ -51,9 +57,11 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
         body: JSON.stringify({
           id: editingUserId,
           name,
+          dni,
           phone,
           email,
           role,
+          pin,
           avatarUrl
         })
       });
@@ -131,12 +139,19 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
     return 'Socio Activo';
   };
 
+  const generateWhatsAppMessage = (m) => {
+    const text = `¡Hola ${m.name}! La Directiva ha habilitado tu acceso a la Comparsa Cangallo Señorial 🎭.\n\n🪪 *DNI:* ${m.dni || 'Registrado'}\n📱 *Usuario:* ${m.phone || m.email}\n🔑 *Contraseña:* ${m.pin || '1234'}\n\n👉 Ingresa a la app aquí para ver tu Carnet QR:\nhttp://localhost:3000/login\n\n*(Puedes cambiar tu contraseña cuando desees desde tu Perfil).*`;
+    return `https://wa.me/51${m.phone}?text=${encodeURIComponent(text)}`;
+  };
+
   const pendingMembers = members.filter(m => m.status === 'PENDING');
   const activeMembers = members.filter(m => m.status !== 'PENDING');
 
   const filteredMembers = activeMembers.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          (m.phone && m.phone.includes(searchTerm));
+                          (m.dni && m.dni.includes(searchTerm)) ||
+                          (m.phone && m.phone.includes(searchTerm)) ||
+                          (m.email && m.email.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesRole = roleFilter === 'ALL' || m.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -160,7 +175,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
           className="btn btn-green"
           style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}
         >
-          + Nuevo Integrante
+          + Añadir Integrante
         </button>
       </div>
 
@@ -192,7 +207,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
                 <div>
                   <strong style={{ fontSize: '1rem', color: 'var(--text-primary)', display: 'block' }}>{pm.name}</strong>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    📞 {pm.phone || 'Sin celular'} • {getRoleLabel(pm.role)}
+                    🪪 DNI: <strong>{pm.dni || 'Sin DNI'}</strong> • 📞 {pm.phone || 'Sin cel'} • {getRoleLabel(pm.role)}
                   </span>
                 </div>
 
@@ -227,15 +242,15 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
           <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Habilitados</span>
         </div>
         <div className="glass-panel" style={{ padding: '0.75rem', textAlign: 'center' }}>
-          <span style={{ fontSize: '1.2rem', fontWeight 700, display: 'block', color: 'var(--color-asistencia)' }}>{countMembers}</span>
+          <span style={{ fontSize: '1.2rem', fontWeight: 700, display: 'block', color: 'var(--color-asistencia)' }}>{countMembers}</span>
           <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Socios</span>
         </div>
         <div className="glass-panel" style={{ padding: '0.75rem', textAlign: 'center' }}>
-          <span style={{ fontSize: '1.2rem', fontWeight 700, display: 'block', color: 'var(--color-aportes)' }}>{countMusicians}</span>
+          <span style={{ fontSize: '1.2rem', fontWeight: 700, display: 'block', color: 'var(--color-aportes)' }}>{countMusicians}</span>
           <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Músicos</span>
         </div>
         <div className="glass-panel" style={{ padding: '0.75rem', textAlign: 'center' }}>
-          <span style={{ fontSize: '1.2rem', fontWeight 700, display: 'block', color: 'var(--color-accent)' }}>{countAdmins}</span>
+          <span style={{ fontSize: '1.2rem', fontWeight: 700, display: 'block', color: 'var(--color-accent)' }}>{countAdmins}</span>
           <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Directiva</span>
         </div>
       </div>
@@ -244,7 +259,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
       <div className="glass-panel" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
         <input 
           type="text"
-          placeholder="🔍 Buscar por nombre o celular..."
+          placeholder="🔍 Buscar por DNI, nombre, celular o correo..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           style={{
@@ -314,7 +329,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
                 <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)', display: 'block' }}>
                   {m.name}
                 </strong>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem', flexWrap: 'wrap' }}>
                   <span style={{
                     fontSize: '0.72rem',
                     fontWeight: 700,
@@ -325,6 +340,11 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
                   }}>
                     {getRoleLabel(m.role)}
                   </span>
+                  {m.dni && (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', background: '#E2E8F0', padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                      🪪 {m.dni}
+                    </span>
+                  )}
                   {m.phone && (
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                       📞 {m.phone}
@@ -338,7 +358,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               {m.phone && (
                 <a
-                  href={`https://wa.me/51${m.phone}?text=${encodeURIComponent(`¡Hola ${m.name}! La Directiva ha habilitado tu acceso a la Comparsa. Ingresa a la app para ver tu Carnet QR aquí: https://comparsa-app.vercel.app/api/auth/quicklogin?userId=${m.id}`)}`}
+                  href={generateWhatsAppMessage(m)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -354,7 +374,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
                     gap: '0.25rem'
                   }}
                 >
-                  📲 QR
+                  📲 Enviar WhatsApp
                 </a>
               )}
 
@@ -413,7 +433,7 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
             <form onSubmit={handleSaveUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                  Nombre Completo:
+                  Nombre y Apellidos:
                 </label>
                 <input 
                   type="text" 
@@ -427,15 +447,45 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
 
               <div>
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                  Celular / WhatsApp (Sin prefijo +51):
+                  Nº de DNI (8 dígitos):
                 </label>
                 <input 
-                  type="tel" 
-                  placeholder="Ej. 987654321" 
-                  value={phone} 
-                  onChange={e => setPhone(e.target.value)}
+                  type="text" 
+                  required
+                  maxLength={8}
+                  placeholder="Ej. 74839201" 
+                  value={dni} 
+                  onChange={e => setDni(e.target.value.replace(/\D/g, ''))}
                   style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
                 />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                    Celular / WhatsApp:
+                  </label>
+                  <input 
+                    type="tel" 
+                    placeholder="Ej. 987654321" 
+                    value={phone} 
+                    onChange={e => setPhone(e.target.value)}
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                    Correo Electrónico:
+                  </label>
+                  <input 
+                    type="email" 
+                    placeholder="ejemplo@gmail.com" 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)}
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                  />
+                </div>
               </div>
 
               <div>
@@ -451,6 +501,20 @@ export default function IntegrantesClient({ initialMembers = [], currentUser }) 
                   <option value="MUSICIAN">Músico de Banda (Exonerado)</option>
                   <option value="ADMIN">Tesorero / Directiva</option>
                 </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
+                  Contraseña / PIN por defecto:
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="1234" 
+                  value={pin} 
+                  onChange={e => setPin(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
