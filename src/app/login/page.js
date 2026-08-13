@@ -6,13 +6,24 @@ export const dynamic = 'force-dynamic';
 
 export default async function LoginPage({ searchParams }) {
   const params = await searchParams;
-  const initialMode = params?.mode || 'login'; // 'login' | 'register'
+  const initialMode = params?.mode || 'login';
 
-  // Obtenemos los usuarios activos de la base de datos
-  const users = await prisma.user.findMany({
-    where: { status: 'ACTIVE' },
-    orderBy: { role: 'asc' }
-  });
+  let users = [];
+  try {
+    users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { status: 'ACTIVE' },
+          { status: null }
+        ]
+      },
+      orderBy: { role: 'asc' }
+    });
+  } catch (e) {
+    users = await prisma.user.findMany({
+      orderBy: { role: 'asc' }
+    });
+  }
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'inherit' }}>
