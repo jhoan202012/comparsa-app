@@ -167,226 +167,204 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* Grid Principal: Hero a la izquierda, 3 tarjetas a la derecha */}
-      <div className="dash-top-grid">
-        
-        {/* Lado Izquierdo: Tarjeta Hero */}
-        <div className="dash-hero-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <p className="dash-hero-welcome">¡Hola, {firstName}! 👋</p>
-              <h1 className="dash-hero-title">Carnaval<br/>Ayacuchano<br/>2027</h1>
-              <p className="dash-hero-subtitle">Sigamos haciendo historia, juntos.</p>
-            </div>
-
-            <Link href="/perfil" title="Cambiar mi foto de perfil" style={{ textDecoration: 'none' }}>
-              <div style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '50%',
-                overflow: 'hidden',
-                border: '3px solid var(--color-asistencia)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-                flexShrink: 0,
-                cursor: 'pointer',
-                background: '#FFF'
-              }}>
-                <img src={userAvatar} alt={user?.name || 'Usuario'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-            </Link>
-          </div>
-          
-          <div className="dash-hero-img-wrapper">
-            <img src={heroImage} alt="Danzantes Carnaval Ayacuchano" className="dash-hero-img" />
-          </div>
+      {/* 1. HERO BANNER HORIZONTAL EQUILIBRADO */}
+      <div className="dash-hero-card">
+        <div>
+          <p className="dash-hero-welcome">¡Hola, {firstName}! 👋</p>
+          <h1 className="dash-hero-title">Carnaval Ayacuchano 2027</h1>
+          <p className="dash-hero-subtitle">Sigamos haciendo historia, juntos.</p>
         </div>
 
-        {/* Lado Derecho: 3 Tarjetas Operativas */}
-        <div className="dash-modules-grid">
-          
-          {/* TARJETA 1: ASISTENCIA */}
-          <div className="dash-card dash-card-green">
-            <div className="dash-card-header">
-              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#D1FAE5', color: '#065F46', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconUsers size={20} color="#065F46" />
-              </div>
-              <h2>ASISTENCIA & PADRÓN</h2>
-            </div>
-            
-            {user?.role === 'ADMIN' ? (
-              <>
-                <div>
-                  <div className="dash-card-stat">{todayAttendancesCount}</div>
-                  <p className="dash-card-subtext">presentes hoy en ensayo</p>
-                </div>
-
-                <div className="dash-progress-wrap">
-                  <div className="dash-progress-text">
-                    <span>Participación General</span>
-                    <span>{globalParticipationPct}%</span>
-                  </div>
-                  <div className="dash-progress-bar">
-                    <div className="dash-progress-fill-green" style={{ width: `${globalParticipationPct}%` }}></div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <Link href="/escaner" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <IconQrCode size={18} color="#FFF" />
-                    Escanear Asistencia (QR)
-                  </Link>
-                  <Link href="/integrantes" style={{ fontSize: '0.8rem', color: 'var(--color-asistencia)', textDecoration: 'underline', fontWeight: 600, textAlign: 'center' }}>
-                    Administrar Integrantes
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <div className="dash-card-stat">{userPresentCount}</div>
-                  <p className="dash-card-subtext">ensayo(s) asistidos</p>
-                </div>
-
-                <div className="dash-progress-wrap">
-                  <div className="dash-progress-text">
-                    <span>Mi Asistencia</span>
-                    <span>{userAttendancePct}%</span>
-                  </div>
-                  <div className="dash-progress-bar">
-                    <div className="dash-progress-fill-green" style={{ width: `${userAttendancePct}%` }}></div>
-                  </div>
-                </div>
-
-                <Link href="/qr" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <IconQrCode size={18} color="#FFF" />
-                  Mostrar mi Código QR
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* TARJETA 2: APORTES & TIENDA DE VESTUARIO */}
-          {user?.role !== 'MUSICIAN' && (
-            <div className="dash-card dash-card-gold">
-              <div className="dash-card-header">
-                <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IconShirt size={20} color="#B45309" />
-                </div>
-                <h2>APORTES & VESTUARIO</h2>
-              </div>
-
-              {user?.role === 'ADMIN' ? (
-                <>
-                  <div>
-                    <div className="dash-card-stat">{countValidating}</div>
-                    <p className="dash-card-subtext">pedido(s) o pago(s) por revisar</p>
-                  </div>
-                  <div className="dash-progress-wrap">
-                    <div className="dash-progress-text">
-                      <span>Recaudado</span>
-                      <span>81%</span>
-                    </div>
-                    <div className="dash-progress-bar">
-                      <div className="dash-progress-fill-gold" style={{ width: '81%' }}></div>
-                    </div>
-                  </div>
-                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <IconWallet size={18} color="#FFF" />
-                    Validar Aportes & Pedidos
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <div className="dash-card-stat">TIENDA</div>
-                    <p className="dash-card-subtext">Ropa, Vestuario & Aportes</p>
-                  </div>
-                  <div className="dash-progress-wrap">
-                    <div className="dash-progress-text">
-                      <span>Catálogo Disponible</span>
-                      <span>Varones & Mujeres</span>
-                    </div>
-                    <div className="dash-progress-bar">
-                      <div className="dash-progress-fill-gold" style={{ width: '100%' }}></div>
-                    </div>
-                  </div>
-                  <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <IconShirt size={18} color="#FFF" />
-                    Adquirir Vestuario & Pagar
-                  </Link>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* TARJETA 3: CANCIONERO */}
-          <div className="dash-card dash-card-blue">
-            <div className="dash-card-header">
-              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#DBEAFE', color: '#1E40AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconMusic size={20} color="#1E40AF" />
-              </div>
-              <h2>CANCIONERO</h2>
-            </div>
-
-            <div>
-              <div className="dash-card-stat">18</div>
-              <p className="dash-card-subtext">canciones para el 2027</p>
-            </div>
-
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-              Nuestro cancionero oficial con letras de ensayos.
-            </p>
-
-            <Link href="/canciones" className="dash-pill-btn dash-btn-blue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              <IconMusic size={18} color="#FFF" />
-              Ver Canciones
-            </Link>
-          </div>
-
-          {/* TARJETA 4: BUZÓN DIRECTIVO */}
-          <div className="dash-card" style={{ borderTop: '4px solid #B45309' }}>
-            <div className="dash-card-header">
-              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconInbox size={20} color="#B45309" />
-              </div>
-              <h2>BUZÓN DIRECTIVO</h2>
-            </div>
-
-            {user?.role === 'ADMIN' ? (
-              <>
-                <div>
-                  <div className="dash-card-stat">{unreadFeedbackCount}</div>
-                  <p className="dash-card-subtext">mensaje(s) o sugerencia(s) en buzón</p>
-                </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                  Revisa sugerencias, reclamos y observaciones enviadas por los socios.
-                </p>
-                <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <IconInbox size={18} color="#FFF" />
-                  Leer Sugerencias Recibidas
-                </Link>
-              </>
-            ) : (
-              <>
-                <div>
-                  <div className="dash-card-stat">100%</div>
-                  <p className="dash-card-subtext">Canal confidencial directivo</p>
-                </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                  Envía tus opiniones, reclamos o sugerencias a la junta directiva (Oficial o Anónimo).
-                </p>
-                <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <IconInbox size={18} color="#FFF" />
-                  Enviar Sugerencia / Reclamo
-                </Link>
-              </>
-            )}
-          </div>
-
+        <div className="dash-hero-img-wrapper">
+          <img src={heroImage} alt="Danzantes Carnaval Ayacuchano" className="dash-hero-img" />
         </div>
       </div>
 
-      {/* Grid Inferior: Actividad & Próxima Actividad */}
+      {/* 2. MÓDULOS OPERATIVOS EN GRID EQUILIBRADO (2x2) */}
+      <div className="dash-modules-grid">
+        
+        {/* TARJETA 1: ASISTENCIA */}
+        <div className="dash-card dash-card-green">
+          <div className="dash-card-header">
+            <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#D1FAE5', color: '#065F46', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IconUsers size={20} color="#065F46" />
+            </div>
+            <h2>ASISTENCIA & PADRÓN</h2>
+          </div>
+          
+          {user?.role === 'ADMIN' ? (
+            <>
+              <div>
+                <div className="dash-card-stat">{todayAttendancesCount}</div>
+                <p className="dash-card-subtext">presentes hoy en ensayo</p>
+              </div>
+
+              <div className="dash-progress-wrap">
+                <div className="dash-progress-text">
+                  <span>Participación General</span>
+                  <span>{globalParticipationPct}%</span>
+                </div>
+                <div className="dash-progress-bar">
+                  <div className="dash-progress-fill-green" style={{ width: `${globalParticipationPct}%` }}></div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="/escaner" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconQrCode size={18} color="#FFF" />
+                  Escanear Asistencia (QR)
+                </Link>
+                <Link href="/integrantes" style={{ fontSize: '0.8rem', color: 'var(--color-asistencia)', textDecoration: 'underline', fontWeight: 600, textAlign: 'center' }}>
+                  Administrar Integrantes
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <div className="dash-card-stat">{userPresentCount}</div>
+                <p className="dash-card-subtext">ensayo(s) asistidos</p>
+              </div>
+
+              <div className="dash-progress-wrap">
+                <div className="dash-progress-text">
+                  <span>Mi Asistencia</span>
+                  <span>{userAttendancePct}%</span>
+                </div>
+                <div className="dash-progress-bar">
+                  <div className="dash-progress-fill-green" style={{ width: `${userAttendancePct}%` }}></div>
+                </div>
+              </div>
+
+              <Link href="/qr" className="dash-pill-btn dash-btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <IconQrCode size={18} color="#FFF" />
+                Mostrar mi Código QR
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* TARJETA 2: APORTES & TIENDA DE VESTUARIO */}
+        {user?.role !== 'MUSICIAN' && (
+          <div className="dash-card dash-card-gold">
+            <div className="dash-card-header">
+              <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconShirt size={20} color="#B45309" />
+              </div>
+              <h2>APORTES & VESTUARIO</h2>
+            </div>
+
+            {user?.role === 'ADMIN' ? (
+              <>
+                <div>
+                  <div className="dash-card-stat">{countValidating}</div>
+                  <p className="dash-card-subtext">pedido(s) o pago(s) por revisar</p>
+                </div>
+                <div className="dash-progress-wrap">
+                  <div className="dash-progress-text">
+                    <span>Recaudado</span>
+                    <span>81%</span>
+                  </div>
+                  <div className="dash-progress-bar">
+                    <div className="dash-progress-fill-gold" style={{ width: '81%' }}></div>
+                  </div>
+                </div>
+                <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconWallet size={18} color="#FFF" />
+                  Validar Aportes & Pedidos
+                </Link>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className="dash-card-stat">TIENDA</div>
+                  <p className="dash-card-subtext">Ropa, Vestuario & Aportes</p>
+                </div>
+                <div className="dash-progress-wrap">
+                  <div className="dash-progress-text">
+                    <span>Catálogo Disponible</span>
+                    <span>Varones & Mujeres</span>
+                  </div>
+                  <div className="dash-progress-bar">
+                    <div className="dash-progress-fill-gold" style={{ width: '100%' }}></div>
+                  </div>
+                </div>
+                <Link href="/pagos" className="dash-pill-btn dash-btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <IconShirt size={18} color="#FFF" />
+                  Adquirir Vestuario & Pagar
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* TARJETA 3: CANCIONERO */}
+        <div className="dash-card dash-card-blue">
+          <div className="dash-card-header">
+            <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#DBEAFE', color: '#1E40AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IconMusic size={20} color="#1E40AF" />
+            </div>
+            <h2>CANCIONERO</h2>
+          </div>
+
+          <div>
+            <div className="dash-card-stat">18</div>
+            <p className="dash-card-subtext">canciones para el 2027</p>
+          </div>
+
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            Nuestro cancionero oficial con letras de ensayos.
+          </p>
+
+          <Link href="/canciones" className="dash-pill-btn dash-btn-blue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <IconMusic size={18} color="#FFF" />
+            Ver Canciones
+          </Link>
+        </div>
+
+        {/* TARJETA 4: BUZÓN DIRECTIVO */}
+        <div className="dash-card" style={{ borderTop: '4px solid #B45309' }}>
+          <div className="dash-card-header">
+            <div style={{ padding: '0.4rem', borderRadius: '8px', background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IconInbox size={20} color="#B45309" />
+            </div>
+            <h2>BUZÓN DIRECTIVO</h2>
+          </div>
+
+          {user?.role === 'ADMIN' ? (
+            <>
+              <div>
+                <div className="dash-card-stat">{unreadFeedbackCount}</div>
+                <p className="dash-card-subtext">mensaje(s) o sugerencia(s) en buzón</p>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Revisa sugerencias, reclamos y observaciones enviadas por los socios.
+              </p>
+              <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <IconInbox size={18} color="#FFF" />
+                Leer Sugerencias Recibidas
+              </Link>
+            </>
+          ) : (
+            <>
+              <div>
+                <div className="dash-card-stat">100%</div>
+                <p className="dash-card-subtext">Canal confidencial directivo</p>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Envía tus opiniones, reclamos o sugerencias a la junta directiva (Oficial o Anónimo).
+              </p>
+              <Link href="/buzon" className="dash-pill-btn" style={{ background: '#B45309', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <IconInbox size={18} color="#FFF" />
+                Enviar Sugerencia / Reclamo
+              </Link>
+            </>
+          )}
+        </div>
+
+      </div>
+
+      {/* 3. GRID INFERIOR: ACTIVIDAD & PRÓXIMA ACTIVIDAD */}
       <div className="dash-bottom-grid">
         
         {/* Actividad */}
