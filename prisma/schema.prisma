@@ -98,3 +98,11 @@ model Feedback {
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
+
+model Song {
+  id        String   @id @default(uuid())
+  title     String
+  lyrics    String
+  audioUrl  String?
+  createdAt DateTime @default(now())
+}

@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Sembrando base de datos SQLite oficial...');
+  console.log('Sembrando base de datos Supabase oficial...');
 
   try {
     const existingAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
@@ -74,19 +74,67 @@ async function main() {
       });
     }
 
-    // Actualizar o crear catálogo de vestuario y cuotas
-    await prisma.paymentFee.deleteMany({});
-    await prisma.paymentFee.createMany({
-      data: [
-        { title: '👕 Camisa Bordada de Comparsa', amount: 60.0, category: 'VESTUARIO', gender: 'VARON', availableSizes: 'S, M, L, XL', stock: 50 },
-        { title: '👗 Pollera Ayacuchana Bordada', amount: 120.0, category: 'VESTUARIO', gender: 'MUJER', availableSizes: 'S, M, L', stock: 40 },
-        { title: '🎩 Sombrero Tradicional de Comparsa', amount: 35.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Estándar', stock: 60 },
-        { title: '🧣 Faja / Pañuelo de Comparsa', amount: 25.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Única', stock: 100 },
-        { title: '💰 Cuota Mensual de Ensayo Febrero', amount: 50.0, category: 'CUOTA', gender: 'ALL', availableSizes: 'Única', stock: 999 },
-      ]
-    });
+    // Actualizar catálogo de vestuario y cuotas
+    const feeCount = await prisma.paymentFee.count();
+    if (feeCount === 0) {
+      await prisma.paymentFee.createMany({
+        data: [
+          { title: '👕 Camisa Bordada de Comparsa', amount: 60.0, category: 'VESTUARIO', gender: 'VARON', availableSizes: 'S, M, L, XL', stock: 50 },
+          { title: '👗 Pollera Ayacuchana Bordada', amount: 120.0, category: 'VESTUARIO', gender: 'MUJER', availableSizes: 'S, M, L', stock: 40 },
+          { title: '🎩 Sombrero Tradicional de Comparsa', amount: 35.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Estándar', stock: 60 },
+          { title: '🧣 Faja / Pañuelo de Comparsa', amount: 25.0, category: 'ACCESORIOS', gender: 'ALL', availableSizes: 'Única', stock: 100 },
+          { title: '💰 Cuota Mensual de Ensayo Febrero', amount: 50.0, category: 'CUOTA', gender: 'ALL', availableSizes: 'Única', stock: 999 },
+        ]
+      });
+    }
 
-    console.log('¡Base de datos SQLite sincronizada y sembrada con éxito!');
+    // Sembrar Canciones del Cancionero Oficial
+    const songCount = await prisma.song.count();
+    if (songCount === 0) {
+      await prisma.song.createMany({
+        data: [
+          {
+            title: 'Carnaval de Cangallo (Himno Oficial)',
+            lyrics: `Cangallinomi kani, morochuco sonqoyoq
+Plaza Mayorpi tususpa, carnavalta qallarisun.
+
+(Estribillo)
+¡Yaykukamuy comparsa!
+¡Kausachun Cangallo Señorial!
+Carnaval Ayacuchano,
+Llaqtanchikpa kusiynin.
+
+Waranqa waranqa takisunchik,
+Qori fajaspa, sombrero señorial.
+Ayacucho llaqtaypi,
+Tusurisun kusisqa.`
+          },
+          {
+            title: 'Ripuy Ripuy (Carnaval Tradicional)',
+            lyrics: `Ripuy ripuy ripukullay,
+Cangallo llaqtata qawaykuspa.
+Ama waqaspalla ripuy,
+Carnavalkunapi tupananchikkama.
+
+(Fuga)
+¡Chayraqmi chayraqmi chayaykamuchkani!
+¡Morochuco wamla tusuykamullaway!`
+          },
+          {
+            title: 'Puka Polleracha (Carnaval Ayacuchano)',
+            lyrics: `Puka polleracha, yana sombrerucha,
+Imapaqraq shamurqanki Cangallo plazaman.
+
+Kusi kusilla tusuykamuy,
+Qori bordadoyki kancharichun.
+Carnaval 2027,
+Comparsa Señorial ñawpaqman!`
+          }
+        ]
+      });
+    }
+
+    console.log('¡Base de datos Supabase sincronizada y sembrada con éxito!');
   } catch (e) {
     console.error('Error en seed:', e.message);
   }
