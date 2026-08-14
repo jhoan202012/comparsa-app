@@ -27,7 +27,7 @@ export async function POST(request) {
     const updated = await prisma.paymentRecord.update({
       where: { id: recordId },
       data: {
-        proofUrl: proofUrl || record.proofUrl || '/images/634041989_1346800734148847_7655715541676484146_n.jpg',
+        receiptUrl: proofUrl || record.receiptUrl || '/images/634041989_1346800734148847_7655715541676484146_n.jpg',
         status: 'VALIDATING'
       }
     });

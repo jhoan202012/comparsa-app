@@ -22,17 +22,33 @@ export async function POST(request) {
     }
     
     let targetStatus = 'PAID';
-    if (action === 'APPROVE') targetStatus = 'PAID';
-    if (action === 'REJECT') targetStatus = 'REJECTED';
-    if (action === 'DELIVER') targetStatus = 'DELIVERED';
-    if (action === 'UNDELIVER') targetStatus = 'PAID';
+    let deliveryStatus = undefined;
+
+    if (action === 'APPROVE') {
+      targetStatus = 'PAID';
+    } else if (action === 'REJECT') {
+      targetStatus = 'REJECTED';
+    } else if (action === 'DELIVER') {
+      targetStatus = 'DELIVERED';
+      deliveryStatus = 'ENTREGADO';
+    } else if (action === 'UNDELIVER') {
+      targetStatus = 'PAID';
+      deliveryStatus = 'PENDIENTE';
+    }
+
+    const updateData = {
+      status: targetStatus,
+      validatedById: adminId,
+      validatedAt: new Date()
+    };
+
+    if (deliveryStatus) {
+      updateData.deliveryStatus = deliveryStatus;
+    }
 
     const updated = await prisma.paymentRecord.update({
       where: { id: recordId },
-      data: { 
-        status: targetStatus,
-        validatorId: adminId
-      },
+      data: updateData,
       include: {
         user: true,
         fee: true
@@ -42,6 +58,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, record: updated });
   } catch (error) {
     console.error('Error al procesar validación de pago:', error);
-    return NextResponse.json({ error: 'Error al procesar validación de pago' }, { status: 500 });
+    return NextResponse.json({ error: `Error al procesar validación de pago: ${error.message || 'Error del servidor'}` }, { status: 500 });
   }
 }
