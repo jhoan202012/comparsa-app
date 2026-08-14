@@ -146,7 +146,20 @@ export default async function Home() {
         
         <div className="dash-header-actions">
           <Link href="/perfil" title="Editar Mi Perfil" style={{ textDecoration: 'none' }}>
-            <div className="dash-user-badge" style={{ overflow: 'hidden', padding: 0, cursor: 'pointer' }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '2px solid var(--color-asistencia)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              flexShrink: 0,
+              background: '#FFF',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
               <img src={userAvatar} alt={user?.name || 'Usuario'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </Link>
@@ -175,7 +188,8 @@ export default async function Home() {
                 border: '3px solid var(--color-asistencia)',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
                 flexShrink: 0,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                background: '#FFF'
               }}>
                 <img src={userAvatar} alt={user?.name || 'Usuario'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
