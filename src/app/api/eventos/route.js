@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import crypto from 'crypto';
 
 export async function GET() {
   try {
@@ -44,20 +45,23 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Título, fecha y lugar son requeridos' }, { status: 400 });
     }
 
+    const qrToken = `evt-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+
     const newEvent = await prisma.event.create({
       data: {
         title,
         date: new Date(date),
         location,
-        type,
-        description
+        type: type || 'ENSAYO',
+        description: description || null,
+        qr_token: qrToken
       }
     });
 
     return NextResponse.json({ success: true, event: newEvent });
   } catch (error) {
     console.error('Error al crear evento:', error);
-    return NextResponse.json({ error: 'Error al crear evento' }, { status: 500 });
+    return NextResponse.json({ error: `Error al crear evento: ${error.message || 'Error del servidor'}` }, { status: 500 });
   }
 }
 
@@ -87,8 +91,8 @@ export async function PUT(request) {
         title,
         date: new Date(date),
         location,
-        type,
-        description
+        type: type || 'ENSAYO',
+        description: description || null
       }
     });
 

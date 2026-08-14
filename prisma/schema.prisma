@@ -30,10 +30,11 @@ model User {
 model Event {
   id          String   @id @default(uuid())
   title       String
-  type        String   // ENSAYO, PASACALLE, REUNIÓN
+  type        String   @default("ENSAYO") // ENSAYO, PASACALLE, REUNIÓN
   date        DateTime
   location    String
-  qr_token    String   @unique
+  description String?
+  qr_token    String?  @unique
   createdAt   DateTime @default(now())
   
   attendances Attendance[]
