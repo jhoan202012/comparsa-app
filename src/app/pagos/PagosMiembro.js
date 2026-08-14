@@ -47,7 +47,8 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
   const handleSelectItem = (item) => {
     setSelectedProduct(item);
     if (wizardMode === 'VESTUARIO') {
-      const availableSizes = item.sizes ? item.sizes.split(',').map(s => s.trim()) : ['Única'];
+      const rawSizes = item.availableSizes || item.sizes || 'S, M, L, XL';
+      const availableSizes = rawSizes.split(',').map(s => s.trim());
       setSelectedSize(availableSizes[0] || 'Única');
       setQuantity(1);
       setWizardStep(2); // Pasar a elegir Talla
@@ -139,8 +140,9 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
   };
 
   const getGenderBadge = (g) => {
-    if (g === 'VARON') return { label: '👨 Varones', bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' };
-    if (g === 'MUJER') return { label: '👩 Mujeres', bg: '#FDF2F8', color: '#BE185D', border: '#FBCFE8' };
+    const gender = (g || 'UNISEX').toUpperCase();
+    if (gender === 'VARON') return { label: '👨 Varones', bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' };
+    if (gender === 'MUJER') return { label: '👩 Mujeres', bg: '#FDF2F8', color: '#BE185D', border: '#FBCFE8' };
     return { label: '👫 Unisex', bg: '#F8FAFC', color: '#475569', border: '#E2E8F0' };
   };
 
@@ -149,9 +151,10 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
   const aporteItems = catalog.filter(item => item.category !== 'VESTUARIO' && item.category !== 'ACCESORIOS');
 
   const filteredVestuario = vestuarioItems.filter(item => {
+    const itemGender = (item.gender || item.targetGender || 'UNISEX').toUpperCase();
     if (selectedGender === 'ALL') return true;
-    if (selectedGender === 'VARON') return item.targetGender === 'VARON' || item.targetGender === 'ALL';
-    if (selectedGender === 'MUJER') return item.targetGender === 'MUJER' || item.targetGender === 'ALL';
+    if (selectedGender === 'VARON') return itemGender === 'VARON' || itemGender === 'UNISEX' || itemGender === 'ALL';
+    if (selectedGender === 'MUJER') return itemGender === 'MUJER' || itemGender === 'UNISEX' || itemGender === 'ALL';
     if (selectedGender === 'ACCESORIOS') return item.category === 'ACCESORIOS';
     return true;
   });
@@ -187,16 +190,16 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
             boxShadow: '0 4px 14px rgba(37, 99, 235, 0.08)',
             display: 'flex',
             flexDirection: 'column',
-            justify: 'space-between'
+            justifyContent: 'space-between'
           }}
         >
           <div>
             <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#DBEAFE', color: '#1E40AF', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.65rem' }}>
               <IconShirt size={24} color="#1E40AF" />
             </div>
-            <strong style={{ fontSize: '1.05rem', color: '#1E40AF', display: 'block' }}>Tienda de Vestuario</strong>
+            <strong style={{ fontSize: '1.05rem', color: '#1E40AF', display: 'block' }}>Pedir Vestuario</strong>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.2rem', marginBottom: '1rem' }}>
-              Adquiere camisas, polleras, sombreros y fajas eligiendo tu talla.
+              Camisas, polleras, sombreros y fajas con tallas personalizadas.
             </p>
           </div>
 
@@ -235,7 +238,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
             boxShadow: '0 4px 14px rgba(225, 177, 44, 0.1)',
             display: 'flex',
             flexDirection: 'column',
-            justify: 'space-between'
+            justifyContent: 'space-between'
           }}
         >
           <div>
@@ -291,78 +294,83 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
             </div>
           )}
 
-          {paymentRecords.map(r => (
-            <div 
-              key={r.id} 
-              className="glass-panel animate-fade-in" 
-              style={{
-                padding: '1.25rem',
-                background: '#FFFFFF',
-                borderRadius: '16px',
-                border: '1px solid var(--glass-border)',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.02)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-                <div>
-                  <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)', display: 'block' }}>
-                    {r.itemsDetail || (r.fee ? r.fee.title : 'Comprobante de Pago')}
-                  </strong>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.15rem', display: 'block' }}>
-                    📅 Registrado: {new Date(r.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <div style={{ fontSize: '1.35rem', fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--color-asistencia)', marginTop: '0.35rem' }}>
-                    S/ {(r.totalAmount || (r.fee ? r.fee.amount : 0)).toFixed(2)}
-                  </div>
-                </div>
+          {paymentRecords.map(r => {
+            const voucherImg = r.receiptUrl || r.proofUrl;
+            const amountVal = r.amount ?? r.totalAmount ?? (r.fee ? r.fee.amount : 0);
 
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  padding: '0.35rem 0.8rem',
-                  borderRadius: '20px',
-                  background: r.status === 'PAID' ? '#D1FAE5' : r.status === 'VALIDATING' ? '#FEF3C7' : '#FEE2E2',
-                  color: r.status === 'PAID' ? '#065F46' : r.status === 'VALIDATING' ? '#92400E' : '#991B1B',
-                  border: r.status === 'PAID' ? '1px solid #A7F3D0' : r.status === 'VALIDATING' ? '1px solid #FDE68A' : '1px solid #FECACA'
-                }}>
-                  {r.status === 'PAID' ? '🟢 PAGADO & VALIDADO' : r.status === 'VALIDATING' ? '🟡 EN REVISIÓN' : r.status === 'REJECTED' ? '🔴 COMPROBANTE RECHAZADO' : '🔴 PENDIENTE'}
-                </span>
-              </div>
-
-              {r.status === 'VALIDATING' && (
-                <div style={{ padding: '0.75rem 0.9rem', background: '#FFFBEB', borderRadius: '12px', fontSize: '0.84rem', color: '#92400E', border: '1px solid #FEF3C7' }}>
-                  🟡 Tu comprobante fue recibido. El Tesorero revisará la captura para validar la recepción de tu pago.
-                </div>
-              )}
-
-              {r.status === 'PAID' && (
-                <div style={{ padding: '0.75rem 0.9rem', background: '#F0FDF4', borderRadius: '12px', fontSize: '0.84rem', color: '#166534', fontWeight: 600, border: '1px solid #DCFCE7' }}>
-                  ✓ ¡Pago verificado por Tesorería! Gracias por estar al día con la comparsa.
-                </div>
-              )}
-
-              {r.proofUrl && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#F8FAFC', padding: '0.75rem', borderRadius: '12px', marginTop: '0.85rem', border: '1px solid #E2E8F0' }}>
-                  <img 
-                    src={r.proofUrl} 
-                    alt="Voucher Registrado" 
-                    onClick={() => setSelectedProofUrl(r.proofUrl)}
-                    style={{ width: '55px', height: '55px', borderRadius: '10px', objectFit: 'cover', cursor: 'pointer', border: '2px solid var(--color-aportes)' }}
-                  />
+            return (
+              <div 
+                key={r.id} 
+                className="glass-panel animate-fade-in" 
+                style={{
+                  padding: '1.25rem',
+                  background: '#FFFFFF',
+                  borderRadius: '16px',
+                  border: '1px solid var(--glass-border)',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.02)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
                   <div>
-                    <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', display: 'block' }}>Voucher Yape/Plin enviado</strong>
-                    <button 
-                      onClick={() => setSelectedProofUrl(r.proofUrl)}
-                      style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', padding: 0, marginTop: '0.15rem' }}
-                    >
-                      🔍 Ver voucher en HD
-                    </button>
+                    <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)', display: 'block' }}>
+                      {r.itemsDetail || (r.fee ? r.fee.title : 'Comprobante de Pago')}
+                    </strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.15rem', display: 'block' }}>
+                      📅 Registrado: {new Date(r.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <div style={{ fontSize: '1.35rem', fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--color-asistencia)', marginTop: '0.35rem' }}>
+                      S/ {Number(amountVal).toFixed(2)}
+                    </div>
                   </div>
-                </div>
-              )}
 
-            </div>
-          ))}
+                  <span style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    padding: '0.35rem 0.8rem',
+                    borderRadius: '20px',
+                    background: r.status === 'PAID' ? '#D1FAE5' : r.status === 'VALIDATING' ? '#FEF3C7' : '#FEE2E2',
+                    color: r.status === 'PAID' ? '#065F46' : r.status === 'VALIDATING' ? '#92400E' : '#991B1B',
+                    border: r.status === 'PAID' ? '1px solid #A7F3D0' : r.status === 'VALIDATING' ? '1px solid #FDE68A' : '1px solid #FECACA'
+                  }}>
+                    {r.status === 'PAID' ? '🟢 PAGADO & VALIDADO' : r.status === 'VALIDATING' ? '🟡 EN REVISIÓN' : r.status === 'REJECTED' ? '🔴 COMPROBANTE RECHAZADO' : '🔴 PENDIENTE'}
+                  </span>
+                </div>
+
+                {r.status === 'VALIDATING' && (
+                  <div style={{ padding: '0.75rem 0.9rem', background: '#FFFBEB', borderRadius: '12px', fontSize: '0.84rem', color: '#92400E', border: '1px solid #FEF3C7' }}>
+                    🟡 Tu comprobante fue recibido. El Tesorero revisará la captura para validar la recepción de tu pago.
+                  </div>
+                )}
+
+                {r.status === 'PAID' && (
+                  <div style={{ padding: '0.75rem 0.9rem', background: '#F0FDF4', borderRadius: '12px', fontSize: '0.84rem', color: '#166534', fontWeight: 600, border: '1px solid #DCFCE7' }}>
+                    ✓ ¡Pago verificado por Tesorería! Gracias por estar al día con la comparsa.
+                  </div>
+                )}
+
+                {voucherImg && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#F8FAFC', padding: '0.75rem', borderRadius: '12px', marginTop: '0.85rem', border: '1px solid #E2E8F0' }}>
+                    <img 
+                      src={voucherImg} 
+                      alt="Voucher Registrado" 
+                      onClick={() => setSelectedProofUrl(voucherImg)}
+                      style={{ width: '55px', height: '55px', borderRadius: '10px', objectFit: 'cover', cursor: 'pointer', border: '2px solid var(--color-aportes)' }}
+                    />
+                    <div>
+                      <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', display: 'block' }}>Voucher Yape/Plin enviado</strong>
+                      <button 
+                        onClick={() => setSelectedProofUrl(voucherImg)}
+                        style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', padding: 0, marginTop: '0.15rem' }}
+                      >
+                        🔍 Ver voucher en HD
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -448,7 +456,8 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
                     {/* Lista de Prendas de Vestuario */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '48vh', overflowY: 'auto' }}>
                       {filteredVestuario.map(item => {
-                        const genderBadge = getGenderBadge(item.targetGender);
+                        const genderBadge = getGenderBadge(item.gender || item.targetGender);
+                        const rawSizes = item.availableSizes || item.sizes || 'S, M, L, XL';
                         return (
                           <div
                             key={item.id}
@@ -461,7 +470,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
-                              justify: 'space-between'
+                              justifyContent: 'space-between'
                             }}
                           >
                             <div>
@@ -472,7 +481,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
                                 </span>
                               </div>
                               <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                                Tallas: <strong style={{ color: '#1E293B' }}>{item.sizes || 'S, M, L, XL'}</strong>
+                                Tallas: <strong style={{ color: '#1E293B' }}>{rawSizes}</strong>
                               </span>
                             </div>
 
@@ -501,7 +510,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
 
                     <label style={{ fontSize: '0.85rem', fontWeight: 700, display: 'block', marginBottom: '0.5rem' }}>Selecciona tu Talla:</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                      {selectedProduct.sizes?.split(',').map(s => s.trim()).map(sz => (
+                      {(selectedProduct.availableSizes || selectedProduct.sizes || 'S, M, L, XL').split(',').map(s => s.trim()).map(sz => (
                         <button
                           key={sz}
                           type="button"
@@ -562,7 +571,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        justify: 'space-between'
+                        justifyContent: 'space-between'
                       }}
                     >
                       <div>
@@ -637,7 +646,7 @@ export default function PagosMiembro({ catalog = [], records = [] }) {
                     {lastCreatedRecord.itemsDetail}
                   </strong>
                   <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--color-asistencia)', marginTop: '0.3rem' }}>
-                    Total: S/ {lastCreatedRecord.totalAmount.toFixed(2)}
+                    Total: S/ {Number(lastCreatedRecord.amount || lastCreatedRecord.totalAmount || 0).toFixed(2)}
                   </div>
                 </div>
 

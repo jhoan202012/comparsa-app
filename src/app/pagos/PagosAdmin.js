@@ -56,7 +56,9 @@ export default function PagosAdmin({ fees = [], records = [] }) {
           amount, 
           category,
           targetGender,
+          gender: targetGender,
           sizes: modalMode === 'VESTUARIO' ? sizes : 'Única',
+          availableSizes: modalMode === 'VESTUARIO' ? sizes : 'Única',
           stock: modalMode === 'VESTUARIO' ? stock : 999
         })
       });
@@ -117,8 +119,9 @@ export default function PagosAdmin({ fees = [], records = [] }) {
   };
 
   const getGenderBadge = (g) => {
-    if (g === 'VARON') return { label: '👨 Varones', bg: '#DBEAFE', color: '#1E40AF' };
-    if (g === 'MUJER') return { label: '👩 Mujeres', bg: '#FCE7F3', color: '#9D174D' };
+    const gender = (g || 'UNISEX').toUpperCase();
+    if (gender === 'VARON') return { label: '👨 Varones', bg: '#DBEAFE', color: '#1E40AF' };
+    if (gender === 'MUJER') return { label: '👩 Mujeres', bg: '#FCE7F3', color: '#9D174D' };
     return { label: '👫 Unisex', bg: '#E2E8F0', color: '#334155' };
   };
 
@@ -198,75 +201,84 @@ export default function PagosAdmin({ fees = [], records = [] }) {
       {/* Alerta de Pedidos y Vouchers por Validar */}
       {countValidating > 0 && (
         <div className="glass-panel animate-fade-in" style={{
+          padding: '1rem',
+          background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+          borderRadius: '14px',
+          border: '1px solid #FDE68A',
           marginBottom: '1.5rem',
-          padding: '1.25rem',
-          borderLeft: '4px solid var(--color-aportes)',
-          background: 'rgba(225, 177, 44, 0.08)'
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
-          <strong style={{ color: '#161B14', fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>
-            🟡 TIENES {countValidating} COMPROBANTE(S) PENDIENTES DE VALIDACIÓN
-          </strong>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-            Verifica el comprobante Yape/Plin enviado por los socios para aprobar el pago o marcar la entrega de prendas.
-          </span>
+          <div>
+            <strong style={{ color: '#92400E', fontSize: '0.95rem' }}>
+              🟡 Tienes {countValidating} comprobante(s) o pedido(s) pendiente(s) de revisión
+            </strong>
+            <p style={{ margin: '0.2rem 0 0', color: '#B45309', fontSize: '0.82rem' }}>
+              Revisa los comprobantes adjuntos para aprobar los aportes o autorizar la entrega de vestuario.
+            </p>
+          </div>
+          <button 
+            onClick={() => setFilterStatus('VALIDATING')}
+            className="btn btn-gold"
+            style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+          >
+            Revisar Ahora ➔
+          </button>
         </div>
       )}
 
-      {/* Resumen de Métricas Filtro */}
+      {/* PESTAÑAS DE ESTADO CON CONTADORES DINÁMICOS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1.5rem' }}>
-        <button 
-          type="button"
+        <button
           onClick={() => setFilterStatus('VALIDATING')}
-          className="glass-panel" 
           style={{
+            borderRadius: '14px',
             padding: '0.75rem',
             textAlign: 'center',
             cursor: 'pointer',
-            border: filterStatus === 'VALIDATING' ? '2px solid var(--color-aportes)' : '1px solid var(--glass-border)',
-            background: filterStatus === 'VALIDATING' ? '#FFFBEB' : '#FFFFFF'
+            border: filterStatus === 'VALIDATING' ? '2px solid #D97706' : '1px solid var(--glass-border)',
+            background: filterStatus === 'VALIDATING' ? '#FEF3C7' : '#FFFFFF'
           }}
         >
           <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#D97706' }}>{countValidating}</span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>Por Validar</span>
+          <span style={{ fontSize: '0.75rem', color: '#92400E', fontWeight: 700 }}>Por Validar</span>
         </button>
 
-        <button 
-          type="button"
+        <button
           onClick={() => setFilterStatus('PAID')}
-          className="glass-panel" 
           style={{
+            borderRadius: '14px',
             padding: '0.75rem',
             textAlign: 'center',
             cursor: 'pointer',
-            border: filterStatus === 'PAID' ? '2px solid var(--color-asistencia)' : '1px solid var(--glass-border)',
-            background: filterStatus === 'PAID' ? '#F0FDF4' : '#FFFFFF'
+            border: filterStatus === 'PAID' ? '2px solid #059669' : '1px solid var(--glass-border)',
+            background: filterStatus === 'PAID' ? '#D1FAE5' : '#FFFFFF'
           }}
         >
-          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#166534' }}>{countPaid}</span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>Aprobados</span>
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#059669' }}>{countPaid}</span>
+          <span style={{ fontSize: '0.75rem', color: '#065F46', fontWeight: 700 }}>Aprobados</span>
         </button>
 
-        <button 
-          type="button"
+        <button
           onClick={() => setFilterStatus('DELIVERED')}
-          className="glass-panel" 
           style={{
+            borderRadius: '14px',
             padding: '0.75rem',
             textAlign: 'center',
             cursor: 'pointer',
             border: filterStatus === 'DELIVERED' ? '2px solid #2563EB' : '1px solid var(--glass-border)',
-            background: filterStatus === 'DELIVERED' ? '#EFF6FF' : '#FFFFFF'
+            background: filterStatus === 'DELIVERED' ? '#DBEAFE' : '#FFFFFF'
           }}
         >
-          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#1D4ED8' }}>{countDelivered}</span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>📦 Entregados</span>
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, display: 'block', color: '#2563EB' }}>{countDelivered}</span>
+          <span style={{ fontSize: '0.75rem', color: '#1E40AF', fontWeight: 700 }}>Entregados</span>
         </button>
 
-        <button 
-          type="button"
+        <button
           onClick={() => setFilterStatus('ALL')}
-          className="glass-panel" 
           style={{
+            borderRadius: '14px',
             padding: '0.75rem',
             textAlign: 'center',
             cursor: 'pointer',
@@ -288,7 +300,8 @@ export default function PagosAdmin({ fees = [], records = [] }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
             {paymentFees.map(f => {
               const isVestuario = f.category === 'VESTUARIO' || f.category === 'ACCESORIOS';
-              const genderBadge = getGenderBadge(f.targetGender);
+              const genderBadge = getGenderBadge(f.gender || f.targetGender);
+              const rawSizes = f.availableSizes || f.sizes || 'S, M, L, XL';
               return (
                 <div key={f.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid var(--glass-border)' }}>
                   <div>
@@ -304,7 +317,7 @@ export default function PagosAdmin({ fees = [], records = [] }) {
                       )}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                      <strong>Monto: S/ {f.amount.toFixed(2)}</strong> {isVestuario ? `• Tallas: ${f.sizes || 'S, M, L, XL'} • Stock: ${f.stock ?? 50}` : '• Aporte Oficial de Dinero'}
+                      <strong>Monto: S/ {f.amount.toFixed(2)}</strong> {isVestuario ? `• Tallas: ${rawSizes} • Stock: ${f.stock ?? 50}` : '• Aporte Oficial de Dinero'}
                     </div>
                   </div>
                   <button 
@@ -337,7 +350,9 @@ export default function PagosAdmin({ fees = [], records = [] }) {
           const isPaid = r.status === 'PAID' || r.status === 'APPROVED';
           const isDelivered = r.status === 'DELIVERED';
           const isValidating = r.status === 'VALIDATING' || r.status === 'PENDING';
-          const isVestuario = r.itemsDetail?.includes('Vestuario') || r.fee?.category === 'VESTUARIO';
+          const isVestuario = (r.itemsDetail || '').toLowerCase().includes('vestuario') || (r.itemsDetail || '').toLowerCase().includes('camisa') || (r.itemsDetail || '').toLowerCase().includes('pollera') || (r.itemsDetail || '').toLowerCase().includes('sombrero') || (r.itemsDetail || '').toLowerCase().includes('faja') || r.fee?.category === 'VESTUARIO';
+          const voucherUrl = r.receiptUrl || r.proofUrl;
+          const amountVal = r.amount ?? r.totalAmount ?? (r.fee ? r.fee.amount : 0);
 
           return (
             <div key={r.id} className="glass-panel animate-fade-in" style={{ padding: '1.1rem', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px' }}>
@@ -357,7 +372,7 @@ export default function PagosAdmin({ fees = [], records = [] }) {
                       {r.itemsDetail || (r.fee ? r.fee.title : 'Comprobante de Pago')}
                     </strong>
                     <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--color-asistencia)', marginTop: '0.2rem' }}>
-                      Total: S/ {(r.totalAmount || (r.fee ? r.fee.amount : 0)).toFixed(2)}
+                      Total: S/ {Number(amountVal).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -376,18 +391,18 @@ export default function PagosAdmin({ fees = [], records = [] }) {
               </div>
 
               {/* Fotografía del Voucher Yape */}
-              {r.proofUrl && (
+              {voucherUrl && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#F8FAFC', padding: '0.75rem', borderRadius: '12px', marginBottom: '0.85rem', border: '1px solid #E2E8F0' }}>
                   <img 
-                    src={r.proofUrl} 
+                    src={voucherUrl} 
                     alt="Voucher Yape" 
-                    onClick={() => setSelectedProofUrl(r.proofUrl)}
+                    onClick={() => setSelectedProofUrl(voucherUrl)}
                     style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover', cursor: 'pointer', border: '2px solid var(--color-aportes)' }}
                   />
                   <div>
                     <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', display: 'block' }}>Comprobante Yape/Plin enviado</strong>
                     <button 
-                      onClick={() => setSelectedProofUrl(r.proofUrl)}
+                      onClick={() => setSelectedProofUrl(voucherUrl)}
                       style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', padding: 0, marginTop: '0.2rem' }}
                     >
                       🔍 Ver voucher en HD
@@ -408,46 +423,38 @@ export default function PagosAdmin({ fees = [], records = [] }) {
                     >
                       ✓ Aprobar Pago
                     </button>
-
                     <button
                       onClick={() => handleValidationAction(r.id, 'REJECT')}
                       disabled={loadingId === r.id}
-                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+                      className="btn"
+                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', background: '#FEE2E2', color: '#991B1B', border: '1px solid #FECACA', fontWeight: 700 }}
                     >
-                      ✕ Rechazar Voucher
+                      ✕ Rechazar
                     </button>
                   </>
                 )}
 
-                {isPaid && (
-                  <>
-                    <button
-                      onClick={() => handleValidationAction(r.id, 'DELIVER')}
-                      disabled={loadingId === r.id}
-                      className="btn btn-blue"
-                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', fontWeight: 700, background: '#2563EB', color: 'white' }}
-                    >
-                      📦 Marcar como ENTREGADO AL SOCIO
-                    </button>
+                {isPaid && isVestuario && (
+                  <button
+                    onClick={() => handleValidationAction(r.id, 'DELIVER')}
+                    disabled={loadingId === r.id}
+                    className="btn btn-blue"
+                    style={{ padding: '0.45rem 0.9rem', fontSize: '0.84rem', background: '#2563EB', color: 'white', fontWeight: 700 }}
+                  >
+                    📦 Marcar Vestuario Entregado al Socio
+                  </button>
+                )}
 
-                    <button
-                      onClick={() => handleValidationAction(r.id, 'REJECT')}
-                      disabled={loadingId === r.id}
-                      style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid var(--color-accent)', color: 'var(--color-accent)', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
-                    >
-                      ↩️ Deshacer Aprobación
-                    </button>
-                  </>
+                {isPaid && !isVestuario && (
+                  <span style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 700 }}>
+                    ✓ Cuota ingresada a caja de la comparsa
+                  </span>
                 )}
 
                 {isDelivered && (
-                  <button
-                    onClick={() => handleValidationAction(r.id, 'UNDELIVER')}
-                    disabled={loadingId === r.id}
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#334155', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
-                  >
-                    ↩️ Deshacer Entrega
-                  </button>
+                  <span style={{ fontSize: '0.8rem', color: '#1D4ED8', fontWeight: 700 }}>
+                    ✓ Vestuario entregado conforme
+                  </span>
                 )}
               </div>
 
@@ -456,153 +463,112 @@ export default function PagosAdmin({ fees = [], records = [] }) {
         })}
       </div>
 
-      {/* MODAL CREAR VESTUARIO O APORTE */}
+      {/* Modal Crear Nuevo Elemento de Catálogo */}
       {showFeeModal && (
         <div style={{
           position: 'fixed',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
+          background: 'rgba(15, 23, 42, 0.8)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: '1rem'
+          zIndex: 3000, padding: '1rem'
         }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '460px', background: '#FFFFFF', padding: '1.75rem', borderRadius: '18px' }}>
-            <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-playfair)', color: 'var(--text-primary)', marginBottom: '1.25rem' }}>
-              {modalMode === 'VESTUARIO' ? '👗 Publicar Prenda de Vestuario' : '💰 Crear Aporte o Cuota'}
-            </h3>
+          <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '1.5rem', width: '100%', maxWidth: '450px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: 'var(--font-playfair)' }}>
+                {modalMode === 'VESTUARIO' ? '👗 Publicar Nueva Prenda' : '💰 Publicar Nueva Cuota'}
+              </h3>
+              <button onClick={() => setShowFeeModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.1rem', cursor: 'pointer' }}>✕</button>
+            </div>
 
-            <form onSubmit={handleCreateFee} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                  Nombre del {modalMode === 'VESTUARIO' ? 'Vestuario' : 'Aporte'}:
-                </label>
+            <form onSubmit={handleCreateFee}>
+              <div style={{ marginBottom: '0.9rem' }}>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>Nombre del Producto o Cuota:</label>
                 <input 
                   type="text" 
-                  required
-                  placeholder={modalMode === 'VESTUARIO' ? 'Ej. Camisa Bordada o Pollera Ayacuchana' : 'Ej. Cuota Mensual de Ensayo Febrero'} 
+                  required 
+                  placeholder={modalMode === 'VESTUARIO' ? 'Ej. Camisa Bordada Varón' : 'Ej. Aporte para Contrato de Banda'} 
                   value={title} 
-                  onChange={e => setTitle(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                  onChange={e => setTitle(e.target.value)} 
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }} 
                 />
               </div>
 
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                  Monto Oficial (S/):
-                </label>
+              <div style={{ marginBottom: '0.9rem' }}>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>Precio / Monto (S/):</label>
                 <input 
                   type="number" 
-                  step="0.5"
-                  required
-                  placeholder="60.00" 
+                  step="0.50" 
+                  required 
                   value={amount} 
-                  onChange={e => setAmount(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                  onChange={e => setAmount(e.target.value)} 
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }} 
                 />
               </div>
 
-              {/* Si es vestuario, pide género, tallas y stock */}
-              {modalMode === 'VESTUARIO' ? (
+              {modalMode === 'VESTUARIO' && (
                 <>
-                  <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                      ¿Para quién es la prenda? (Género):
-                    </label>
-                    <select
-                      value={targetGender}
-                      onChange={e => setTargetGender(e.target.value)}
-                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem', background: 'white' }}
+                  <div style={{ marginBottom: '0.9rem' }}>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>Dirigido a:</label>
+                    <select 
+                      value={targetGender} 
+                      onChange={e => setTargetGender(e.target.value)} 
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem', background: 'white' }}
                     >
-                      <option value="VARON">👨 Solo Varones (Camisas, Chalecos)</option>
-                      <option value="MUJER">👩 Solo Mujeres (Polleras, Mantas, Blusas)</option>
-                      <option value="ALL">👫 Unisex / Todos (Sombreros, Fajas)</option>
+                      <option value="ALL">👫 Todos / Unisex</option>
+                      <option value="VARON">👨 Solo Varones</option>
+                      <option value="MUJER">👩 Solo Mujeres</option>
                     </select>
                   </div>
 
-                  <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                      Tallas Disponibles:
-                    </label>
+                  <div style={{ marginBottom: '0.9rem' }}>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>Tallas Disponibles (separadas por coma):</label>
                     <input 
                       type="text" 
-                      required
-                      placeholder="S, M, L, XL" 
                       value={sizes} 
-                      onChange={e => setSizes(e.target.value)}
-                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                      onChange={e => setSizes(e.target.value)} 
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }} 
                     />
                   </div>
 
-                  <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                      Stock / Cantidad disponible:
-                    </label>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>Stock Inicial:</label>
                     <input 
                       type="number" 
-                      required
                       value={stock} 
-                      onChange={e => setStock(e.target.value)}
-                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem' }}
+                      onChange={e => setStock(e.target.value)} 
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }} 
                     />
                   </div>
                 </>
-              ) : (
-                <div>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.35rem' }}>
-                    Tipo de Aporte Monetario:
-                  </label>
-                  <select
-                    value={category}
-                    onChange={e => setCategory(e.target.value)}
-                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid var(--glass-border)', fontSize: '0.9rem', background: 'white' }}
-                  >
-                    <option value="CUOTA">💰 Cuota Mensual de Ensayo</option>
-                    <option value="APORTE_CARNAVAL">🎉 Aporte Extraordinario Carnaval</option>
-                    <option value="BANDA">🎺 Cuota de Banda & Músicos</option>
-                    <option value="TRANSPORTE">🚌 Cuota de Pasajes / Transporte</option>
-                    <option value="PROFONDOS">🍲 Aporte Pro-Fondos / Actividad</option>
-                  </select>
-                </div>
               )}
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button 
-                  type="button" 
-                  onClick={() => setShowFeeModal(false)}
-                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', border: '1px solid #ccc', background: 'transparent', cursor: 'pointer', fontWeight: 600 }}
-                >
-                  Cancelar
-                </button>
-
-                <button 
-                  type="submit" 
-                  disabled={feeLoading}
-                  className="btn btn-gold"
-                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', fontSize: '0.95rem' }}
-                >
-                  {feeLoading ? 'Guardando...' : 'Publicar'}
-                </button>
-              </div>
-
+              <button 
+                type="submit" 
+                disabled={feeLoading} 
+                className={modalMode === 'VESTUARIO' ? 'btn btn-blue' : 'btn btn-gold'} 
+                style={{ width: '100%', padding: '0.8rem', borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem' }}
+              >
+                {feeLoading ? 'Publicando...' : 'Publicar en la Tienda 🚀'}
+              </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* Modal Zoom Voucher en HD */}
+      {/* Modal Zoom Voucher */}
       {selectedProofUrl && (
         <div 
           onClick={() => setSelectedProofUrl(null)}
           style={{
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.85)',
+            background: 'rgba(15, 23, 42, 0.88)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 2000, padding: '1rem', cursor: 'zoom-out'
+            zIndex: 4000, padding: '1rem', cursor: 'zoom-out'
           }}
         >
           <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={selectedProofUrl} alt="Voucher Zoom HD" style={{ width: '100%', maxHeight: '85vh', objectFit: 'contain', borderRadius: '14px' }} />
+            <img src={selectedProofUrl} alt="Voucher HD" style={{ width: '100%', maxHeight: '85vh', objectFit: 'contain', borderRadius: '16px' }} />
             <p style={{ color: 'white', textAlign: 'center', marginTop: '0.75rem', fontSize: '0.9rem' }}>✕ Toca para cerrar</p>
           </div>
         </div>

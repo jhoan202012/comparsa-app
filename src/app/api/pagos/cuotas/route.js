@@ -22,7 +22,9 @@ export async function POST(request) {
       dueDate, 
       category = 'VESTUARIO', 
       targetGender = 'ALL',
-      sizes = 'S, M, L, XL', 
+      gender = 'UNISEX',
+      sizes = 'S, M, L, XL',
+      availableSizes = 'S, M, L, XL', 
       stock = 50 
     } = await request.json();
 
@@ -36,16 +38,17 @@ export async function POST(request) {
     }
 
     const numericStock = parseInt(stock) || 50;
+    const finalGender = targetGender || gender || 'UNISEX';
+    const finalSizes = sizes || availableSizes || 'S, M, L, XL';
 
     // Crear el producto / cuota en el catálogo de la tienda
     const fee = await prisma.paymentFee.create({
       data: {
         title: title.trim(),
         amount: numericAmount,
-        dueDate: dueDate ? new Date(dueDate) : null,
         category,
-        targetGender,
-        sizes: sizes.trim() || 'Única',
+        gender: finalGender,
+        availableSizes: finalSizes.trim() || 'Única',
         stock: numericStock
       }
     });

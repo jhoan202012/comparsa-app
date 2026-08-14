@@ -28,8 +28,8 @@ export async function POST(request) {
         userId,
         feeId: feeId || null,
         itemsDetail: itemsDetail.trim(),
-        totalAmount: numericTotal,
-        proofUrl,
+        amount: numericTotal,
+        receiptUrl: proofUrl,
         status: 'VALIDATING'
       },
       include: {
@@ -41,6 +41,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, record: newRecord });
   } catch (error) {
     console.error('Error al registrar pedido y voucher:', error);
-    return NextResponse.json({ error: 'No se pudo procesar el pedido' }, { status: 500 });
+    return NextResponse.json({ error: `No se pudo procesar el pedido: ${error.message || 'Error de datos'}` }, { status: 500 });
   }
 }
