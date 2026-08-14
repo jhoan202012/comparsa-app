@@ -27,22 +27,22 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
     setLoading(true);
 
     try {
-      // Buscar usuario coincidente por DNI, teléfono, email o nombre
-      const foundUser = users.find(u => 
-        (u.dni && u.dni === loginInput.trim()) ||
-        (u.phone && u.phone === loginInput.trim()) ||
-        (u.email && u.email.toLowerCase() === loginInput.trim().toLowerCase()) ||
-        u.name.toLowerCase().includes(loginInput.trim().toLowerCase())
-      );
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          loginInput: loginInput.trim(),
+          pin: loginPin.trim()
+        })
+      });
 
-      if (!foundUser) {
-        setLoginError('No se encontró ningún integrante activo con ese DNI, teléfono o correo. Solicita tu registro si eres nuevo.');
+      const data = await res.json();
+      if (res.ok && data.success) {
+        window.location.href = '/';
+      } else {
+        setLoginError(data.error || 'Credenciales incorrectas');
         setLoading(false);
-        return;
       }
-
-      // Redirigir a quicklogin con el usuario encontrado
-      window.location.href = `/api/auth/quicklogin?userId=${foundUser.id}`;
     } catch (err) {
       console.error(err);
       setLoginError('Error de conexión al ingresar');
@@ -214,6 +214,7 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
             </label>
             <input
               type="password"
+              required
               placeholder="••••"
               value={loginPin}
               onChange={e => setLoginPin(e.target.value)}
@@ -245,7 +246,7 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
               marginBottom: '1.25rem'
             }}
           >
-            {loading ? 'Ingresando...' : 'Ingresar a mi Perfil ➔'}
+            {loading ? 'Validando...' : 'Ingresar a mi Perfil ➔'}
           </button>
 
           {/* Acceso Rápido para Ensayos */}
