@@ -31,18 +31,33 @@ export async function POST(request) {
     const adminId = cookieStore.get('auth_user_id')?.value;
 
     if (!adminId) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+      return NextResponse.json({ error: 'No autorizado. Vuelve a iniciar sesión.' }, { status: 401 });
     }
 
     const admin = await prisma.user.findUnique({ where: { id: adminId } });
     if (!admin || admin.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Permisos de administrador requeridos' }, { status: 403 });
+      return NextResponse.json({ error: 'Se requieren permisos de administrador' }, { status: 403 });
     }
 
-    const { title, date, location, type = 'ENSAYO', description } = await request.json();
+    const body = await request.json();
+    const { title, date, location, type = 'ENSAYO', description } = body;
 
     if (!title || !date || !location) {
-      return NextResponse.json({ error: 'Título, fecha y lugar son requeridos' }, { status: 400 });
+      return NextResponse.json({ error: 'Título, fecha y lugar son obligatorios' }, { status: 400 });
+    }
+
+    // Parsing ultra-defensivo de fecha y hora
+    let eventDate = new Date(date);
+    if (isNaN(eventDate.getTime())) {
+      if (typeof date === 'string' && date.includes('/')) {
+        const parts = date.split('/');
+        if (parts.length === 3) {
+          eventDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        }
+      }
+    }
+    if (isNaN(eventDate.getTime())) {
+      eventDate = new Date();
     }
 
     const qrToken = `evt-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
@@ -50,7 +65,7 @@ export async function POST(request) {
     const newEvent = await prisma.event.create({
       data: {
         title,
-        date: new Date(date),
+        date: eventDate,
         location,
         type: type || 'ENSAYO',
         description: description || null,
@@ -61,7 +76,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true, event: newEvent });
   } catch (error) {
     console.error('Error al crear evento:', error);
-    return NextResponse.json({ error: `Error al crear evento: ${error.message || 'Error del servidor'}` }, { status: 500 });
+    return NextResponse.json({ error: `Error al crear evento: ${error.message || 'Error interno'}` }, { status: 500 });
   }
 }
 
@@ -85,11 +100,16 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'ID, Título, fecha y lugar son requeridos' }, { status: 400 });
     }
 
+    let eventDate = new Date(date);
+    if (isNaN(eventDate.getTime())) {
+      eventDate = new Date();
+    }
+
     const updatedEvent = await prisma.event.update({
       where: { id },
       data: {
         title,
-        date: new Date(date),
+        date: eventDate,
         location,
         type: type || 'ENSAYO',
         description: description || null
