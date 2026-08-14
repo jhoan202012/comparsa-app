@@ -25,30 +25,33 @@ export async function POST(request) {
       try {
         const parsed = JSON.parse(qr_code_hash);
         if (parsed.hash) searchHash = parsed.hash;
+        if (parsed.qr_code_hash) searchHash = parsed.qr_code_hash;
         if (parsed.userId) searchUserId = parsed.userId;
+        if (parsed.id) searchUserId = parsed.id;
       } catch (e) {
         // Texto hash directo
       }
     }
 
-    // Buscar al integrante por su código QR hash o por su ID de usuario
+    // Buscar al integrante por su código QR hash o por su ID de usuario o DNI
     let targetUser = null;
     if (searchHash) {
-      targetUser = await prisma.user.findUnique({ where: { qr_code_hash: searchHash } });
+      targetUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { qr_code_hash: searchHash },
+            { id: searchHash },
+            { dni: searchHash }
+          ]
+        }
+      });
     }
     if (!targetUser && searchUserId) {
       targetUser = await prisma.user.findUnique({ where: { id: searchUserId } });
     }
 
-    // Si aún no se encuentra porque es un QR impreso o captura anterior a la migración, asignar al primer socio de prueba
     if (!targetUser) {
-      targetUser = await prisma.user.findFirst({
-        where: { role: 'MEMBER' }
-      });
-    }
-
-    if (!targetUser) {
-      return NextResponse.json({ error: 'Código QR o usuario no válido' }, { status: 404 });
+      return NextResponse.json({ error: 'Código QR o usuario no encontrado en el padrón' }, { status: 404 });
     }
 
     // Obtener el ensayo seleccionado por el admin o el más reciente
@@ -67,7 +70,9 @@ export async function POST(request) {
         data: {
           title: 'Ensayo General - Carnaval 2027',
           date: new Date(),
-          location: 'Plaza Mayor de Ayacucho'
+          location: 'Plaza Mayor de Ayacucho',
+          type: 'ENSAYO',
+          qr_token: `evt-auto-${Date.now()}`
         }
       });
     }
@@ -84,7 +89,7 @@ export async function POST(request) {
 
     const isAlreadyMarked = !!existingRecord;
 
-    // Registrar o actualizar la asistencia en Prisma
+    // Registrar o actualizar la asistencia en Prisma (sin campos inexistentes)
     const attendance = await prisma.attendance.upsert({
       where: {
         userId_eventId: {
@@ -94,14 +99,13 @@ export async function POST(request) {
       },
       update: {
         status,
-        timestamp: isAlreadyMarked ? existingRecord.timestamp : new Date(),
-        markedBy: adminId
+        timestamp: isAlreadyMarked ? existingRecord.timestamp : new Date()
       },
       create: {
         userId: targetUser.id,
         eventId: activeEvent.id,
         status,
-        markedBy: adminId
+        timestamp: new Date()
       }
     });
 
@@ -112,7 +116,8 @@ export async function POST(request) {
         id: targetUser.id,
         name: targetUser.name,
         role: targetUser.role,
-        avatarUrl: targetUser.avatarUrl
+        avatarUrl: targetUser.avatarUrl,
+        dni: targetUser.dni
       },
       status: attendance.status,
       timestamp: attendance.timestamp
@@ -120,6 +125,6 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error al marcar asistencia:', error);
-    return NextResponse.json({ error: 'Error al procesar la asistencia' }, { status: 500 });
+    return NextResponse.json({ error: `Error al procesar la asistencia: ${error.message || 'Error del servidor'}` }, { status: 500 });
   }
 }
