@@ -21,8 +21,6 @@ export default async function Home() {
   }
 
   let unreadFeedbackCount = 0;
-  let myPayments = [];
-  let myAttendances = [];
   let nextEvent = null;
   let totalEventsCount = 1;
   let totalMembersCount = 1;
@@ -31,6 +29,7 @@ export default async function Home() {
   let userPresentCount = 0;
   let userAttendancePct = 0;
   let countValidating = 0;
+  let recentActivities = [];
 
   // Consultas defensivas protegidas individualmente
   if (user?.role === 'ADMIN') {
@@ -44,30 +43,86 @@ export default async function Home() {
     } catch (e) {
       countValidating = 0;
     }
-  }
 
-  if (user?.role === 'MEMBER') {
+    // Actividades recientes generales para el Administrador
     try {
-      myPayments = await prisma.paymentRecord.findMany({
-        where: { userId: user.id },
-        include: { fee: true },
-        orderBy: { createdAt: 'desc' },
-        take: 2
-      });
-    } catch (e) {
-      myPayments = [];
-    }
-  }
+      const [latestAttendances, latestPayments] = await Promise.all([
+        prisma.attendance.findMany({
+          include: { user: true, event: true },
+          orderBy: { timestamp: 'desc' },
+          take: 3
+        }),
+        prisma.paymentRecord.findMany({
+          include: { user: true, fee: true },
+          orderBy: { createdAt: 'desc' },
+          take: 3
+        })
+      ]);
 
-  try {
-    myAttendances = await prisma.attendance.findMany({
-      where: { userId: user.id },
-      include: { event: true },
-      orderBy: { timestamp: 'desc' },
-      take: 2
-    });
-  } catch (e) {
-    myAttendances = [];
+      const attActs = latestAttendances.map(a => ({
+        id: `att-${a.id}`,
+        type: 'ATTENDANCE',
+        title: `${a.user?.name || 'Socio'} registró su asistencia en ${a.event?.title || 'Ensayo'}`,
+        status: a.status === 'PRESENT' ? 'Presente' : 'Tarde',
+        date: new Date(a.timestamp)
+      }));
+
+      const payActs = latestPayments.map(p => ({
+        id: `pay-${p.id}`,
+        type: 'PAYMENT',
+        title: `${p.user?.name || 'Socio'} - ${p.itemsDetail || (p.fee ? p.fee.title : 'Pago')}`,
+        status: p.status === 'PAID' ? 'Aprobado' : p.status === 'VALIDATING' ? 'Por validar' : 'Pendiente',
+        date: new Date(p.createdAt)
+      }));
+
+      recentActivities = [...attActs, ...payActs]
+        .sort((a, b) => b.date - a.date)
+        .slice(0, 4);
+    } catch (e) {
+      console.error('Error fetching admin activities:', e);
+      recentActivities = [];
+    }
+  } else {
+    // Actividades recientes personales para el Socio o Músico
+    try {
+      const [userAtts, userPays] = await Promise.all([
+        prisma.attendance.findMany({
+          where: { userId: user.id },
+          include: { event: true },
+          orderBy: { timestamp: 'desc' },
+          take: 3
+        }),
+        prisma.paymentRecord.findMany({
+          where: { userId: user.id },
+          include: { fee: true },
+          orderBy: { createdAt: 'desc' },
+          take: 3
+        })
+      ]);
+
+      const attActs = userAtts.map(a => ({
+        id: `att-${a.id}`,
+        type: 'ATTENDANCE',
+        title: `Asistencia: ${a.event?.title || 'Ensayo Oficial'}`,
+        status: a.status === 'PRESENT' ? 'Presente ✅' : 'Tarde ⏰',
+        date: new Date(a.timestamp)
+      }));
+
+      const payActs = userPays.map(p => ({
+        id: `pay-${p.id}`,
+        type: 'PAYMENT',
+        title: p.itemsDetail || (p.fee ? p.fee.title : 'Comprobante de Pago'),
+        status: p.status === 'PAID' ? 'Aprobado 🟢' : p.status === 'VALIDATING' ? 'En revisión 🟡' : 'Pendiente 🔴',
+        date: new Date(p.createdAt)
+      }));
+
+      recentActivities = [...attActs, ...payActs]
+        .sort((a, b) => b.date - a.date)
+        .slice(0, 4);
+    } catch (e) {
+      console.error('Error fetching user activities:', e);
+      recentActivities = [];
+    }
   }
 
   try {
@@ -367,66 +422,41 @@ export default async function Home() {
       {/* 3. GRID INFERIOR: ACTIVIDAD & PRÓXIMA ACTIVIDAD */}
       <div className="dash-bottom-grid">
         
-        {/* Actividad */}
+        {/* Actividad Reciente Integrada (Asistencia + Pagos en Vivo) */}
         <div className="dash-info-card">
           <h3>{user?.role === 'ADMIN' ? 'Actividad reciente (General)' : 'Mi actividad reciente'}</h3>
           <ul className="dash-activity-list">
-            
-            {user?.role === 'ADMIN' && (
-              <>
-                <li className="dash-activity-item">
-                  <div className="dash-activity-icon">
-                    <IconUsers size={16} color="var(--text-primary)" />
+            {recentActivities.length > 0 ? (
+              recentActivities.map(act => (
+                <li key={act.id} className="dash-activity-item">
+                  <div className="dash-activity-icon" style={{ background: act.type === 'ATTENDANCE' ? '#D1FAE5' : '#FEF3C7' }}>
+                    {act.type === 'ATTENDANCE' ? (
+                      <IconUsers size={16} color="#065F46" />
+                    ) : (
+                      <IconShirt size={16} color="#B45309" />
+                    )}
                   </div>
                   <div className="dash-activity-content">
-                    <span className="dash-activity-text">María Quispe registró su asistencia</span>
-                    <time className="dash-activity-time">Hoy 6:02 p.m.</time>
+                    <span className="dash-activity-text">
+                      {act.title} <strong style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 700 }}>({act.status})</strong>
+                    </span>
+                    <time className="dash-activity-time">
+                      {act.date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    </time>
                   </div>
                 </li>
-                <li className="dash-activity-item">
-                  <div className="dash-activity-icon">
-                    <IconWallet size={16} color="var(--text-primary)" />
-                  </div>
-                  <div className="dash-activity-content">
-                    <span className="dash-activity-text">Juan Pérez realizó un aporte de S/ 50</span>
-                    <time className="dash-activity-time">Hoy 5:58 p.m.</time>
-                  </div>
-                </li>
-              </>
+              ))
+            ) : (
+              <li className="dash-activity-item">
+                <div className="dash-activity-icon">
+                  <IconUsers size={16} color="var(--text-primary)" />
+                </div>
+                <div className="dash-activity-content">
+                  <span className="dash-activity-text">Sin actividad reciente registrada</span>
+                  <time className="dash-activity-time">Hoy</time>
+                </div>
+              </li>
             )}
-
-            {user?.role === 'MEMBER' && (
-              <>
-                {myPayments.length > 0 ? (
-                  myPayments.map(p => (
-                    <li key={p.id} className="dash-activity-item">
-                      <div className="dash-activity-icon">
-                        <IconShirt size={16} color="var(--text-primary)" />
-                      </div>
-                      <div className="dash-activity-content">
-                        <span className="dash-activity-text">
-                          {p.itemsDetail || (p.fee ? p.fee.title : 'Pedido de Vestuario')} ({p.status === 'PAID' ? 'Aprobado' : p.status === 'VALIDATING' ? 'En revisión' : 'Pendiente'})
-                        </span>
-                        <time className="dash-activity-time">
-                          {new Date(p.updatedAt || p.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-                        </time>
-                      </div>
-                    </li>
-                  ))
-                ) : (
-                  <li className="dash-activity-item">
-                    <div className="dash-activity-icon">
-                      <IconShirt size={16} color="var(--text-primary)" />
-                    </div>
-                    <div className="dash-activity-content">
-                      <span className="dash-activity-text">Sin pedidos recientes</span>
-                      <time className="dash-activity-time">Hoy</time>
-                    </div>
-                  </li>
-                )}
-              </>
-            )}
-
           </ul>
         </div>
 
