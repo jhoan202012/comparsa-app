@@ -10,7 +10,7 @@ export async function GET(request) {
       return NextResponse.json({ error: 'El DNI debe tener 8 dígitos numéricos' }, { status: 400 });
     }
 
-    // 1. NIVEL 1: Buscar en Base de Datos Local (0ms / S/ 0.00)
+    // 1. Buscar en Base de Datos Local
     const existingUser = await prisma.user.findUnique({
       where: { dni },
       select: {
@@ -24,92 +24,80 @@ export async function GET(request) {
       }
     });
 
-    if (existingUser) {
-      // Separar nombres y apellidos si es posible
-      const parts = existingUser.name.split(' ');
-      const nombres = parts.length > 2 ? parts.slice(0, parts.length - 2).join(' ') : parts[0] || '';
-      const apellidos = parts.length > 2 ? parts.slice(parts.length - 2).join(' ') : parts.slice(1).join(' ') || '';
-
-      return NextResponse.json({
-        success: true,
-        source: 'LOCAL_DB',
-        name: existingUser.name,
-        nombres: nombres || existingUser.name,
-        apellidos: apellidos || '',
-        birthDate: existingUser.birthDate || '',
-        gender: existingUser.gender === 'MUJER' ? 'Femenino' : 'Masculino',
-        district: existingUser.district || '',
-        alreadyRegistered: true,
-        status: existingUser.status,
-        message: 'Este DNI ya se encuentra registrado en la base de datos de Cangallo Señorial.'
-      });
-    }
-
-    // 2. NIVEL 2: Consulta a Servicio de Identidad con Timeout Seguro (1.8 segundos)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1800);
-
-    let parsedData = null;
-
+    // 2. Consultar API Externa de Identidad para obtener nombres oficiales completos si faltan
+    let externalData = null;
     try {
       const token = process.env.DNI_API_TOKEN || '';
       const headers = { 'Accept': 'application/json' };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const apiUrl = token 
         ? `https://api.apis.net.pe/v2/reniec/dni?numero=${dni}`
         : `https://api.apis.net.pe/v1/dni?numero=${dni}`;
 
-      const apiRes = await fetch(apiUrl, {
-        headers,
-        signal: controller.signal
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1500);
 
+      const apiRes = await fetch(apiUrl, { headers, signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (apiRes.ok) {
-        const data = await apiRes.json();
-        
-        let nombres = data.nombres || data.nombre || '';
-        let apellidoPaterno = data.apellidoPaterno || data.apellido_paterno || '';
-        let apellidoMaterno = data.apellidoMaterno || data.apellido_materno || '';
-        let apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim();
-        
-        let fullName = data.nombre_completo || `${nombres} ${apellidos}`.trim();
-        let fechaNac = data.fechaNacimiento || data.fecha_nacimiento || data.nacimiento || '';
-        
-        // Formatear género
-        let rawSexo = (data.sexo || data.genero || '').toUpperCase();
-        let sexo = rawSexo === 'F' || rawSexo === 'FEMENINO' || rawSexo === 'MUJER' ? 'Femenino' : 'Masculino';
+        const d = await apiRes.json();
+        const nombres = d.nombres || d.nombre || '';
+        const apellidoPaterno = d.apellidoPaterno || d.apellido_paterno || '';
+        const apellidoMaterno = d.apellidoMaterno || d.apellido_materno || '';
+        const apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim();
+        const fullName = d.nombre_completo || `${nombres} ${apellidos}`.trim();
 
         if (nombres || fullName) {
-          parsedData = {
+          externalData = {
             nombres: nombres || fullName,
             apellidos: apellidos || '',
             name: fullName,
-            birthDate: fechaNac,
-            gender: sexo,
-            district: data.distrito || data.ubigeo_distrito || ''
+            birthDate: d.fechaNacimiento || d.fecha_nacimiento || '',
+            gender: d.sexo === 'F' ? 'Femenino' : 'Masculino',
+            district: d.distrito || ''
           };
         }
       }
-    } catch (fetchErr) {
-      clearTimeout(timeoutId);
-      console.log('Aviso: Consulta externa DNI demoró o no respondió, activando fallback manual elegante.');
+    } catch (e) {
+      // Ignorar timeout y continuar con base de datos
     }
 
-    if (parsedData) {
+    // Si ya existe en base de datos local
+    if (existingUser) {
+      const parts = existingUser.name.split(' ');
+      const nombres = externalData?.nombres || (parts.length > 2 ? parts.slice(0, parts.length - 2).join(' ') : parts[0] || existingUser.name);
+      const apellidos = externalData?.apellidos || (parts.length > 2 ? parts.slice(parts.length - 2).join(' ') : parts.slice(1).join(' ') || '');
+      const birthDate = existingUser.birthDate || externalData?.birthDate || '';
+      const gender = existingUser.gender === 'MUJER' ? 'Femenino' : existingUser.gender === 'VARON' ? 'Masculino' : (externalData?.gender || 'Masculino');
+
+      return NextResponse.json({
+        success: true,
+        source: 'LOCAL_DB',
+        name: existingUser.name,
+        nombres,
+        apellidos,
+        birthDate,
+        gender,
+        district: existingUser.district || externalData?.district || '',
+        alreadyRegistered: true,
+        status: existingUser.status,
+        message: 'Socio registrado en el padrón.'
+      });
+    }
+
+    // Si es un socio nuevo y la API externa respondió
+    if (externalData) {
       return NextResponse.json({
         success: true,
         source: 'RENIEC_API',
-        ...parsedData,
+        ...externalData,
         alreadyRegistered: false
       });
     }
 
-    // 3. NIVEL 3 / 4: Degradación Elegante
+    // Fallback manual
     return NextResponse.json({
       success: true,
       source: 'MANUAL_FALLBACK',
@@ -118,12 +106,11 @@ export async function GET(request) {
       name: '',
       birthDate: '',
       gender: 'Masculino',
-      alreadyRegistered: false,
-      message: 'Digita tus nombres y apellidos para completar el empadronamiento.'
+      alreadyRegistered: false
     });
 
   } catch (error) {
-    console.error('Error general en consulta de DNI:', error);
+    console.error('Error en consulta DNI:', error);
     return NextResponse.json({
       success: true,
       source: 'MANUAL_FALLBACK',
