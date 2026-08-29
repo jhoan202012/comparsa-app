@@ -325,30 +325,30 @@ export default function EmpadronamientoClient() {
               </div>
             </div>
 
-            {/* Sexo y Fecha de Nacimiento Desglosados y Bloqueados */}
+            {/* Sexo y Fecha de Nacimiento */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
               <div>
                 <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Sexo:
+                  Sexo / Género:
                 </label>
-                <input
-                  type="text"
+                <select
                   value={gender}
-                  readOnly={isLocked}
                   onChange={e => setGender(e.target.value)}
                   style={{
                     width: '100%',
                     padding: '0.8rem',
                     borderRadius: '12px',
-                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    border: '1px solid #D1D5DB',
                     fontSize: '0.95rem',
                     fontWeight: 700,
-                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                    color: isLocked ? '#065F46' : '#111827',
-                    cursor: isLocked ? 'not-allowed' : 'text',
+                    background: '#FFFFFF',
+                    color: '#111827',
                     outline: 'none'
                   }}
-                />
+                >
+                  <option value="Masculino">Varón</option>
+                  <option value="Femenino">Mujer</option>
+                </select>
               </div>
 
               <div>
@@ -356,21 +356,18 @@ export default function EmpadronamientoClient() {
                   Fecha de Nacimiento:
                 </label>
                 <input
-                  type="text"
-                  placeholder="DD/MM/AAAA"
+                  type="date"
                   value={birthDate}
-                  readOnly={isLocked && Boolean(birthDate)}
                   onChange={e => setBirthDate(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '0.8rem',
+                    padding: '0.75rem 0.8rem',
                     borderRadius: '12px',
-                    border: (isLocked && birthDate) ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    border: '1px solid #D1D5DB',
                     fontSize: '0.95rem',
                     fontWeight: 700,
-                    background: (isLocked && birthDate) ? '#F0FDF4' : '#FFFFFF',
-                    color: (isLocked && birthDate) ? '#065F46' : '#111827',
-                    cursor: (isLocked && birthDate) ? 'not-allowed' : 'text',
+                    background: '#FFFFFF',
+                    color: '#111827',
                     outline: 'none'
                   }}
                 />
