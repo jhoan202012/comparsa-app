@@ -235,6 +235,80 @@ export default async function Home() {
         </div>
       </div>
 
+      {/* BANNER INSTITUCIONAL: EMPADRONAMIENTO DIGITAL & PADRÓN GENERAL */}
+      <div style={{
+        background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+        border: '1.5px solid #F59E0B',
+        borderRadius: '16px',
+        padding: '1rem 1.25rem',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px',
+        boxShadow: '0 4px 12px rgba(217, 155, 0, 0.12)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#13603A', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
+            📝
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              Campaña Oficial 2027
+            </div>
+            <strong style={{ fontSize: '1.05rem', color: '#111827', display: 'block' }}>
+              Empadronamiento Digital & Padrón General
+            </strong>
+            <span style={{ fontSize: '0.82rem', color: '#4B5563' }}>
+              Censo de talentos, músicos, vestuario y carnet QR para el Carnaval 2027.
+            </span>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <Link
+            href="/empadronamiento"
+            style={{
+              background: '#13603A',
+              color: '#FFFFFF',
+              textDecoration: 'none',
+              padding: '0.6rem 1.1rem',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(19, 96, 58, 0.25)'
+            }}
+          >
+            ✍️ Registrarse / Empadronar
+          </Link>
+
+          {user?.role === 'ADMIN' && (
+            <Link
+              href="/padron"
+              style={{
+                background: '#FFFFFF',
+                color: '#13603A',
+                border: '1.5px solid #13603A',
+                textDecoration: 'none',
+                padding: '0.6rem 1.1rem',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              📋 Ver Padrón & Backups
+            </Link>
+          )}
+        </div>
+      </div>
+
       {/* 2. MÓDULOS OPERATIVOS EN GRID EQUILIBRADO (2x2) */}
       <div className="dash-modules-grid">
         

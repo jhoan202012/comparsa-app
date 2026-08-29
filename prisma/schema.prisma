@@ -20,6 +20,24 @@ model User {
   avatarUrl      String?
   qr_code_hash   String          @unique
   createdAt      DateTime        @default(now())
+
+  // CAMPOS DEL PADRÓN & CENSO DIGITAL 2027
+  birthDate         String?         // Fecha de nacimiento (DD/MM/AAAA o YYYY-MM-DD)
+  gender            String?         // VARON, MUJER
+  department        String?         @default("Ayacucho")
+  province          String?         @default("Cangallo")
+  district          String?         // Distrito de residencia (Cangallo, Huamanga, etc.)
+  address           String?         // Dirección o referencia
+  hasRelatives      Boolean?        @default(false)
+  relativesDetail   String?         // Nombres y parentesco de familiares en la comparsa
+  memberType        String?         @default("SOCIO") // SOCIO, MUSICO, DIRECTIVO, DELEGADO
+  affiliationYear   Int?            // Año de afiliación / ingreso a la comparsa
+  talents           String?         // Disciplinas (Música, Canto, Danza, Creación, Arte)
+  musicalInstrument String?         // Instrumento que toca (si aplica)
+  artCategory       String?         // Categoría artística principal
+  artDetail         String?         // Detalle del rol artístico o talento
+  clothingSize      String?         // Talla de vestuario (S, M, L, XL, XXL)
+  notes             String?         // Notas adicionales o sugerencias
   
   attendances       Attendance[]
   payments          PaymentRecord[]
