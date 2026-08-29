@@ -209,19 +209,19 @@ export default function EmpadronamientoClient() {
     }
   };
 
-  // ==================== ESTILO DE ESPACIADO AMPLIO Y SUAVE (1rem padding, 1rem border-radius) ====================
+  // ==================== ESTILOS DE ESPACIADO Y ACABADO TÁCTIL ====================
   const spaciousInputStyle = {
     width: '100%',
     padding: '0.95rem 1.15rem',
-    borderRadius: '1rem',
-    border: '1.5px solid #E5E7EB',
+    borderRadius: '0.85rem',
+    border: '1px solid #e8e8e8',
     fontSize: '0.98rem',
     fontWeight: '500',
-    color: '#1F2937',
-    background: '#F9FAFB',
+    color: '#090909',
+    background: '#e8e8e8',
     outline: 'none',
     boxSizing: 'border-box',
-    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+    boxShadow: 'inset 2px 2px 5px #c5c5c5, inset -2px -2px 5px #ffffff',
     transition: 'all 0.3s ease'
   };
 
@@ -245,20 +245,12 @@ export default function EmpadronamientoClient() {
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
+                className="btn-neu-base"
                 style={{
                   width: '42px',
                   height: '42px',
-                  borderRadius: '1rem',
-                  border: '1.5px solid #E5E7EB',
-                  background: '#FFFFFF',
-                  color: '#92400E',
-                  fontSize: '1.1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-                  transition: 'all 0.2s ease'
+                  padding: 0,
+                  fontSize: '1.2rem'
                 }}
               >
                 ←
@@ -268,15 +260,16 @@ export default function EmpadronamientoClient() {
             )}
 
             <div style={{
-              background: '#FEF3C7',
-              border: '1px solid #FCD34D',
+              background: '#e8e8e8',
+              border: '1px solid #e8e8e8',
+              boxShadow: '4px 4px 8px #c5c5c5, -4px -4px 8px #ffffff',
               color: '#92400E',
               fontSize: '0.75rem',
               fontWeight: 800,
               letterSpacing: '1px',
               textTransform: 'uppercase',
               padding: '6px 16px',
-              borderRadius: '1rem'
+              borderRadius: '0.75rem'
             }}>
               PASO {step} DE 4
             </div>
@@ -289,21 +282,12 @@ export default function EmpadronamientoClient() {
                 setAdminError(null);
               }}
               title="Acceso restringido para el Comité Directivo"
+              className="btn-neu-base"
               style={{
                 height: '42px',
-                padding: '0 16px',
-                borderRadius: '1rem',
-                border: '1.5px solid #D97706',
-                background: '#FFFBEB',
-                color: '#92400E',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(217, 119, 6, 0.1)',
-                transition: 'all 0.2s ease'
+                padding: '0 14px',
+                fontSize: '0.82rem',
+                color: '#92400E'
               }}
             >
               <span>🔒</span> Directiva
@@ -329,7 +313,7 @@ export default function EmpadronamientoClient() {
           background: '#FFFFFF',
           borderRadius: '1.25rem',
           border: '1.5px solid #FDE68A',
-          boxShadow: '0 6px 20px rgba(217, 119, 6, 0.08)',
+          boxShadow: '6px 6px 16px rgba(0,0,0,0.06), -6px -6px 16px #ffffff',
           overflow: 'hidden'
         }}>
           {/* Fotografía de las Danzantes */}
@@ -351,7 +335,7 @@ export default function EmpadronamientoClient() {
               background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(8px)',
               padding: '6px 12px 6px 8px',
-              borderRadius: '1rem',
+              borderRadius: '0.75rem',
               boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
               border: '1px solid #FCD34D'
             }}>
@@ -381,13 +365,13 @@ export default function EmpadronamientoClient() {
 
             {/* Pastillas de Disciplinas */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '1rem' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '0.75rem' }}>
                 💃 Danzantes
               </span>
-              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '1rem' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '0.75rem' }}>
                 🎺 Músicos
               </span>
-              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '1rem' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.78rem', fontWeight: 700, padding: '4px 14px', borderRadius: '0.75rem' }}>
                 👑 Directivos
               </span>
             </div>
@@ -397,17 +381,17 @@ export default function EmpadronamientoClient() {
 
       {/* Mensaje de Error */}
       {errorMsg && (
-        <div style={{ marginBottom: '1.25rem', padding: '1rem 1.25rem', background: '#FEE2E2', border: '1px solid #EF4444', color: '#B91C1C', borderRadius: '1rem', fontSize: '0.9rem', fontWeight: 700 }}>
+        <div style={{ marginBottom: '1.25rem', padding: '1rem 1.25rem', background: '#FEE2E2', border: '1px solid #EF4444', color: '#B91C1C', borderRadius: '0.75rem', fontSize: '0.9rem', fontWeight: 700 }}>
           ⚠️ {errorMsg}
         </div>
       )}
 
-      {/* ==================== TARJETA PRINCIPAL DEL FORMULARIO (ESPACIADO CÓMODO) ==================== */}
+      {/* ==================== TARJETA PRINCIPAL DEL FORMULARIO ==================== */}
       <div style={{
         background: '#FFFFFF',
         border: '1px solid #E5E7EB',
         borderRadius: '1.25rem',
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.04)',
+        boxShadow: '8px 8px 24px rgba(0, 0, 0, 0.05), -8px -8px 24px #ffffff',
         position: 'relative',
         overflow: 'hidden'
       }}>
@@ -445,7 +429,7 @@ export default function EmpadronamientoClient() {
                     onChange={e => handleDniInput(e.target.value)}
                     style={{
                       ...spaciousInputStyle,
-                      border: dniVerified ? '2px solid #10B981' : '1.5px solid #E5E7EB',
+                      border: dniVerified ? '2px solid #10B981' : '1px solid #e8e8e8',
                       fontWeight: '600'
                     }}
                   />
@@ -471,7 +455,7 @@ export default function EmpadronamientoClient() {
                   background: '#FEF3C7',
                   border: '1.5px solid #F59E0B',
                   color: '#92400E',
-                  borderRadius: '1rem',
+                  borderRadius: '0.75rem',
                   fontSize: '0.98rem',
                   fontWeight: 800,
                   textAlign: 'center',
@@ -497,9 +481,9 @@ export default function EmpadronamientoClient() {
                         onChange={e => setNombres(e.target.value)}
                         style={{
                           ...spaciousInputStyle,
-                          background: isLocked ? '#F0FDF4' : '#F9FAFB',
-                          color: isLocked ? '#065F46' : '#1F2937',
-                          border: isLocked ? '1.5px solid #10B981' : '1.5px solid #E5E7EB',
+                          background: isLocked ? '#F0FDF4' : '#e8e8e8',
+                          color: isLocked ? '#065F46' : '#090909',
+                          border: isLocked ? '1.5px solid #10B981' : '1px solid #e8e8e8',
                           cursor: isLocked ? 'not-allowed' : 'text'
                         }}
                       />
@@ -518,9 +502,9 @@ export default function EmpadronamientoClient() {
                         onChange={e => setApellidos(e.target.value)}
                         style={{
                           ...spaciousInputStyle,
-                          background: isLocked ? '#F0FDF4' : '#F9FAFB',
-                          color: isLocked ? '#065F46' : '#1F2937',
-                          border: isLocked ? '1.5px solid #10B981' : '1.5px solid #E5E7EB',
+                          background: isLocked ? '#F0FDF4' : '#e8e8e8',
+                          color: isLocked ? '#065F46' : '#090909',
+                          border: isLocked ? '1.5px solid #10B981' : '1px solid #e8e8e8',
                           cursor: isLocked ? 'not-allowed' : 'text'
                         }}
                       />
@@ -564,19 +548,10 @@ export default function EmpadronamientoClient() {
                     type="button"
                     disabled={!dni || !nombres}
                     onClick={() => setStep(2)}
+                    className="btn-neu-primary"
                     style={{
-                      width: '100%',
-                      padding: '1rem',
-                      borderRadius: '1rem',
-                      background: (!dni || !nombres) ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      fontSize: '1.05rem',
-                      fontWeight: 800,
-                      letterSpacing: '0.3px',
-                      cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
-                      boxShadow: (!dni || !nombres) ? 'none' : '0 8px 24px rgba(217, 119, 6, 0.25)',
-                      transition: 'all 0.3s ease'
+                      opacity: (!dni || !nombres) ? 0.6 : 1,
+                      cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer'
                     }}
                   >
                     Continuar al Paso 2 ➔
@@ -669,18 +644,10 @@ export default function EmpadronamientoClient() {
                   type="button"
                   disabled={!phone}
                   onClick={() => setStep(3)}
+                  className="btn-neu-primary"
                   style={{
-                    width: '100%',
-                    padding: '1rem',
-                    borderRadius: '1rem',
-                    background: !phone ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    fontSize: '1.05rem',
-                    fontWeight: 800,
-                    cursor: !phone ? 'not-allowed' : 'pointer',
-                    boxShadow: !phone ? 'none' : '0 8px 24px rgba(217, 119, 6, 0.25)',
-                    transition: 'all 0.3s ease'
+                    opacity: !phone ? 0.6 : 1,
+                    cursor: !phone ? 'not-allowed' : 'pointer'
                   }}
                 >
                   Continuar al Paso 3 ➔
@@ -709,14 +676,14 @@ export default function EmpadronamientoClient() {
                         key={item.id}
                         onClick={() => setMemberType(item.id)}
                         style={{
-                          border: active ? '2px solid #D97706' : '1.5px solid #E5E7EB',
-                          background: active ? '#FEF3C7' : '#F9FAFB',
+                          border: active ? '2px solid #D97706' : '1px solid #e8e8e8',
+                          background: active ? '#FEF3C7' : '#e8e8e8',
                           color: '#1F2937',
-                          borderRadius: '1rem',
+                          borderRadius: '0.75rem',
                           padding: '16px 8px',
                           textAlign: 'center',
                           cursor: 'pointer',
-                          boxShadow: active ? '0 4px 14px rgba(217, 119, 6, 0.15)' : 'none',
+                          boxShadow: active ? 'inset 3px 3px 6px rgba(217, 119, 6, 0.2), inset -3px -3px 6px #ffffff' : '5px 5px 10px #c5c5c5, -5px -5px 10px #ffffff',
                           transition: 'all 0.3s ease'
                         }}
                       >
@@ -750,7 +717,14 @@ export default function EmpadronamientoClient() {
               </div>
 
               {/* Familiares en la Comparsa */}
-              <div style={{ marginBottom: '1.75rem', background: '#F9FAFB', borderRadius: '1rem', padding: '1.25rem', border: '1px solid #E5E7EB' }}>
+              <div style={{
+                marginBottom: '1.75rem',
+                background: '#e8e8e8',
+                borderRadius: '0.75rem',
+                padding: '1.25rem',
+                border: '1px solid #e8e8e8',
+                boxShadow: '4px 4px 10px #c5c5c5, -4px -4px 10px #ffffff'
+              }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1F2937' }}>
                     ¿Tienes familiares en la comparsa?
@@ -779,19 +753,7 @@ export default function EmpadronamientoClient() {
               <button
                 type="button"
                 onClick={() => setStep(4)}
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  borderRadius: '1rem',
-                  background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  fontSize: '1.05rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.25)',
-                  transition: 'all 0.3s ease'
-                }}
+                className="btn-neu-primary"
               >
                 Continuar al Paso 4 ➔
               </button>
@@ -821,14 +783,15 @@ export default function EmpadronamientoClient() {
                         key={item.id}
                         onClick={() => handleTalentToggle(item.id)}
                         style={{
-                          border: isSelected ? '1.5px solid #D97706' : '1.5px solid #E5E7EB',
-                          background: isSelected ? '#FEF3C7' : '#F9FAFB',
-                          borderRadius: '1rem',
+                          border: isSelected ? '1.5px solid #D97706' : '1px solid #e8e8e8',
+                          background: isSelected ? '#FEF3C7' : '#e8e8e8',
+                          borderRadius: '0.75rem',
                           padding: '12px 14px',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
+                          boxShadow: isSelected ? 'inset 3px 3px 6px rgba(217, 119, 6, 0.2), inset -3px -3px 6px #ffffff' : '4px 4px 8px #c5c5c5, -4px -4px 8px #ffffff',
                           transition: 'all 0.25s ease'
                         }}
                       >
@@ -836,7 +799,7 @@ export default function EmpadronamientoClient() {
                           <div style={{ fontSize: '0.88rem', fontWeight: 800, color: isSelected ? '#92400E' : '#1F2937' }}>{item.label}</div>
                           <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>{item.desc}</div>
                         </div>
-                        <span style={{ fontSize: '1rem', fontWeight: 900, color: isSelected ? '#D97706' : '#D1D5DB' }}>
+                        <span style={{ fontSize: '1rem', fontWeight: 900, color: isSelected ? '#D97706' : '#9CA3AF' }}>
                           {isSelected ? '✓' : '+'}
                         </span>
                       </div>
@@ -847,7 +810,7 @@ export default function EmpadronamientoClient() {
 
               {/* Instrumento si es Músico */}
               {selectedTalents.includes('Música') && (
-                <div style={{ marginBottom: '1.5rem', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '1rem', padding: '1rem' }}>
+                <div style={{ marginBottom: '1.5rem', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '0.75rem', padding: '1rem' }}>
                   <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400E', display: 'block', marginBottom: '8px' }}>
                     🎺 ¿Qué instrumento tocas?
                   </label>
@@ -861,7 +824,7 @@ export default function EmpadronamientoClient() {
                 </div>
               )}
 
-              {/* Selector de Talla de Vestuario */}
+              {/* Selector de Talla de Vestuario con Estilo Neumórfico */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={spaciousLabelStyle}>
                   Talla de Vestuario para Carnaval 2027:
@@ -874,17 +837,10 @@ export default function EmpadronamientoClient() {
                         key={size}
                         type="button"
                         onClick={() => setClothingSize(size)}
+                        className={`btn-neu-pill ${active ? 'active' : ''}`}
                         style={{
                           height: '48px',
-                          borderRadius: '1rem',
-                          border: active ? '2px solid #D97706' : '1.5px solid #E5E7EB',
-                          background: active ? '#FEF3C7' : '#F9FAFB',
-                          color: active ? '#92400E' : '#1F2937',
-                          fontWeight: 800,
-                          fontSize: '1rem',
-                          cursor: 'pointer',
-                          boxShadow: active ? '0 2px 8px rgba(217, 119, 6, 0.15)' : 'none',
-                          transition: 'all 0.25s ease'
+                          fontSize: '1rem'
                         }}
                       >
                         {size}
@@ -918,11 +874,12 @@ export default function EmpadronamientoClient() {
               {/* Fotografía al Final */}
               <div style={{
                 marginBottom: '1.75rem',
-                background: '#F9FAFB',
+                background: '#e8e8e8',
                 border: '1.5px dashed #D97706',
-                borderRadius: '1.25rem',
+                borderRadius: '0.75rem',
                 padding: '1.5rem',
-                textAlign: 'center'
+                textAlign: 'center',
+                boxShadow: 'inset 2px 2px 6px #c5c5c5, inset -2px -2px 6px #ffffff'
               }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.35rem' }}>
                   📸 Fotografía / Selfie para tu Carnet QR
@@ -959,20 +916,10 @@ export default function EmpadronamientoClient() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
+                      className="btn-neu-base"
                       style={{
-                        padding: '0.9rem 1.6rem',
-                        borderRadius: '1rem',
-                        background: '#FEF3C7',
-                        color: '#92400E',
-                        border: '1.5px solid #F59E0B',
-                        fontWeight: 800,
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)',
-                        transition: 'all 0.25s ease'
+                        padding: '0.8em 1.6em',
+                        color: '#090909'
                       }}
                     >
                       📷 Tomar Foto / Elegir Archivo
@@ -984,18 +931,10 @@ export default function EmpadronamientoClient() {
               <button
                 type="submit"
                 disabled={loading}
+                className="btn-neu-primary"
                 style={{
-                  width: '100%',
-                  padding: '1.1rem',
-                  borderRadius: '1rem',
-                  background: loading ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  fontSize: '1.08rem',
-                  fontWeight: 800,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.3)',
-                  transition: 'all 0.3s ease'
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? 'not-allowed' : 'pointer'
                 }}
               >
                 {loading ? 'Generando Carnet Oficial 2027...' : '✓ Finalizar Empadronamiento'}
@@ -1066,7 +1005,7 @@ export default function EmpadronamientoClient() {
                   fontWeight: 900,
                   letterSpacing: '1.2px',
                   padding: '4px 14px',
-                  borderRadius: '1rem',
+                  borderRadius: '0.75rem',
                   marginBottom: '0.6rem'
                 }}>
                   CÓDIGO: {savedUser.affiliationYear || '2027'}{savedUser.dni}
@@ -1076,7 +1015,7 @@ export default function EmpadronamientoClient() {
                   DNI: {savedUser.dni} &bull; Talla: {savedUser.clothingSize || 'L'}
                 </div>
 
-                <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '1rem', display: 'inline-block', marginBottom: '0.85rem', boxShadow: '0 4px 14px rgba(0,0,0,0.25)' }}>
+                <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '0.75rem', display: 'inline-block', marginBottom: '0.85rem', boxShadow: '0 4px 14px rgba(0,0,0,0.25)' }}>
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${savedUser.qr_code_hash}`}
                     alt="QR Asistencia"
@@ -1103,17 +1042,11 @@ export default function EmpadronamientoClient() {
                     setApellidos('');
                     setSavedUser(null);
                   }}
+                  className="btn-neu-base"
                   style={{
                     width: '100%',
-                    padding: '0.95rem',
-                    background: '#FAF7F2',
-                    color: '#92400E',
-                    borderRadius: '1rem',
-                    fontWeight: 800,
-                    fontSize: '0.95rem',
-                    border: '1.5px solid #D97706',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease'
+                    padding: '0.85em 1.5em',
+                    color: '#92400E'
                   }}
                 >
                   ← Empadronar a Otro Integrante
@@ -1174,7 +1107,7 @@ export default function EmpadronamientoClient() {
             <div style={{
               width: '54px',
               height: '54px',
-              borderRadius: '1rem',
+              borderRadius: '0.75rem',
               background: '#FEF3C7',
               border: '2px solid #FCD34D',
               color: '#D97706',
@@ -1207,7 +1140,7 @@ export default function EmpadronamientoClient() {
                 background: '#FEE2E2',
                 border: '1px solid #EF4444',
                 color: '#B91C1C',
-                borderRadius: '1rem',
+                borderRadius: '0.75rem',
                 fontSize: '0.85rem',
                 fontWeight: 700
               }}>
@@ -1247,19 +1180,7 @@ export default function EmpadronamientoClient() {
               <button
                 type="submit"
                 disabled={adminLoading}
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  borderRadius: '1rem',
-                  background: adminLoading ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  cursor: adminLoading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.25)',
-                  transition: 'all 0.3s ease'
-                }}
+                className="btn-neu-primary"
               >
                 {adminLoading ? 'Verificando...' : 'Ingresar al Padrón Oficial ➔'}
               </button>
