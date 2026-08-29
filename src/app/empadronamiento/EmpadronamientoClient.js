@@ -2,6 +2,28 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 
+// Iconos SVG Vectoriales de Alta Definición y Seguridad
+const LockIcon = ({ size = 16, color = '#92400E' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    <rect x="3" y="11" width="18" height="11" rx="2.5" ry="2.5" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const ShieldCheckIcon = ({ size = 16, color = '#059669' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <polyline points="9 12 11 14 15 10" />
+  </svg>
+);
+
+const CameraIcon = ({ size = 18, color = '#090909' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+    <circle cx="12" cy="13" r="4" />
+  </svg>
+);
+
 export default function EmpadronamientoClient() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -226,7 +248,9 @@ export default function EmpadronamientoClient() {
   };
 
   const spaciousLabelStyle = {
-    display: 'block',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     fontSize: '0.85rem',
     fontWeight: '600',
     color: '#374151',
@@ -274,7 +298,7 @@ export default function EmpadronamientoClient() {
               PASO {step} DE 4
             </div>
 
-            {/* Botón Protegido para la Directiva */}
+            {/* Botón Protegido para la Directiva con Candado Vectorial */}
             <button
               type="button"
               onClick={() => {
@@ -287,10 +311,11 @@ export default function EmpadronamientoClient() {
                 height: '42px',
                 padding: '0 14px',
                 fontSize: '0.82rem',
-                color: '#92400E'
+                color: '#92400E',
+                gap: '6px'
               }}
             >
-              <span>🔒</span> Directiva
+              <LockIcon size={14} color="#92400E" /> Directiva
             </button>
           </div>
 
@@ -409,10 +434,8 @@ export default function EmpadronamientoClient() {
             <div>
               {/* Campo DNI Principal */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={spaciousLabelStyle}>
-                    Número de DNI (8 dígitos)
-                  </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Número de DNI (8 dígitos)</span>
                   {dniLoading && (
                     <span style={{ fontSize: '0.8rem', color: '#D97706', fontWeight: 700 }}>
                       🔍 Consultando...
@@ -442,7 +465,7 @@ export default function EmpadronamientoClient() {
 
                 {dniVerified && !alreadyRegisteredUser && (
                   <div style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🛡️</span> <span>Identidad Verificada Oficialmente</span>
+                    <ShieldCheckIcon size={16} color="#059669" /> <span>Identidad Verificada Oficialmente</span>
                   </div>
                 )}
               </div>
@@ -470,9 +493,10 @@ export default function EmpadronamientoClient() {
                     
                     {/* Nombres */}
                     <div>
-                      <label style={spaciousLabelStyle}>
-                        Nombres Oficiales {isLocked && <span style={{ color: '#D97706' }}>🔒</span>}
-                      </label>
+                      <div style={spaciousLabelStyle}>
+                        <span>Nombres Oficiales</span>
+                        {isLocked && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#D97706', fontSize: '0.78rem', fontWeight: 700 }}><LockIcon size={13} color="#D97706" /> Verificado</span>}
+                      </div>
                       <input
                         type="text"
                         placeholder="Ej. Jhoan"
@@ -491,9 +515,10 @@ export default function EmpadronamientoClient() {
 
                     {/* Apellidos */}
                     <div>
-                      <label style={spaciousLabelStyle}>
-                        Apellidos Oficiales {isLocked && <span style={{ color: '#D97706' }}>🔒</span>}
-                      </label>
+                      <div style={spaciousLabelStyle}>
+                        <span>Apellidos Oficiales</span>
+                        {isLocked && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#D97706', fontSize: '0.78rem', fontWeight: 700 }}><LockIcon size={13} color="#D97706" /> Verificado</span>}
+                      </div>
                       <input
                         type="text"
                         placeholder="Ej. Taboada Huaman"
@@ -513,9 +538,9 @@ export default function EmpadronamientoClient() {
                     {/* Fila: Sexo & Nacimiento */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                       <div>
-                        <label style={spaciousLabelStyle}>
-                          Sexo / Género
-                        </label>
+                        <div style={spaciousLabelStyle}>
+                          <span>Sexo / Género</span>
+                        </div>
                         <select
                           value={gender}
                           onChange={e => setGender(e.target.value)}
@@ -530,9 +555,9 @@ export default function EmpadronamientoClient() {
                       </div>
 
                       <div>
-                        <label style={spaciousLabelStyle}>
-                          Fecha de Nacimiento
-                        </label>
+                        <div style={spaciousLabelStyle}>
+                          <span>Fecha de Nacimiento</span>
+                        </div>
                         <input
                           type="date"
                           value={birthDate}
@@ -566,9 +591,9 @@ export default function EmpadronamientoClient() {
             <div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '1.75rem' }}>
                 <div>
-                  <label style={spaciousLabelStyle}>
-                    Celular / WhatsApp Principal <span style={{ color: '#DC2626' }}>*</span>
-                  </label>
+                  <div style={spaciousLabelStyle}>
+                    <span>Celular / WhatsApp Principal <span style={{ color: '#DC2626' }}>*</span></span>
+                  </div>
                   <input
                     type="tel"
                     placeholder="Ej. 987654321"
@@ -579,9 +604,9 @@ export default function EmpadronamientoClient() {
                 </div>
 
                 <div>
-                  <label style={spaciousLabelStyle}>
-                    Correo Electrónico (Opcional)
-                  </label>
+                  <div style={spaciousLabelStyle}>
+                    <span>Correo Electrónico (Opcional)</span>
+                  </div>
                   <input
                     type="email"
                     placeholder="Ej. mi.correo@gmail.com"
@@ -593,9 +618,9 @@ export default function EmpadronamientoClient() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
-                    <label style={spaciousLabelStyle}>
-                      Departamento
-                    </label>
+                    <div style={spaciousLabelStyle}>
+                      <span>Departamento</span>
+                    </div>
                     <select
                       value={department}
                       onChange={e => setDepartment(e.target.value)}
@@ -612,9 +637,9 @@ export default function EmpadronamientoClient() {
                   </div>
 
                   <div>
-                    <label style={spaciousLabelStyle}>
-                      Distrito
-                    </label>
+                    <div style={spaciousLabelStyle}>
+                      <span>Distrito</span>
+                    </div>
                     <input
                       type="text"
                       placeholder="Ej. Cangallo"
@@ -626,9 +651,9 @@ export default function EmpadronamientoClient() {
                 </div>
 
                 <div>
-                  <label style={spaciousLabelStyle}>
-                    Dirección o Referencia
-                  </label>
+                  <div style={spaciousLabelStyle}>
+                    <span>Dirección o Referencia</span>
+                  </div>
                   <input
                     type="text"
                     placeholder="Ej. Jr. Sucre 240 / Cerca a la Plaza Central"
@@ -661,9 +686,9 @@ export default function EmpadronamientoClient() {
             <div>
               {/* Selector de Rol */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Selecciona tu Rol Institucional:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Selecciona tu Rol Institucional:</span>
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                   {[
                     { id: 'SOCIO', icon: '💃', label: 'Danzante', desc: 'Bailarín(a)' },
@@ -698,9 +723,9 @@ export default function EmpadronamientoClient() {
 
               {/* Año de Afiliación */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Año de Ingreso a Cangallo Señorial:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Año de Ingreso a Cangallo Señorial:</span>
+                </div>
                 <select
                   value={affiliationYear}
                   onChange={e => setAffiliationYear(e.target.value)}
@@ -765,9 +790,9 @@ export default function EmpadronamientoClient() {
             <form onSubmit={handleSubmit}>
               {/* Disciplinas y Talentos */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Disciplinas & Talentos Artísticos:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Disciplinas & Talentos Artísticos:</span>
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   {[
                     { id: 'Danza', label: '💃 Danza', desc: 'Coreografía' },
@@ -826,9 +851,9 @@ export default function EmpadronamientoClient() {
 
               {/* Selector de Talla de Vestuario con Estilo Neumórfico */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Talla de Vestuario para Carnaval 2027:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Talla de Vestuario para Carnaval 2027:</span>
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
                   {['S', 'M', 'L', 'XL', 'XXL'].map(size => {
                     const active = clothingSize === size;
@@ -852,9 +877,9 @@ export default function EmpadronamientoClient() {
 
               {/* PIN de Seguridad */}
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  PIN de Acceso a tu Perfil (4 dígitos):
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>PIN de Acceso a tu Perfil (4 dígitos):</span>
+                </div>
                 <input
                   type="password"
                   maxLength={4}
@@ -919,10 +944,11 @@ export default function EmpadronamientoClient() {
                       className="btn-neu-base"
                       style={{
                         padding: '0.8em 1.6em',
-                        color: '#090909'
+                        color: '#090909',
+                        gap: '8px'
                       }}
                     >
-                      📷 Tomar Foto / Elegir Archivo
+                      <CameraIcon size={18} color="#090909" /> Tomar Foto / Elegir Archivo
                     </button>
                   </div>
                 )}
@@ -1091,7 +1117,7 @@ export default function EmpadronamientoClient() {
                 position: 'absolute',
                 top: '14px',
                 right: '14px',
-                background: '#F3F4F6',
+                background: '#e8e8e8',
                 border: 'none',
                 borderRadius: '50%',
                 width: '32px',
@@ -1110,14 +1136,12 @@ export default function EmpadronamientoClient() {
               borderRadius: '0.75rem',
               background: '#FEF3C7',
               border: '2px solid #FCD34D',
-              color: '#D97706',
-              fontSize: '1.8rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 0.75rem auto'
             }}>
-              🔒
+              <LockIcon size={24} color="#D97706" />
             </div>
 
             <h3 style={{
@@ -1150,9 +1174,9 @@ export default function EmpadronamientoClient() {
 
             <form onSubmit={handleAdminLogin} style={{ textAlign: 'left' }}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Usuario:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Usuario:</span>
+                </div>
                 <input
                   type="text"
                   required
@@ -1164,9 +1188,9 @@ export default function EmpadronamientoClient() {
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={spaciousLabelStyle}>
-                  Contraseña:
-                </label>
+                <div style={spaciousLabelStyle}>
+                  <span>Contraseña:</span>
+                </div>
                 <input
                   type="password"
                   required

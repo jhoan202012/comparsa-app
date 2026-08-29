@@ -139,8 +139,6 @@ body {
   border: 1.5px solid #D97706;
   box-shadow: inset 3px 3px 6px rgba(217, 119, 6, 0.2), inset -3px -3px 6px #ffffff;
 }
-  background-attachment: fixed;
-}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair), serif;
