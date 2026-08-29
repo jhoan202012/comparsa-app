@@ -10,12 +10,12 @@ export default function EmpadronamientoClient() {
   const [isLocked, setIsLocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  // Paso 1: Identidad (Campos Desglosados y Bloqueables)
+  // Paso 1: Identidad
   const [dni, setDni] = useState('');
   const [nombres, setNombres] = useState('');
   const [apellidos, setApellidos] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [gender, setGender] = useState('Masculino'); // 'Masculino' | 'Femenino'
+  const [gender, setGender] = useState('Masculino');
 
   // Paso 2: Contacto & Residencia
   const [phone, setPhone] = useState('');
@@ -26,7 +26,7 @@ export default function EmpadronamientoClient() {
   const [address, setAddress] = useState('');
 
   // Paso 3: Trayectoria & Familia
-  const [memberType, setMemberType] = useState('SOCIO'); // SOCIO, MUSICO, DIRECTIVO
+  const [memberType, setMemberType] = useState('SOCIO');
   const [affiliationYear, setAffiliationYear] = useState('2027');
   const [hasRelatives, setHasRelatives] = useState(false);
   const [relativesDetail, setRelativesDetail] = useState('');
@@ -69,7 +69,7 @@ export default function EmpadronamientoClient() {
             setNombres(data.nombres || data.name);
             setApellidos(data.apellidos || '');
             setDniVerified(true);
-            setIsLocked(true); // Bloquear campos automáticamente
+            setIsLocked(true);
           }
           if (data.birthDate) {
             setBirthDate(data.birthDate);
@@ -161,7 +161,7 @@ export default function EmpadronamientoClient() {
       const data = await res.json();
       if (res.ok && data.success) {
         setSavedUser(data.user);
-        setStep(5); // Pantalla final con Carnet Oficial QR
+        setStep(5);
       } else {
         setErrorMsg(data.error || 'Hubo un error al procesar tu empadronamiento.');
       }
@@ -174,794 +174,947 @@ export default function EmpadronamientoClient() {
   };
 
   return (
-    <div style={{
-      background: '#FFFFFF',
-      borderRadius: '24px',
-      boxShadow: '0 12px 36px rgba(14, 71, 42, 0.09)',
-      border: '1.5px solid #E5E7EB',
-      overflow: 'hidden',
-      maxWidth: '680px',
-      margin: '0 auto'
-    }}>
+    <div style={{ maxWidth: '560px', margin: '0 auto', fontFamily: 'var(--font-inter, sans-serif)' }}>
       
-      {/* Cabecera Oficial Señorial (Google Stitch Luxury Pattern) */}
-      <div style={{
-        background: 'linear-gradient(135deg, #002F18 0%, #0E472A 70%, #1A3624 100%)',
-        color: '#FFFFFF',
-        padding: '1.75rem 1.5rem',
-        textAlign: 'center',
-        borderBottom: '3.5px solid #D99B00',
-        position: 'relative'
-      }}>
-        <div style={{
-          display: 'inline-block',
-          background: 'rgba(217, 155, 0, 0.22)',
-          border: '1px solid #FCD34D',
-          color: '#FCD34D',
-          fontSize: '0.75rem',
-          fontWeight: 800,
-          letterSpacing: '1.5px',
-          textTransform: 'uppercase',
-          padding: '3px 12px',
-          borderRadius: '9999px',
-          marginBottom: '0.5rem'
-        }}>
-          Carnaval Ayacuchano 2027
-        </div>
-        <h1 style={{
-          fontFamily: 'var(--font-playfair, serif)',
-          fontSize: '1.75rem',
-          fontWeight: 900,
-          margin: '0 0 0.35rem 0',
-          color: '#FFFFFF',
-          letterSpacing: '0.5px'
-        }}>
-          EMPADRONAMIENTO OFICIAL
-        </h1>
-        <p style={{ fontSize: '0.88rem', color: '#E5E7EB', margin: 0, fontWeight: 500 }}>
-          Comparsa Cangallo Señorial • Padrón Institucional de Socios
-        </p>
-      </div>
-
-      {/* Barra de Progreso (Pasos 1 a 4) */}
+      {/* ==================== GOOGLE STITCH APP HEADER ==================== */}
       {step < 5 && (
-        <div style={{ padding: '1.1rem 1.75rem 0.65rem 1.75rem', background: '#FAF7F2', borderBottom: '1px solid #E5E7EB' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.3px' }}>
-            <span style={{ color: step >= 1 ? '#0E472A' : '#9CA3AF' }}>1. Identidad DNI</span>
-            <span style={{ color: step >= 2 ? '#0E472A' : '#9CA3AF' }}>2. Contacto</span>
-            <span style={{ color: step >= 3 ? '#0E472A' : '#9CA3AF' }}>3. Membresía</span>
-            <span style={{ color: step >= 4 ? '#0E472A' : '#9CA3AF' }}>4. Talentos & Foto</span>
+        <div style={{ marginBottom: '1.75rem' }}>
+          {/* Top Bar con Botón Volver y Paso */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep(step - 1)}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '1.5px solid #E5E7EB',
+                  background: '#FFFFFF',
+                  color: '#002F18',
+                  fontSize: '1.1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+                }}
+              >
+                ←
+              </button>
+            ) : (
+              <Link
+                href="/"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '1.5px solid #E5E7EB',
+                  background: '#FFFFFF',
+                  color: '#002F18',
+                  fontSize: '1.1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textDecoration: 'none',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+                }}
+              >
+                ←
+              </Link>
+            )}
+
+            <div style={{
+              background: '#FEF3C7',
+              border: '1px solid #FCD34D',
+              color: '#92400E',
+              fontSize: '0.72rem',
+              fontWeight: 900,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              padding: '4px 14px',
+              borderRadius: '9999px'
+            }}>
+              PASO {step} DE 4
+            </div>
+
+            <div style={{ width: '40px' }} />
           </div>
-          <div style={{ height: '6px', background: '#E5E7EB', borderRadius: '10px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(step / 4) * 100}%`, background: 'linear-gradient(90deg, #0E472A, #D99B00)', transition: 'width 0.3s ease' }} />
+
+          {/* Barra de Progreso Fina de Stitch */}
+          <div style={{ height: '4px', background: '#E5E7EB', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              width: `${(step / 4) * 100}%`,
+              background: 'linear-gradient(90deg, #002F18 0%, #D99B00 100%)',
+              transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+            }} />
           </div>
+        </div>
+      )}
+
+      {/* ==================== HERO DE SECCIÓN ==================== */}
+      {step < 5 && (
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          {/* Badge Dorado */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'rgba(217, 155, 0, 0.12)',
+            border: '1px solid rgba(217, 155, 0, 0.35)',
+            color: '#7D5800',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            letterSpacing: '1.2px',
+            textTransform: 'uppercase',
+            padding: '4px 14px',
+            borderRadius: '9999px',
+            marginBottom: '0.75rem'
+          }}>
+            <span>✨</span> CANGALLO SEÑORIAL 2027
+          </div>
+
+          <h1 style={{
+            fontFamily: 'var(--font-playfair, "Libre Caslon Text", serif)',
+            fontSize: '1.9rem',
+            fontWeight: 900,
+            color: '#002F18',
+            lineHeight: 1.15,
+            margin: '0 0 0.5rem 0'
+          }}>
+            {step === 1 && 'Validación de Identidad'}
+            {step === 2 && 'Contacto & Residencia'}
+            {step === 3 && 'Membresía & Familia'}
+            {step === 4 && 'Talentos & Fotografía'}
+          </h1>
+
+          <p style={{ fontSize: '0.9rem', color: '#4B5563', margin: 0, maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto' }}>
+            {step === 1 && 'Ingresa tu DNI para autocompletar tus datos oficiales de RENIEC.'}
+            {step === 2 && 'Indica tu WhatsApp principal para recibir comunicados oficiales.'}
+            {step === 3 && 'Selecciona tu rol institucional en la comparsa y familiares.'}
+            {step === 4 && 'Elige tu talla de vestuario, disciplinas y sube tu foto carnet.'}
+          </p>
         </div>
       )}
 
       {/* Mensaje de Error */}
       {errorMsg && (
-        <div style={{ margin: '1.25rem 1.75rem 0 1.75rem', padding: '0.9rem 1rem', background: '#FEE2E2', border: '1px solid #EF4444', color: '#B91C1C', borderRadius: '12px', fontSize: '0.88rem', fontWeight: 700 }}>
+        <div style={{ marginBottom: '1.25rem', padding: '0.9rem 1.1rem', background: '#FEE2E2', border: '1px solid #EF4444', color: '#B91C1C', borderRadius: '14px', fontSize: '0.88rem', fontWeight: 700 }}>
           ⚠️ {errorMsg}
         </div>
       )}
 
-      {/* Contenido por Pasos */}
-      <div style={{ padding: '1.75rem' }}>
+      {/* ==================== TARJETA PRINCIPAL (GOOGLE STITCH SPEC) ==================== */}
+      <div style={{
+        background: '#FFFFFF',
+        border: '1px solid #E5E7EB',
+        borderRadius: '24px',
+        boxShadow: '0 16px 40px rgba(0, 47, 24, 0.06)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Borde Superior Dorado Sutil */}
+        <div style={{
+          height: '4px',
+          background: 'linear-gradient(90deg, #D99B00 0%, #FEBB30 50%, #D99B00 100%)',
+          width: '100%'
+        }} />
 
-        {/* ==================== PASO 1: IDENTIDAD DNI DESGLOSADA Y BLOQUEADA ==================== */}
-        {step === 1 && (
-          <div>
-            <h2 style={{ fontSize: '1.3rem', color: '#0E472A', fontWeight: 800, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              👤 Paso 1: Validación de Identidad por DNI
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '1.25rem' }}>
-              Digita tu DNI de 8 dígitos para autocompletar y verificar tu identidad oficial:
-            </p>
+        <div style={{ padding: '2rem 1.75rem' }}>
 
-            {/* DNI con autolookup */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18' }}>
-                  Nº de DNI (8 dígitos): <span style={{ color: '#DC2626' }}>*</span>
-                </label>
-                {dniLoading && (
-                  <span style={{ fontSize: '0.78rem', color: '#0E472A', fontWeight: 800 }}>
-                    🔍 Validando en tiempo real...
-                  </span>
+          {/* ==================== PASO 1: VALIDACIÓN DNI ==================== */}
+          {step === 1 && (
+            <div>
+              {/* Campo DNI Principal con Look Premium */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    NÚMERO DE DNI (8 DÍGITOS)
+                  </label>
+                  {dniLoading && (
+                    <span style={{ fontSize: '0.75rem', color: '#002F18', fontWeight: 800 }}>
+                      🔍 Consultando RENIEC...
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    maxLength={8}
+                    placeholder="Ej. 70112123"
+                    value={dni}
+                    onChange={e => handleDniInput(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '1rem 1.25rem',
+                      borderRadius: '16px',
+                      border: dniVerified ? '2px solid #10B981' : '1.5px solid #D1D5DB',
+                      fontSize: '1.3rem',
+                      fontWeight: 800,
+                      letterSpacing: '3px',
+                      background: '#FFF8F5',
+                      color: '#002F18',
+                      outline: 'none',
+                      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+                      transition: 'border 0.2s ease'
+                    }}
+                  />
+                  {dniVerified && !alreadyRegisteredUser && (
+                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: '#10B981', color: '#FFFFFF', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 900 }}>
+                      ✓
+                    </span>
+                  )}
+                </div>
+
+                {dniVerified && !alreadyRegisteredUser && (
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🛡️</span> <span>Identidad Verificada Oficialmente</span>
+                  </div>
                 )}
               </div>
-              <input
-                type="text"
-                maxLength={8}
-                placeholder="Escribe tu DNI (Ej. 74839201)"
-                value={dni}
-                onChange={e => handleDniInput(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.9rem 1rem',
-                  borderRadius: '14px',
-                  border: dniVerified ? '2px solid #10B981' : '1.5px solid #D1D5DB',
-                  fontSize: '1.15rem',
+
+              {/* Mensaje si el usuario ya está empadronado: ULTRA LIMPIO */}
+              {alreadyRegisteredUser ? (
+                <div style={{
+                  marginTop: '1.25rem',
+                  padding: '1.25rem',
+                  background: '#FEF3C7',
+                  border: '1.5px solid #F59E0B',
+                  color: '#92400E',
+                  borderRadius: '16px',
+                  fontSize: '1.05rem',
                   fontWeight: 800,
-                  letterSpacing: '2px',
-                  background: '#FAF7F2',
-                  outline: 'none',
-                  transition: 'border 0.2s ease'
-                }}
-              />
-              {dniVerified && !alreadyRegisteredUser && (
-                <div style={{ marginTop: '0.45rem', fontSize: '0.82rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  ✅ <span>Identidad Verificada con RENIEC</span>
+                  textAlign: 'center',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.1)'
+                }}>
+                  ⚠️ El usuario ya se encuentra empadronado.
                 </div>
+              ) : (
+                <>
+                  {/* Campos de Identidad Desglosados */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '1.75rem' }}>
+                    
+                    {/* Nombres */}
+                    <div>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                        Nombres Oficiales {isLocked && <span style={{ color: '#D99B00' }}>🔒</span>}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Jhoan"
+                        value={nombres}
+                        readOnly={isLocked}
+                        onChange={e => setNombres(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.85rem 1rem',
+                          borderRadius: '12px',
+                          border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                          fontSize: '1rem',
+                          fontWeight: 700,
+                          background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                          color: isLocked ? '#065F46' : '#1E1B18',
+                          cursor: isLocked ? 'not-allowed' : 'text',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    {/* Apellidos */}
+                    <div>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                        Apellidos Oficiales {isLocked && <span style={{ color: '#D99B00' }}>🔒</span>}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Taboada Huaman"
+                        value={apellidos}
+                        readOnly={isLocked}
+                        onChange={e => setApellidos(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.85rem 1rem',
+                          borderRadius: '12px',
+                          border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                          fontSize: '1rem',
+                          fontWeight: 700,
+                          background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                          color: isLocked ? '#065F46' : '#1E1B18',
+                          cursor: isLocked ? 'not-allowed' : 'text',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    {/* Fila: Sexo & Nacimiento */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                          Sexo / Género
+                        </label>
+                        <select
+                          value={gender}
+                          onChange={e => setGender(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.85rem',
+                            borderRadius: '12px',
+                            border: '1px solid #D1D5DB',
+                            fontSize: '0.95rem',
+                            fontWeight: 700,
+                            background: '#FFFFFF',
+                            color: '#1E1B18',
+                            outline: 'none'
+                          }}
+                        >
+                          <option value="Masculino">Varón</option>
+                          <option value="Femenino">Mujer</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                          Nacimiento
+                        </label>
+                        <input
+                          type="date"
+                          value={birthDate}
+                          onChange={e => setBirthDate(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.8rem',
+                            borderRadius: '12px',
+                            border: '1px solid #D1D5DB',
+                            fontSize: '0.92rem',
+                            fontWeight: 700,
+                            background: '#FFFFFF',
+                            color: '#1E1B18',
+                            outline: 'none'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={!dni || !nombres}
+                    onClick={() => setStep(2)}
+                    style={{
+                      width: '100%',
+                      padding: '1.1rem',
+                      borderRadius: '16px',
+                      background: (!dni || !nombres) ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                      color: '#FFFFFF',
+                      border: (!dni || !nombres) ? 'none' : '1px solid #D99B00',
+                      fontSize: '1.05rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.5px',
+                      cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
+                      boxShadow: (!dni || !nombres) ? 'none' : '0 8px 24px rgba(0, 47, 24, 0.28)',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    Continuar al Paso 2 ➔
+                  </button>
+                </>
               )}
             </div>
+          )}
 
-            {/* Si el socio ya está empadronado en el sistema: MENSAJE LIMPIO SOLICITADO */}
-            {alreadyRegisteredUser ? (
-              <div style={{
-                marginTop: '1.25rem',
-                padding: '1.25rem',
-                background: '#FEF3C7',
-                border: '1.5px solid #F59E0B',
-                color: '#92400E',
-                borderRadius: '14px',
-                fontSize: '1rem',
-                fontWeight: 800,
-                textAlign: 'center'
-              }}>
-                ⚠️ El usuario ya se encuentra empadronado.
-              </div>
-            ) : (
-              <>
-                {/* Banner de Bloqueo de Seguridad */}
-                {isLocked && (
-                  <div style={{
-                    background: '#ECFDF5',
-                    border: '1px solid #A7F3D0',
-                    borderRadius: '12px',
-                    padding: '0.65rem 0.9rem',
-                    marginBottom: '1.1rem',
-                    fontSize: '0.78rem',
-                    color: '#065F46',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}>
-                    🔒 <strong>Datos Oficiales Bloqueados:</strong> La información obtenida de tu DNI no puede ser modificada para garantizar la validez del padrón.
-                  </div>
-                )}
-
-                {/* Nombres y Apellidos Desglosados */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.1rem' }}>
-                  <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                      Nombre: <span style={{ color: '#DC2626' }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Jhoan"
-                      value={nombres}
-                      readOnly={isLocked}
-                      onChange={e => setNombres(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '0.85rem',
-                        borderRadius: '12px',
-                        border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
-                        fontSize: '0.95rem',
-                        fontWeight: 700,
-                        background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                        color: isLocked ? '#065F46' : '#111827',
-                        cursor: isLocked ? 'not-allowed' : 'text',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                      Apellidos: <span style={{ color: '#DC2626' }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Taboada Huaman"
-                      value={apellidos}
-                      readOnly={isLocked}
-                      onChange={e => setApellidos(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '0.85rem',
-                        borderRadius: '12px',
-                        border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
-                        fontSize: '0.95rem',
-                        fontWeight: 700,
-                        background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                        color: isLocked ? '#065F46' : '#111827',
-                        cursor: isLocked ? 'not-allowed' : 'text',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
+          {/* ==================== PASO 2: CONTACTO ==================== */}
+          {step === 2 && (
+            <div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '1.75rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                    Celular / WhatsApp Principal <span style={{ color: '#DC2626' }}>*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="Ej. 987654321"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.9rem 1rem',
+                      borderRadius: '14px',
+                      border: '1.5px solid #D1D5DB',
+                      fontSize: '1.05rem',
+                      fontWeight: 800,
+                      background: '#FFF8F5',
+                      outline: 'none'
+                    }}
+                  />
                 </div>
 
-                {/* Sexo y Fecha de Nacimiento */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                    Correo Electrónico (Opcional)
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Ej. mi.correo@gmail.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem 1rem',
+                      borderRadius: '14px',
+                      border: '1px solid #D1D5DB',
+                      fontSize: '0.95rem',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                      Sexo / Género:
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                      Departamento
                     </label>
                     <select
-                      value={gender}
-                      onChange={e => setGender(e.target.value)}
+                      value={department}
+                      onChange={e => setDepartment(e.target.value)}
                       style={{
                         width: '100%',
                         padding: '0.85rem',
                         borderRadius: '12px',
                         border: '1px solid #D1D5DB',
-                        fontSize: '0.95rem',
+                        fontSize: '0.9rem',
                         fontWeight: 700,
                         background: '#FFFFFF',
-                        color: '#111827',
                         outline: 'none'
                       }}
                     >
-                      <option value="Masculino">Varón</option>
-                      <option value="Femenino">Mujer</option>
+                      <option value="Ayacucho">Ayacucho</option>
+                      <option value="Lima">Lima / Callao</option>
+                      <option value="Ica">Ica</option>
+                      <option value="Huancavelica">Huancavelica</option>
+                      <option value="Arequipa">Arequipa</option>
+                      <option value="Cusco">Cusco</option>
+                      <option value="Otro">Otra Región</option>
                     </select>
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                      Fecha de Nacimiento:
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                      Distrito
                     </label>
                     <input
-                      type="date"
-                      value={birthDate}
-                      onChange={e => setBirthDate(e.target.value)}
+                      type="text"
+                      placeholder="Ej. Cangallo"
+                      value={district}
+                      onChange={e => setDistrict(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '0.8rem',
+                        padding: '0.85rem',
                         borderRadius: '12px',
                         border: '1px solid #D1D5DB',
-                        fontSize: '0.95rem',
+                        fontSize: '0.9rem',
                         fontWeight: 700,
-                        background: '#FFFFFF',
-                        color: '#111827',
                         outline: 'none'
                       }}
                     />
                   </div>
                 </div>
 
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
+                    Dirección o Referencia
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Jr. Sucre 240 / Cerca a la Plaza Central"
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem 1rem',
+                      borderRadius: '12px',
+                      border: '1px solid #D1D5DB',
+                      fontSize: '0.9rem',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                   type="button"
-                  disabled={!dni || !nombres}
-                  onClick={() => setStep(2)}
+                  disabled={!phone}
+                  onClick={() => setStep(3)}
                   style={{
                     width: '100%',
-                    padding: '0.95rem',
-                    borderRadius: '14px',
-                    background: (!dni || !nombres) ? '#9CA3AF' : '#0E472A',
+                    padding: '1.1rem',
+                    borderRadius: '16px',
+                    background: !phone ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
                     color: '#FFFFFF',
-                    border: 'none',
-                    fontSize: '1rem',
+                    border: !phone ? 'none' : '1px solid #D99B00',
+                    fontSize: '1.05rem',
                     fontWeight: 800,
-                    cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 14px rgba(14, 71, 42, 0.25)',
-                    transition: 'all 0.2s ease'
+                    cursor: !phone ? 'not-allowed' : 'pointer',
+                    boxShadow: !phone ? 'none' : '0 8px 24px rgba(0, 47, 24, 0.28)'
                   }}
                 >
-                  Continuar al Paso 2 ➔
+                  Continuar al Paso 3 ➔
                 </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ==================== PASO 2: CONTACTO & RESIDENCIA ==================== */}
-        {step === 2 && (
-          <div>
-            <h2 style={{ fontSize: '1.3rem', color: '#0E472A', fontWeight: 800, marginBottom: '0.35rem' }}>
-              📍 Paso 2: Contacto & Residencia
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '1.25rem' }}>
-              ¿Dónde resides actualmente y a qué número de WhatsApp podemos coordinar?
-            </p>
-
-            <div style={{ marginBottom: '1.1rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                Celular / WhatsApp Principal: <span style={{ color: '#DC2626' }}>*</span>
-              </label>
-              <input
-                type="tel"
-                placeholder="Ej. 987654321"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '1rem', fontWeight: 700, outline: 'none' }}
-              />
+              </div>
             </div>
+          )}
 
-            <div style={{ marginBottom: '1.1rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                Correo Electrónico (Opcional):
-              </label>
-              <input
-                type="email"
-                placeholder="Ej. socio@gmail.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.95rem', outline: 'none' }}
-              />
-            </div>
+          {/* ==================== PASO 3: MEMBRESÍA & FAMILIA (STITCH TACTILE TILES) ==================== */}
+          {step === 3 && (
+            <div>
+              {/* Selector de Rol en Tarjetas de Lujo */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.6rem' }}>
+                  Selecciona tu Rol Institucional:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+                  {[
+                    { id: 'SOCIO', icon: '💃', label: 'Danzante', desc: 'Bailarín(a)' },
+                    { id: 'MUSICO', icon: '🎺', label: 'Músico', desc: 'Banda' },
+                    { id: 'DIRECTIVO', icon: '👑', label: 'Directivo', desc: 'Comité' }
+                  ].map(item => {
+                    const active = memberType === item.id;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setMemberType(item.id)}
+                        style={{
+                          border: active ? '2px solid #D99B00' : '1.5px solid #E5E7EB',
+                          background: active ? '#002F18' : '#FFF8F5',
+                          color: active ? '#FFFFFF' : '#1E1B18',
+                          borderRadius: '16px',
+                          padding: '14px 8px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          boxShadow: active ? '0 6px 16px rgba(0, 47, 24, 0.25)' : 'none',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{ fontSize: '1.6rem', marginBottom: '4px' }}>{item.icon}</div>
+                        <div style={{ fontWeight: 900, fontSize: '0.92rem', color: active ? '#FCD34D' : '#002F18' }}>{item.label}</div>
+                        <div style={{ fontSize: '0.72rem', color: active ? '#A7F3D0' : '#6B7280', marginTop: '2px' }}>{item.desc}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.1rem' }}>
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                  Región / Departamento:
+              {/* Año de Afiliación */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.4rem' }}>
+                  Año de Ingreso a Cangallo Señorial:
                 </label>
                 <select
-                  value={department}
-                  onChange={e => setDepartment(e.target.value)}
-                  style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.9rem', background: '#FFFFFF', outline: 'none' }}
+                  value={affiliationYear}
+                  onChange={e => setAffiliationYear(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.9rem',
+                    borderRadius: '14px',
+                    border: '1.5px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 800,
+                    background: '#FFFFFF',
+                    color: '#002F18',
+                    outline: 'none'
+                  }}
                 >
-                  <option value="Ayacucho">Ayacucho</option>
-                  <option value="Lima">Lima / Callao</option>
-                  <option value="Ica">Ica</option>
-                  <option value="Huancavelica">Huancavelica</option>
-                  <option value="Arequipa">Arequipa</option>
-                  <option value="Cusco">Cusco</option>
-                  <option value="Otro">Otra Región</option>
+                  <option value="2027">🌟 2027 (Nuevo Integrante)</option>
+                  <option value="2026">2026 (1 año de antigüedad)</option>
+                  <option value="2025">2025 (2 años de antigüedad)</option>
+                  <option value="2024">2024 (3 años de antigüedad)</option>
+                  <option value="2023">2023</option>
+                  <option value="2020">2020 o anterior (Socio Tradicional)</option>
+                  <option value="2015">2015 o anterior (Socio Fundador / Veterano)</option>
                 </select>
               </div>
 
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                  Distrito de Residencia:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej. Cangallo / San Juan"
-                  value={district}
-                  onChange={e => setDistrict(e.target.value)}
-                  style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                Dirección / Referencia (Opcional):
-              </label>
-              <input
-                type="text"
-                placeholder="Ej. Jr. Sucre 240 / Cerca a la Plaza"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                style={{ flex: 1, padding: '0.9rem', borderRadius: '12px', background: '#F3F4F6', color: '#374151', border: 'none', fontWeight: 700, cursor: 'pointer' }}
-              >
-                ⬅ Volver
-              </button>
-              <button
-                type="button"
-                disabled={!phone}
-                onClick={() => setStep(3)}
-                style={{ flex: 2, padding: '0.9rem', borderRadius: '12px', background: !phone ? '#9CA3AF' : '#0E472A', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: !phone ? 'not-allowed' : 'pointer' }}
-              >
-                Continuar al Paso 3 ➔
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ==================== PASO 3: MEMBRESÍA & FAMILIA (Stitch Tactile Tiles) ==================== */}
-        {step === 3 && (
-          <div>
-            <h2 style={{ fontSize: '1.3rem', color: '#0E472A', fontWeight: 800, marginBottom: '0.35rem' }}>
-              🏛️ Paso 3: Membresía & Familiares
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '1.25rem' }}>
-              Tu rol institucional en Cangallo Señorial y vínculos familiares:
-            </p>
-
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.4rem' }}>
-                Tipo de Socio / Rol Institucional:
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                {[
-                  { id: 'SOCIO', label: '💃 Danzante', desc: 'Bailarín(a) comparsa' },
-                  { id: 'MUSICO', label: '🎺 Músico', desc: 'Banda / Orquesta' },
-                  { id: 'DIRECTIVO', label: '👑 Directivo', desc: 'Comité / Delegado' }
-                ].map(item => (
-                  <div
-                    key={item.id}
-                    onClick={() => setMemberType(item.id)}
-                    style={{
-                      border: memberType === item.id ? '2px solid #D99B00' : '1px solid #D1D5DB',
-                      background: memberType === item.id ? '#FEF3C7' : '#FFFFFF',
-                      borderRadius: '14px',
-                      padding: '12px 8px',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      boxShadow: memberType === item.id ? '0 4px 12px rgba(217, 155, 0, 0.2)' : 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: memberType === item.id ? '#0E472A' : '#111827' }}>{item.label}</div>
-                    <div style={{ fontSize: '0.72rem', color: '#6B7280', marginTop: '2px' }}>{item.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                ¿Desde qué año integras Cangallo Señorial? (Año de Ingreso):
-              </label>
-              <select
-                value={affiliationYear}
-                onChange={e => setAffiliationYear(e.target.value)}
-                style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.95rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
-              >
-                <option value="2027">🌟 2027 (Nuevo Integrante)</option>
-                <option value="2026">2026 (1 año de antigüedad)</option>
-                <option value="2025">2025 (2 años de antigüedad)</option>
-                <option value="2024">2024 (3 años de antigüedad)</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-                <option value="2020">2020 o anterior (Socio Tradicional)</option>
-                <option value="2015">2015 o anterior (Socio Fundador / Veterano)</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem', background: '#FAF7F2', borderRadius: '14px', padding: '1rem 1.1rem', border: '1px solid #E5E7EB' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1E1B18' }}>
-                  ¿Tienes familiares directos en la comparsa?
-                </span>
-                <input
-                  type="checkbox"
-                  checked={hasRelatives}
-                  onChange={e => setHasRelatives(e.target.checked)}
-                  style={{ width: '20px', height: '20px', accentColor: '#0E472A', cursor: 'pointer' }}
-                />
-              </div>
-
-              {hasRelatives && (
-                <div style={{ marginTop: '0.5rem' }}>
-                  <input
-                    type="text"
-                    placeholder="Ej. Mi hermano Carlos y mi prima Rosa"
-                    value={relativesDetail}
-                    onChange={e => setRelativesDetail(e.target.value)}
-                    style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '10px', border: '1px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none' }}
-                  />
-                  <span style={{ fontSize: '0.75rem', color: '#6B7280', display: 'block', marginTop: '4px' }}>
-                    Nos ayuda a organizar bloques familiares en el pasacalle central.
+              {/* Familiares en la Comparsa */}
+              <div style={{ marginBottom: '1.75rem', background: '#FFF8F5', borderRadius: '16px', padding: '1.1rem', border: '1px solid #E5E7EB' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#002F18' }}>
+                    ¿Tienes familiares en la comparsa?
                   </span>
+                  <input
+                    type="checkbox"
+                    checked={hasRelatives}
+                    onChange={e => setHasRelatives(e.target.checked)}
+                    style={{ width: '22px', height: '22px', accentColor: '#002F18', cursor: 'pointer' }}
+                  />
                 </div>
-              )}
-            </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setStep(2)}
-                style={{ flex: 1, padding: '0.9rem', borderRadius: '12px', background: '#F3F4F6', color: '#374151', border: 'none', fontWeight: 700, cursor: 'pointer' }}
-              >
-                ⬅ Volver
-              </button>
+                {hasRelatives && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <input
+                      type="text"
+                      placeholder="Ej. Mi hermano Carlos y mi prima Rosa"
+                      value={relativesDetail}
+                      onChange={e => setRelativesDetail(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.8rem 1rem',
+                        borderRadius: '12px',
+                        border: '1px solid #D1D5DB',
+                        fontSize: '0.88rem',
+                        background: '#FFFFFF',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setStep(4)}
-                style={{ flex: 2, padding: '0.9rem', borderRadius: '12px', background: '#0E472A', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}
+                style={{
+                  width: '100%',
+                  padding: '1.1rem',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                  color: '#FFFFFF',
+                  border: '1px solid #D99B00',
+                  fontSize: '1.05rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(0, 47, 24, 0.28)'
+                }}
               >
                 Continuar al Paso 4 ➔
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ==================== PASO 4: TALENTOS, VESTUARIO, PIN & FOTOGRAFÍA AL FINAL ==================== */}
-        {step === 4 && (
-          <form onSubmit={handleSubmit}>
-            <h2 style={{ fontSize: '1.3rem', color: '#0E472A', fontWeight: 800, marginBottom: '0.35rem' }}>
-              🎨 Paso 4: Talentos, Vestuario & Fotografía Final
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '1.25rem' }}>
-              Completa tus disciplinas, talla de ropa, PIN y sube tu foto para el carnet QR:
-            </p>
-
-            {/* Talentos Selección */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.4rem' }}>
-                Disciplinas y Talentos (Selecciona todas las que apliquen):
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                {[
-                  { id: 'Danza', label: '💃 Danza', sub: 'Danzante / Coreógrafo' },
-                  { id: 'Canto', label: '🎤 Canto', sub: 'Solista / Corista' },
-                  { id: 'Música', label: '🎺 Música', sub: 'Toca instrumento' },
-                  { id: 'Creación', label: '✍️ Creación', sub: 'Compositor / Letrista' },
-                  { id: 'Arte', label: '📸 Arte & Foto', sub: 'Fotografía / Video' },
-                  { id: 'Bordado', label: '🧵 Vestuario', sub: 'Confección / Bordado' }
-                ].map(item => {
-                  const isSelected = selectedTalents.includes(item.id);
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => handleTalentToggle(item.id)}
-                      style={{
-                        border: isSelected ? '1.5px solid #0E472A' : '1px solid #D1D5DB',
-                        background: isSelected ? '#ECFDF5' : '#FFFFFF',
-                        borderRadius: '12px',
-                        padding: '10px 12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 800, color: isSelected ? '#0E472A' : '#111827' }}>{item.label}</div>
-                        <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>{item.sub}</div>
-                      </div>
-                      <span style={{ fontSize: '1.1rem', fontWeight: 900, color: isSelected ? '#0E472A' : '#D1D5DB' }}>
-                        {isSelected ? '✓' : '+'}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Instrumento si seleccionó Música */}
-            {selectedTalents.includes('Música') && (
-              <div style={{ marginBottom: '1.1rem', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '12px', padding: '0.9rem' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400E', display: 'block', marginBottom: '0.35rem' }}>
-                  🎺 ¿Qué instrumento musical tocas?
+          {/* ==================== PASO 4: TALENTOS, VESTUARIO, PIN & FOTO ==================== */}
+          {step === 4 && (
+            <form onSubmit={handleSubmit}>
+              {/* Disciplinas y Talentos */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.5rem' }}>
+                  Disciplinas & Talentos Artísticos:
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ej. Guitarra, Mandolina, Quena, Violín, Trompeta"
-                  value={musicalInstrument}
-                  onChange={e => setMusicalInstrument(e.target.value)}
-                  style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '8px', border: '1px solid #F59E0B', fontSize: '0.9rem', background: '#FFFFFF', outline: 'none' }}
-                />
-              </div>
-            )}
-
-            {/* Talla de Vestuario */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.4rem' }}>
-                Talla de Vestuario para Carnaval 2027:
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
-                {['S', 'M', 'L', 'XL', 'XXL'].map(size => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => setClothingSize(size)}
-                    style={{
-                      padding: '0.75rem 0',
-                      borderRadius: '10px',
-                      border: clothingSize === size ? '2px solid #D99B00' : '1px solid #D1D5DB',
-                      background: clothingSize === size ? '#0E472A' : '#FFFFFF',
-                      color: clothingSize === size ? '#FFFFFF' : '#111827',
-                      fontWeight: 900,
-                      fontSize: '0.95rem',
-                      cursor: 'pointer',
-                      boxShadow: clothingSize === size ? '0 2px 8px rgba(14, 71, 42, 0.25)' : 'none'
-                    }}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* PIN de 4 dígitos */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1E1B18', display: 'block', marginBottom: '0.35rem' }}>
-                Crea tu PIN de Acceso (4 dígitos para ver tu carnet y asistencia):
-              </label>
-              <input
-                type="password"
-                maxLength={4}
-                placeholder="Ej. 1234"
-                value={pin}
-                onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
-                style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '1.2rem', fontWeight: 800, letterSpacing: '4px', textAlign: 'center', background: '#FAF7F2', outline: 'none' }}
-              />
-            </div>
-
-            {/* FOTOGRAFÍA AL FINAL DEL FORMULARIO (Google Stitch High-End Avatar Box) */}
-            <div style={{ marginBottom: '1.5rem', background: '#FAF7F2', border: '1.5px dashed #D99B00', borderRadius: '16px', padding: '1.25rem', textAlign: 'center' }}>
-              <label style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0E472A', display: 'block', marginBottom: '0.35rem' }}>
-                📸 Fotografía / Selfie para tu Carnet Oficial 2027:
-              </label>
-              <p style={{ fontSize: '0.78rem', color: '#6B7280', marginBottom: '0.9rem' }}>
-                Tómate una selfie clara con tu celular o sube una foto de tu rostro:
-              </p>
-
-              {avatarUrl ? (
-                <div style={{ display: 'inline-block', position: 'relative' }}>
-                  <img
-                    src={avatarUrl}
-                    alt="Foto de Perfil"
-                    style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #D99B00', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setAvatarUrl('')}
-                    style={{ position: 'absolute', bottom: 0, right: 0, background: '#DC2626', color: '#FFFFFF', border: 'none', borderRadius: '50%', width: '28px', height: '28px', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    ✕
-                  </button>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {[
+                    { id: 'Danza', label: '💃 Danza', desc: 'Coreografía' },
+                    { id: 'Canto', label: '🎤 Canto', desc: 'Voz / Coro' },
+                    { id: 'Música', label: '🎺 Música', desc: 'Instrumento' },
+                    { id: 'Creación', label: '✍️ Creación', desc: 'Compositor' },
+                    { id: 'Arte', label: '📸 Arte & Foto', desc: 'Redes / Foto' },
+                    { id: 'Bordado', label: '🧵 Vestuario', desc: 'Confección' }
+                  ].map(item => {
+                    const isSelected = selectedTalents.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => handleTalentToggle(item.id)}
+                        style={{
+                          border: isSelected ? '1.5px solid #002F18' : '1px solid #E5E7EB',
+                          background: isSelected ? '#ECFDF5' : '#FFFFFF',
+                          borderRadius: '14px',
+                          padding: '10px 12px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: '0.88rem', fontWeight: 800, color: isSelected ? '#002F18' : '#1E1B18' }}>{item.label}</div>
+                          <div style={{ fontSize: '0.7rem', color: '#6B7280' }}>{item.desc}</div>
+                        </div>
+                        <span style={{ fontSize: '1rem', fontWeight: 900, color: isSelected ? '#002F18' : '#D1D5DB' }}>
+                          {isSelected ? '✓' : '+'}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              ) : (
-                <div>
+              </div>
+
+              {/* Instrumento si es Músico */}
+              {selectedTalents.includes('Música') && (
+                <div style={{ marginBottom: '1.25rem', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '14px', padding: '0.9rem' }}>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#92400E', display: 'block', marginBottom: '0.35rem' }}>
+                    🎺 ¿Qué instrumento tocas?
+                  </label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    capture="user"
-                    ref={fileInputRef}
-                    onChange={handlePhotoUpload}
-                    style={{ display: 'none' }}
+                    type="text"
+                    placeholder="Ej. Guitarra, Mandolina, Quena, Trompeta"
+                    value={musicalInstrument}
+                    onChange={e => setMusicalInstrument(e.target.value)}
+                    style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '10px', border: '1px solid #F59E0B', fontSize: '0.9rem', background: '#FFFFFF', outline: 'none' }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      padding: '0.75rem 1.5rem',
-                      borderRadius: '12px',
-                      background: '#FEF3C7',
-                      color: '#92400E',
-                      border: '1.5px solid #F59E0B',
-                      fontWeight: 800,
-                      fontSize: '0.9rem',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    📷 Tomar Foto / Elegir de Galería
-                  </button>
                 </div>
               )}
-            </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setStep(3)}
-                style={{ flex: 1, padding: '0.9rem', borderRadius: '12px', background: '#F3F4F6', color: '#374151', border: 'none', fontWeight: 700, cursor: 'pointer' }}
-              >
-                ⬅ Volver
-              </button>
+              {/* Selector de Talla de Vestuario (Pills) */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.5rem' }}>
+                  Talla de Vestuario para Carnaval 2027:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                  {['S', 'M', 'L', 'XL', 'XXL'].map(size => {
+                    const active = clothingSize === size;
+                    return (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setClothingSize(size)}
+                        style={{
+                          padding: '0.85rem 0',
+                          borderRadius: '12px',
+                          border: active ? '2px solid #D99B00' : '1px solid #D1D5DB',
+                          background: active ? '#002F18' : '#FFF8F5',
+                          color: active ? '#FFFFFF' : '#1E1B18',
+                          fontWeight: 900,
+                          fontSize: '1rem',
+                          cursor: 'pointer',
+                          boxShadow: active ? '0 4px 12px rgba(0, 47, 24, 0.25)' : 'none',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* PIN de Seguridad */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.4rem' }}>
+                  PIN de Acceso a tu Perfil (4 dígitos):
+                </label>
+                <input
+                  type="password"
+                  maxLength={4}
+                  placeholder="1234"
+                  value={pin}
+                  onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem',
+                    borderRadius: '14px',
+                    border: '1.5px solid #D1D5DB',
+                    fontSize: '1.3rem',
+                    fontWeight: 900,
+                    letterSpacing: '6px',
+                    textAlign: 'center',
+                    background: '#FFF8F5',
+                    color: '#002F18',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Fotografía al Final (Módulo Stitch Avatar Upload) */}
+              <div style={{
+                marginBottom: '1.75rem',
+                background: '#FFF8F5',
+                border: '1.5px dashed #D99B00',
+                borderRadius: '20px',
+                padding: '1.5rem',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#7D5800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.35rem' }}>
+                  📸 FOTOGRAFÍA / SELFIE PARA TU CARNET QR
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: '0 0 1rem 0' }}>
+                  Tómate una selfie con tu celular o elige una foto de tu rostro:
+                </p>
+
+                {avatarUrl ? (
+                  <div style={{ display: 'inline-block', position: 'relative' }}>
+                    <img
+                      src={avatarUrl}
+                      alt="Foto de Perfil"
+                      style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #D99B00', boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAvatarUrl('')}
+                      style={{ position: 'absolute', bottom: 0, right: 0, background: '#DC2626', color: '#FFFFFF', border: 'none', borderRadius: '50%', width: '28px', height: '28px', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="user"
+                      ref={fileInputRef}
+                      onChange={handlePhotoUpload}
+                      style={{ display: 'none' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        padding: '0.85rem 1.6rem',
+                        borderRadius: '14px',
+                        background: '#FEF3C7',
+                        color: '#92400E',
+                        border: '1.5px solid #F59E0B',
+                        fontWeight: 900,
+                        fontSize: '0.92rem',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 4px 12px rgba(245, 158, 11, 0.2)'
+                      }}
+                    >
+                      📷 Tomar Foto / Elegir Archivo
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
                 style={{
-                  flex: 2,
-                  padding: '0.95rem',
-                  borderRadius: '14px',
-                  background: loading ? '#9CA3AF' : 'linear-gradient(135deg, #0E472A 0%, #13603A 100%)',
+                  width: '100%',
+                  padding: '1.15rem',
+                  borderRadius: '16px',
+                  background: loading ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
                   color: '#FFFFFF',
-                  border: 'none',
-                  fontSize: '1.05rem',
+                  border: '1px solid #D99B00',
+                  fontSize: '1.1rem',
                   fontWeight: 900,
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 4px 16px rgba(14, 71, 42, 0.35)'
+                  boxShadow: '0 8px 24px rgba(0, 47, 24, 0.35)'
                 }}
               >
-                {loading ? 'Generando Carnet 2027...' : '✓ Finalizar Empadronamiento'}
+                {loading ? 'Generando Carnet Oficial 2027...' : '✓ Finalizar Empadronamiento'}
               </button>
-            </div>
-          </form>
-        )}
+            </form>
+          )}
 
-        {/* ==================== PASO 5: ÉXITO & CARNET OFICIAL QR (Google Stitch Luxury ID) ==================== */}
-        {step === 5 && savedUser && (
-          <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
-            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#D1FAE5', color: '#059669', fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem auto' }}>
-              ✓
-            </div>
-
-            <h2 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '1.6rem', color: '#0E472A', fontWeight: 900, marginBottom: '0.25rem' }}>
-              ¡EMPADRONAMIENTO EXITOSO!
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '1.25rem' }}>
-              Ya eres parte del <strong>Padrón Oficial Carnaval 2027</strong> de la Comparsa Cangallo Señorial.
-            </p>
-
-            {/* CARNET DIGITAL OFICIAL DE LUJO (Google Stitch Neo-Traditional Andean Luxury) */}
-            <div style={{
-              background: 'linear-gradient(135deg, #002F18 0%, #0E472A 65%, #1C1917 100%)',
-              color: '#FFFFFF',
-              borderRadius: '20px',
-              padding: '1.6rem',
-              maxWidth: '360px',
-              margin: '0 auto 1.5rem auto',
-              boxShadow: '0 16px 36px rgba(0,0,0,0.3)',
-              border: '2.5px solid #D99B00',
-              position: 'relative',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: '#FCD34D', fontWeight: 800, marginBottom: '0.35rem' }}>
-                CARNET DIGITAL OFICIAL • 2027
-              </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: '1.15', marginBottom: '0.85rem' }}>
-                CANGALLO SEÑORIAL
-              </div>
-
-              {/* Foto de Perfil */}
-              <div style={{ width: '82px', height: '82px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #FCD34D', margin: '0 auto 0.75rem auto', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={savedUser.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-
-              {/* Nombre, Código de Socio continuo y DNI */}
-              <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.25rem' }}>
-                {savedUser.name}
-              </div>
+          {/* ==================== PASO 5: CARNET DIGITAL OFICIAL (GOOGLE STITCH LUXURY SPEC) ==================== */}
+          {step === 5 && savedUser && (
+            <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
               <div style={{
-                display: 'inline-block',
-                background: 'rgba(217, 155, 0, 0.25)',
-                border: '1px solid #FCD34D',
-                color: '#FCD34D',
-                fontSize: '0.88rem',
-                fontWeight: 900,
-                letterSpacing: '1.2px',
-                padding: '3px 12px',
-                borderRadius: '8px',
-                marginBottom: '0.5rem'
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: '#D1FAE5',
+                color: '#059669',
+                fontSize: '2.2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.85rem auto',
+                boxShadow: '0 8px 20px rgba(16, 185, 129, 0.2)'
               }}>
-                CÓDIGO: {savedUser.affiliationYear || '2027'}{savedUser.dni}
-              </div>
-              <div style={{ fontSize: '0.85rem', color: '#E5E7EB', fontWeight: 600, marginBottom: '0.85rem' }}>
-                DNI: {savedUser.dni} &bull; Talla: {savedUser.clothingSize || 'L'}
+                ✓
               </div>
 
-              {/* Código QR Generado */}
-              <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '16px', display: 'inline-block', marginBottom: '0.75rem', boxShadow: '0 4px 14px rgba(0,0,0,0.25)' }}>
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${savedUser.qr_code_hash}`}
-                  alt="QR Asistencia"
-                  style={{ width: '140px', height: '140px', display: 'block' }}
-                />
+              <h2 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '1.75rem', color: '#002F18', fontWeight: 900, marginBottom: '0.25rem' }}>
+                ¡EMPADRONAMIENTO EXITOSO!
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: '#4B5563', marginBottom: '1.5rem' }}>
+                Ya eres parte del <strong>Padrón Oficial Carnaval 2027</strong> de Cangallo Señorial.
+              </p>
+
+              {/* Tarjeta de Lujo del Carnet (Stitch Spec) */}
+              <div style={{
+                background: 'linear-gradient(135deg, #002F18 0%, #0E472A 70%, #1A3624 100%)',
+                color: '#FFFFFF',
+                borderRadius: '24px',
+                padding: '1.75rem',
+                maxWidth: '380px',
+                margin: '0 auto 1.5rem auto',
+                boxShadow: '0 20px 48px rgba(0, 47, 24, 0.4)',
+                border: '2.5px solid #D99B00',
+                position: 'relative',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '0.72rem', letterSpacing: '2px', textTransform: 'uppercase', color: '#FCD34D', fontWeight: 900, marginBottom: '0.35rem' }}>
+                  CARNET DIGITAL OFICIAL • 2027
+                </div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: 1.15, marginBottom: '0.9rem' }}>
+                  CANGALLO SEÑORIAL
+                </div>
+
+                <div style={{ width: '88px', height: '88px', borderRadius: '50%', overflow: 'hidden', border: '3.5px solid #FCD34D', margin: '0 auto 0.85rem auto', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={savedUser.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.3rem' }}>
+                  {savedUser.name}
+                </div>
+
+                <div style={{
+                  display: 'inline-block',
+                  background: 'rgba(217, 155, 0, 0.25)',
+                  border: '1.5px solid #FCD34D',
+                  color: '#FCD34D',
+                  fontSize: '0.92rem',
+                  fontWeight: 900,
+                  letterSpacing: '1.2px',
+                  padding: '4px 14px',
+                  borderRadius: '10px',
+                  marginBottom: '0.6rem'
+                }}>
+                  CÓDIGO: {savedUser.affiliationYear || '2027'}{savedUser.dni}
+                </div>
+
+                <div style={{ fontSize: '0.85rem', color: '#E5E7EB', fontWeight: 600, marginBottom: '0.9rem' }}>
+                  DNI: {savedUser.dni} &bull; Talla: {savedUser.clothingSize || 'L'}
+                </div>
+
+                <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '18px', display: 'inline-block', marginBottom: '0.85rem', boxShadow: '0 6px 18px rgba(0,0,0,0.3)' }}>
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${savedUser.qr_code_hash}`}
+                    alt="QR Asistencia"
+                    style={{ width: '145px', height: '145px', display: 'block' }}
+                  />
+                </div>
+
+                <div style={{ fontSize: '0.78rem', color: '#A7F3D0', fontWeight: 700 }}>
+                  {savedUser.memberType === 'MUSICO' ? '🎺 Músico de Banda' : savedUser.memberType === 'DIRECTIVO' ? '👑 Comité Directivo' : '💃 Socio Danzante'} &bull; Cangallo Señorial
+                </div>
               </div>
 
-              <div style={{ fontSize: '0.75rem', color: '#A7F3D0', fontWeight: 700 }}>
-                {savedUser.memberType === 'MUSICO' ? '🎺 Músico de Banda' : savedUser.memberType === 'DIRECTIVO' ? '👑 Comité Directivo' : '💃 Socio Danzante'} &bull; Cangallo Señorial
+              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem' }}>
+                💡 Toma una <strong>captura de pantalla</strong> a este carnet para tenerlo listo en cada ensayo.
+              </p>
+
+              <div style={{ maxWidth: '380px', margin: '0 auto' }}>
+                <Link
+                  href="/login"
+                  style={{
+                    display: 'block',
+                    padding: '1rem',
+                    background: 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                    color: '#FFFFFF',
+                    borderRadius: '16px',
+                    fontWeight: 900,
+                    textDecoration: 'none',
+                    fontSize: '1rem',
+                    border: '1px solid #D99B00',
+                    boxShadow: '0 8px 24px rgba(0, 47, 24, 0.3)'
+                  }}
+                >
+                  Ir a Mi Perfil en la App ➔
+                </Link>
               </div>
             </div>
+          )}
 
-            <p style={{ fontSize: '0.82rem', color: '#6B7280', marginBottom: '1.25rem' }}>
-              💡 <strong>Consejo:</strong> Toma una <strong>captura de pantalla</strong> a este carnet o guárdalo en tus fotos para mostrarlo en la puerta de los ensayos.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '360px', margin: '0 auto' }}>
-              <Link
-                href="/login"
-                style={{ display: 'block', padding: '0.9rem', background: '#0E472A', color: '#FFFFFF', borderRadius: '14px', fontWeight: 800, textDecoration: 'none', fontSize: '1rem', boxShadow: '0 4px 14px rgba(14, 71, 42, 0.3)' }}
-              >
-                Ir a Mi Perfil en la App ➔
-              </Link>
-            </div>
-          </div>
-        )}
-
+        </div>
       </div>
     </div>
   );
