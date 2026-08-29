@@ -292,7 +292,7 @@ const htmlContent = `<!DOCTYPE html>
       flex-shrink: 0;
     }
 
-    /* FLUJOS EN FILAS PANORÁMICAS AMPLIAS (PAG 2) */
+    /* FLUJOS EN FILAS PANORÁMICAS AMPLIAS (PAG 3) */
     .flow-row-large {
       background: #FFFFFF;
       border: 1px solid var(--border);
@@ -353,7 +353,7 @@ const htmlContent = `<!DOCTYPE html>
       line-height: 1.25;
     }
 
-    /* CV SECTION EN 3 COLUMNAS TALL (PÁGINA 3) */
+    /* CV SECTION EN 3 COLUMNAS TALL (PÁGINA 1) */
     .cv-grid-tall {
       display: grid;
       grid-template-columns: 1.1fr 1.35fr 0.95fr;
@@ -562,7 +562,100 @@ const htmlContent = `<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- ==================== PÁGINA 1: VISIÓN, OPERACIÓN & MÓDULOS (FULL HEIGHT) ==================== -->
+  <!-- ==================== LÁMINA 1: PERFIL PROFESIONAL & RESPALDO (INICIO) ==================== -->
+  <div class="page">
+    <div>
+      <div class="header-banner" style="padding: 12px 20px;">
+        <div class="header-left">
+          <div class="header-logo-wrap" style="width: 48px; height: 48px;">
+            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
+          </div>
+          <div>
+            <div class="header-tag">Presentación Institucional • Carnaval Ayacuchano 2027</div>
+            <h1 class="header-title" style="font-size: 20px;">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h1>
+            <p class="header-sub">Economía, Inteligencia Empresarial, Startups & Transformación Digital</p>
+          </div>
+        </div>
+        <div class="header-meta">
+          <div><strong>Jhoan Taboada Huamán</strong></div>
+          <div>PUCP • Economía & Aplicaciones con IA</div>
+          <div><strong>Especialista en Implementación de Negocios</strong></div>
+        </div>
+      </div>
+
+      <div class="sec-title">Trayectoria Profesional & Experiencia Aplicada</div>
+      <div class="cv-grid-tall">
+        
+        <!-- Columna 1: Formación -->
+        <div class="cv-column">
+          <div class="cv-col-title">🎓 Formación & Especialización</div>
+          
+          <div class="cv-item-block">
+            <strong>Pontificia Universidad Católica del Perú (PUCP)</strong>
+            <p>Bachiller en Economía con formación sólida en análisis económico, finanzas corporativas, evaluación de proyectos y optimización de recursos.</p>
+          </div>
+
+          <div class="cv-item-block">
+            <strong>Diplomado en Aplicaciones con IA & Automatización (PUCP)</strong>
+            <p>Construcción de soluciones analíticas, automatización de procesos empresariales y desarrollo de software moderno.</p>
+          </div>
+
+          <div class="cv-item-block">
+            <strong>Beca de Excelencia Académica — QLAB PUCP</strong>
+            <p>Certificación en Machine Learning Aplicado y métodos cuantitativos avanzados.</p>
+          </div>
+        </div>
+
+        <!-- Columna 2: Experiencia Operativa (Sin Puestos) -->
+        <div class="cv-column highlight">
+          <div class="cv-col-title">💼 Experiencia en Negocios & Operaciones</div>
+          
+          <div class="cv-item-block">
+            <strong>Adecco Perú / América Móvil (Claro)</strong>
+            <p>Diseño y optimización de reportería estratégica y trazabilidad comercial para más de 400 colaboradores. Capacitación al 100% de supervisores.</p>
+          </div>
+
+          <div class="cv-item-block">
+            <strong>Grupo Santander</strong>
+            <p>Control de desembolsos, pagos y recaudación. Automatización de flujos de información y monitoreo operativo presentado a Directorio.</p>
+          </div>
+
+          <div class="cv-item-block">
+            <strong>180 Degrees Consulting PUCP</strong>
+            <p>Diseño y validación de modelos de negocio y transformación digital para cerca de 30 emprendimientos y startups de impacto.</p>
+          </div>
+        </div>
+
+        <!-- Columna 3: Confianza & GitHub -->
+        <div class="cv-column">
+          <div class="cv-col-title">🛡️ Enfoque & Repositorio</div>
+          
+          <p style="font-size: 9.5px; color: var(--muted); line-height: 1.4; margin-bottom: 8px;">
+            Mi propósito es llevar la tecnología de alto nivel empresarial a instituciones culturales y organizaciones, haciéndola simple, transparente y útil para los directivos y socios.
+          </p>
+
+          <div class="github-banner-card">
+            <span style="font-size: 9px; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Portafolio & Código Fuente</span>
+            <a href="https://github.com/jhoan202012" target="_blank">🌐 github.com/jhoan202012</a>
+          </div>
+
+          <div style="margin-top: 10px; padding: 8px 10px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px; font-size: 9px; color: var(--dark); line-height: 1.4;">
+            <strong>Contacto Directo:</strong><br>
+            📱 (+51) 912 802 226<br>
+            ✉️ jhoanth1998@gmail.com
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Comparsa Cangallo Señorial — Perfil Profesional</span>
+      <span>Página 1 de 4</span>
+    </div>
+  </div>
+
+  <!-- ==================== LÁMINA 2: VISIÓN, OPERACIÓN & MÓDULOS ==================== -->
   <div class="page">
     <div>
       <div class="header-banner">
@@ -655,11 +748,11 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 1 de 4</span>
+      <span>Página 2 de 4</span>
     </div>
   </div>
 
-  <!-- ==================== PÁGINA 2: ARQUITECTURA & FLUJOS PANORÁMICOS ==================== -->
+  <!-- ==================== LÁMINA 3: ARQUITECTURA & FLUJOS PANORÁMICOS ==================== -->
   <div class="page">
     <div>
       <div class="header-banner" style="padding: 12px 20px;">
@@ -780,102 +873,11 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 2 de 4</span>
-    </div>
-  </div>
-
-  <!-- ==================== PÁGINA 3: PERFIL PROFESIONAL (RESPALDO & CONFIANZA) ==================== -->
-  <div class="page">
-    <div>
-      <div class="header-banner" style="padding: 12px 20px;">
-        <div class="header-left">
-          <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
-          </div>
-          <div>
-            <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h2>
-            <p style="color: #E5E7EB; font-size: 10px;">Trayectoria en Economía, Inteligencia Empresarial, Startups & Transformación Digital</p>
-          </div>
-        </div>
-        <div class="header-meta">
-          <div><strong>Jhoan Taboada Huamán</strong></div>
-          <div>PUCP • Economía & Aplicaciones con IA</div>
-        </div>
-      </div>
-
-      <div class="sec-title">Trayectoria Profesional & Experiencia Aplicada</div>
-      <div class="cv-grid-tall">
-        
-        <!-- Columna 1: Formación -->
-        <div class="cv-column">
-          <div class="cv-col-title">🎓 Formación & Especialización</div>
-          
-          <div class="cv-item-block">
-            <strong>Pontificia Universidad Católica del Perú (PUCP)</strong>
-            <p>Bachiller en Economía con formación en análisis económico, finanzas corporativas, evaluación de proyectos y optimización de recursos.</p>
-          </div>
-
-          <div class="cv-item-block">
-            <strong>Diplomado en Aplicaciones con IA & Automatización (PUCP)</strong>
-            <p>Construcción de soluciones analíticas, automatización de procesos empresariales y desarrollo de software moderno.</p>
-          </div>
-
-          <div class="cv-item-block">
-            <strong>Beca de Excelencia Académica — QLAB PUCP</strong>
-            <p>Certificación en Machine Learning Aplicado y métodos cuantitativos avanzados.</p>
-          </div>
-        </div>
-
-        <!-- Columna 2: Experiencia Operativa (Sin Puestos) -->
-        <div class="cv-column highlight">
-          <div class="cv-col-title">💼 Experiencia en Operaciones & Negocios</div>
-          
-          <div class="cv-item-block">
-            <strong>Adecco Perú / América Móvil (Claro)</strong>
-            <p>Diseño y optimización de reportería estratégica y trazabilidad comercial para más de 400 colaboradores. Capacitación al 100% de supervisores.</p>
-          </div>
-
-          <div class="cv-item-block">
-            <strong>Grupo Santander</strong>
-            <p>Control de desembolsos, pagos y recaudación. Automatización de flujos de información y monitoreo operativo presentado a Directorio.</p>
-          </div>
-
-          <div class="cv-item-block">
-            <strong>180 Degrees Consulting PUCP</strong>
-            <p>Diseño y validación de modelos de negocio y transformación digital para cerca de 30 emprendimientos y startups de impacto.</p>
-          </div>
-        </div>
-
-        <!-- Columna 3: Confianza & GitHub -->
-        <div class="cv-column">
-          <div class="cv-col-title">🛡️ Enfoque & Repositorio</div>
-          
-          <p style="font-size: 9.5px; color: var(--muted); line-height: 1.4; margin-bottom: 8px;">
-            Mi propósito es llevar la tecnología de alto nivel empresarial a instituciones culturales y organizaciones, haciéndola simple, transparente y útil para los directivos y socios.
-          </p>
-
-          <div class="github-banner-card">
-            <span style="font-size: 9px; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Portafolio & Código Fuente</span>
-            <a href="https://github.com/jhoan202012" target="_blank">🌐 github.com/jhoan202012</a>
-          </div>
-
-          <div style="margin-top: 10px; padding: 8px 10px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px; font-size: 9px; color: var(--dark); line-height: 1.4;">
-            <strong>Contacto Directo:</strong><br>
-            📱 (+51) 912 802 226<br>
-            ✉️ jhoanth1998@gmail.com
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="page-footer">
-      <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
       <span>Página 3 de 4</span>
     </div>
   </div>
 
-  <!-- ==================== PÁGINA 4: PLANES POR USUARIO & SERVICIOS ==================== -->
+  <!-- ==================== LÁMINA 4: PLANES POR USUARIO & SERVICIOS ==================== -->
   <div class="page">
     <div>
       <div class="header-banner" style="padding: 12px 20px;">
@@ -972,5 +974,5 @@ execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF actualizado con logo embebido con dimensiones explicitas y experiencia ajustada sin puestos.');
+  console.log('PDF reordenado con éxito: Perfil Profesional en Lámina 1 y Plataforma en Láminas 2-4.');
 }
