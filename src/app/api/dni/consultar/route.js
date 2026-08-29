@@ -1,7 +1,37 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// Función inteligente para inferir género por nombres peruanos si la API no lo trae
+// 🛡️ CONTROL ANTIFRAUDE & RATE LIMITING (Control de intentos por IP)
+// Almacena en memoria los intentos por IP para evitar que gente "viva" use la plataforma para raspar datos
+const ipRequestCounts = new Map();
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // Ventana de 1 minuto
+  const maxRequests = 6; // Máximo 6 consultas de DNI por minuto por celular/IP
+
+  const record = ipRequestCounts.get(ip);
+
+  if (!record) {
+    ipRequestCounts.set(ip, { count: 1, resetTime: now + windowMs });
+    return { allowed: true };
+  }
+
+  if (now > record.resetTime) {
+    ipRequestCounts.set(ip, { count: 1, resetTime: now + windowMs });
+    return { allowed: true };
+  }
+
+  if (record.count >= maxRequests) {
+    const waitSeconds = Math.ceil((record.resetTime - now) / 1000);
+    return { allowed: false, waitSeconds };
+  }
+
+  record.count += 1;
+  return { allowed: true };
+}
+
+// Función para inferir género por nombres peruanos
 function inferGenderFromName(firstName) {
   if (!firstName) return 'Masculino';
   const name = firstName.trim().toUpperCase().split(' ')[0];
@@ -21,6 +51,19 @@ function inferGenderFromName(firstName) {
 
 export async function GET(request) {
   try {
+    // Obtener IP del cliente para aplicar el límite de seguridad
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const clientIp = (forwardedFor ? forwardedFor.split(',')[0] : realIp) || '127.0.0.1';
+
+    // 🛡️ 1. CANDADO DE SEGURIDAD: Verificar Límite de Velocidad (Anti-Scraping)
+    const rateLimit = checkRateLimit(clientIp);
+    if (!rateLimit.allowed) {
+      return NextResponse.json({
+        error: `Has realizado demasiadas consultas de DNI. Por seguridad, espera ${rateLimit.waitSeconds} segundos para continuar.`
+      }, { status: 429 });
+    }
+
     const { searchParams } = new URL(request.url);
     const dni = searchParams.get('dni')?.trim();
 
@@ -28,7 +71,7 @@ export async function GET(request) {
       return NextResponse.json({ error: 'El DNI debe tener 8 dígitos numéricos' }, { status: 400 });
     }
 
-    // 1. Buscar en Base de Datos Local
+    // 2. Buscar en Base de Datos Local
     const existingUser = await prisma.user.findUnique({
       where: { dni },
       select: {
@@ -42,7 +85,7 @@ export async function GET(request) {
       }
     });
 
-    // 2. Consultar API Externa de Identidad
+    // 3. Consultar API Externa de Identidad (Token protegido en servidor)
     let externalData = null;
     try {
       const token = process.env.DNI_API_TOKEN || '';
@@ -67,7 +110,6 @@ export async function GET(request) {
         const apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim();
         const fullName = d.nombre_completo || `${nombres} ${apellidos}`.trim();
 
-        // Inferencia inteligente de género si viene vacío
         let rawSexo = (d.sexo || d.genero || '').toUpperCase();
         let sexo = rawSexo === 'F' || rawSexo === 'FEMENINO' || rawSexo === 'MUJER' 
           ? 'Femenino' 
@@ -117,7 +159,7 @@ export async function GET(request) {
       });
     }
 
-    // Si es un socio nuevo y la API externa respondió
+    // Si es un socio nuevo
     if (externalData) {
       return NextResponse.json({
         success: true,
