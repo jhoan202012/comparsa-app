@@ -217,7 +217,7 @@ const htmlContent = `<!DOCTYPE html>
     .badge-icon-box {
       background: var(--primary);
       color: #FFFFFF;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       padding: 8px 12px;
       border-radius: 10px;
@@ -440,7 +440,7 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .service-price .amount {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       color: var(--primary);
     }
@@ -555,11 +555,11 @@ const htmlContent = `<!DOCTYPE html>
       <!-- Propósito & Visión Institucional -->
       <div class="banner-value">
         <div class="badge-icon-box">
-          LISTA & ACTIVA
-          <span>100% FUNCIONAL</span>
+          COBERTURA TOTAL
+          <span>NUBE 24/7</span>
         </div>
         <p>
-          <strong>VISIÓN & MODERNIZACIÓN:</strong> La comparsa Cangallo Señorial da el salto hacia la digitalización total. Esta plataforma web centraliza el control de ensayos, la adquisición ordenada de vestuarios y la transparencia en tesorería, accesible desde cualquier teléfono inteligente sin necesidad de instalar aplicaciones pesadas.
+          <strong>MODELO DE SERVICIO INTEGRAL:</strong> La plataforma se entrega completamente configurada y operativa. La institución únicamente asume la inversión de <strong>Mantenimiento Operativo, Servidores en la Nube y Almacenamiento Seguro de la Información</strong> según la escala de socios, garantizando un servicio confiable, blindado y 100% autofinanciable.
         </p>
       </div>
 
@@ -609,15 +609,15 @@ const htmlContent = `<!DOCTYPE html>
       </div>
 
       <!-- Seguridad y Nube -->
-      <div class="sec-title">Infraestructura & Seguridad en la Nube</div>
+      <div class="sec-title">Infraestructura & Almacenamiento en la Nube</div>
       <div class="cloud-grid">
         <div class="cloud-item">
           <strong>☁️ Servidores Cloud de Alta Disponibilidad</strong>
           <p>Red distribuida para carga ultrarrápida en cualquier celular 4G/5G con 99.9% de operatividad.</p>
         </div>
         <div class="cloud-item">
-          <strong>🔒 Base de Datos Segura con Cifrado</strong>
-          <p>Almacenamiento corporativo blindado con copias de seguridad continuas y redundantes.</p>
+          <strong>🔒 Almacenamiento Seguro de Información</strong>
+          <p>Base de datos corporativa blindada con copias de seguridad continuas y redundantes.</p>
         </div>
         <div class="cloud-item">
           <strong>⚙️ Mantenimiento & Monitoreo 24/7</strong>
@@ -727,12 +727,12 @@ const htmlContent = `<!DOCTYPE html>
         </div>
         <div class="header-content">
           <h2 style="font-size: 16px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
-          <p style="color: #E5E7EB; font-size: 10px;">Inversión operativa mínima, transparente y 100% autofinanciable por socio</p>
+          <p style="color: #E5E7EB; font-size: 10px;">Inversión operativa de infraestructura y almacenamiento por socio</p>
         </div>
       </div>
 
       <!-- Planes por Escala -->
-      <div class="sec-title">1. Planes de Mantenimiento e Infraestructura Cloud</div>
+      <div class="sec-title">1. Mantenimiento, Servidores en Nube & Almacenamiento Seguro</div>
       <table class="pricing-table">
         <thead>
           <tr>
@@ -773,8 +773,8 @@ const htmlContent = `<!DOCTYPE html>
           <span>Inducción práctica de 1.5 horas para escaneo QR, validación de pagos y reportes.</span>
         </div>
         <div class="service-price">
-          <span class="amount">S/ 350.00</span>
-          <span class="sub">100% BONIFICADO GRATIS</span>
+          <span class="amount">INCLUIDO</span>
+          <span class="sub">EN EL SERVICIO</span>
         </div>
       </div>
 
@@ -784,8 +784,8 @@ const htmlContent = `<!DOCTYPE html>
           <span>Soporte presencial en puerta durante el primer ensayo oficial para garantizar 0 fallas.</span>
         </div>
         <div class="service-price">
-          <span class="amount">S/ 200.00</span>
-          <span class="sub">100% BONIFICADO GRATIS</span>
+          <span class="amount">INCLUIDO</span>
+          <span class="sub">EN EL SERVICIO</span>
         </div>
       </div>
 
@@ -805,9 +805,9 @@ const htmlContent = `<!DOCTYPE html>
         <div class="final-left">
           <h4>RESUMEN DEL PLAN SEÑORIAL (1,000 INTEGRANTES)</h4>
           <p>
-            • Plataforma y Sistema Web: 100% Desarrollado y Listo<br>
-            • Servidores Cloud 24/7 + Base de Datos Blindada: Incluidos<br>
-            • Capacitación + Soporte Presencial Inicial: Incluidos Gratis<br>
+            • Plataforma y Sistema Web: Provisionado & Operativo<br>
+            • Servidores Cloud 24/7 + Almacenamiento Seguro de Datos: Incluidos<br>
+            • Capacitación & Acompañamiento en Ensayo Inicial: Incluidos<br>
             • Dominio Personalizado Web (1 Año): S/ 120.00
           </p>
         </div>
@@ -851,7 +851,7 @@ const htmlPath = path.join(__dirname, '..', 'public', 'dossier_propuesta.html');
 fs.writeFileSync(htmlPath, htmlContent, 'utf8');
 
 const pdfOutputPath1 = path.join(__dirname, '..', 'public', 'Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf');
-const pdfOutputPath2 = 'C:\\Users\\jhoan\\.gemini\\antigravity\\brain\\03e53288-970f-4e84-abdf-a8ce111ba82e\\Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf';
+const pdfOutputPath2 = path.join('C:', 'Users', 'jhoan', '.gemini', 'antigravity', 'brain', '03e53288-970f-4e84-abdf-a8ce111ba82e', 'Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf');
 
 const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
@@ -864,5 +864,5 @@ execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF actualizado con terminología de Implementación de Negocios y sin nombres de proveedores.');
+  console.log('PDF actualizado formalmente sin palabras de regateo y con rutas correctas.');
 }
