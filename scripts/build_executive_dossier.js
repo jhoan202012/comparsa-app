@@ -140,7 +140,7 @@ const htmlContent = `<!DOCTYPE html>
       padding-top: 8px;
       border-top: 1px solid rgba(255, 255, 255, 0.15);
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 12px;
       font-size: 10px;
     }
@@ -526,7 +526,7 @@ const htmlContent = `<!DOCTYPE html>
           
           <div class="meta-bar">
             <div class="meta-item"><strong>Presentado a:</strong> Sr. Próspero Huayanay & Junta Directiva</div>
-            <div class="meta-item"><strong>Consultoría & Software:</strong> Jhoan Taboada (Soluciones Digitales)</div>
+            <div class="meta-item"><strong>Implementación de Negocios:</strong> Jhoan Taboada</div>
           </div>
         </div>
       </div>
@@ -604,7 +604,7 @@ const htmlContent = `<!DOCTYPE html>
         </div>
         <div class="header-content">
           <h2 style="font-size: 16px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
-          <p style="color: #E5E7EB; font-size: 10px;">Seguridad de grado bancario, servidores en la nube y funcionamiento en vivo</p>
+          <p style="color: #E5E7EB; font-size: 10px;">Seguridad corporativa, infraestructura en la nube y funcionamiento en vivo</p>
         </div>
       </div>
 
@@ -612,19 +612,19 @@ const htmlContent = `<!DOCTYPE html>
       <div class="sec-title">Infraestructura & Seguridad en la Nube</div>
       <div class="cloud-grid">
         <div class="cloud-item">
-          <strong>☁️ Servidores Globales (Vercel Edge)</strong>
-          <p>Carga ultrarrápida en cualquier celular 4G/5G con 99.9% de disponibilidad garantizada.</p>
+          <strong>☁️ Servidores Cloud de Alta Disponibilidad</strong>
+          <p>Red distribuida para carga ultrarrápida en cualquier celular 4G/5G con 99.9% de operatividad.</p>
         </div>
         <div class="cloud-item">
-          <strong>🔒 Base de Datos Segura (Supabase PostgreSQL)</strong>
-          <p>Datos cifrados en la nube de AWS con copias de seguridad automáticas y redundantes.</p>
+          <strong>🔒 Base de Datos Segura con Cifrado</strong>
+          <p>Almacenamiento corporativo blindado con copias de seguridad continuas y redundantes.</p>
         </div>
         <div class="cloud-item">
-          <strong>⚙️ Mantenimiento Automático (Keep-Alive)</strong>
-          <p>Procesos internos programados que mantienen la base de datos siempre activa y lista.</p>
+          <strong>⚙️ Mantenimiento & Monitoreo 24/7</strong>
+          <p>Procesos automatizados de diagnóstico que garantizan que el sistema responda sin demoras.</p>
         </div>
         <div class="cloud-item">
-          <strong>📊 Control Total de la Información</strong>
+          <strong>📊 Soberanía y Control de Datos</strong>
           <p>Descarga del padrón y reportes de tesorería a Microsoft Excel (.xlsx) en cualquier momento.</p>
         </div>
       </div>
@@ -646,7 +646,7 @@ const htmlContent = `<!DOCTYPE html>
           <div class="step-item">
             <div class="step-badge">3</div>
             <div class="step-name">Registro Nube</div>
-            <div class="step-detail">Se valida la identidad y registra la hora exacta en Supabase.</div>
+            <div class="step-detail">El servidor seguro valida identidad y registra hora exacta.</div>
           </div>
           <div class="step-item">
             <div class="step-badge">4</div>
@@ -828,7 +828,7 @@ const htmlContent = `<!DOCTYPE html>
       <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px;">
         <div>
           <strong style="font-size: 11px; color: var(--dark);">Jhoan Taboada</strong><br>
-          <span style="font-size: 9px; color: var(--muted);">Consultor en Soluciones Tecnológicas & Digitalización</span>
+          <span style="font-size: 9px; color: var(--muted);">Especialista en Implementación de Negocios & Soluciones Tecnológicas</span>
         </div>
         <div style="text-align: right; font-size: 9px; color: var(--muted);">
           <span>WhatsApp / Contacto: +51 988 888 888</span><br>
@@ -849,7 +849,6 @@ const htmlContent = `<!DOCTYPE html>
 
 const htmlPath = path.join(__dirname, '..', 'public', 'dossier_propuesta.html');
 fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-console.log('HTML generado en:', htmlPath);
 
 const pdfOutputPath1 = path.join(__dirname, '..', 'public', 'Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf');
 const pdfOutputPath2 = 'C:\\Users\\jhoan\\.gemini\\antigravity\\brain\\03e53288-970f-4e84-abdf-a8ce111ba82e\\Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf';
@@ -861,14 +860,9 @@ let browserPath = fs.existsSync(edgePath) ? edgePath : chromePath;
 
 const cmd = `"${browserPath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOutputPath1}" --no-pdf-header-footer "file:///${htmlPath.replace(/\\/g, '/')}"`;
 
-console.log('Ejecutando renderizado con Chrome/Edge Headless...');
 execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF Oficial actualizado con éxito en:');
-  console.log('1.', pdfOutputPath1);
-  console.log('2.', pdfOutputPath2);
-} else {
-  console.error('No se pudo generar el PDF.');
+  console.log('PDF actualizado con terminología de Implementación de Negocios y sin nombres de proveedores.');
 }
