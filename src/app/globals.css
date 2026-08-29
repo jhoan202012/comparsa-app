@@ -61,44 +61,47 @@ body {
                     radial-gradient(at 100% 100%, rgba(19, 96, 58, 0.04) 0px, transparent 50%);
 }
 
-/* ==================== BOTONES ESTILO SOFT NEUMORPHIC (REFERENCIA) ==================== */
-.btn-neu-base {
-  color: #090909;
-  padding: 0.7em 1.7em;
-  font-size: 16px;
+/* ==================== BOTONES MODERNOS Y REFINADOS (ALTA GAMA UI/UX) ==================== */
+.btn-modern-base {
+  color: #374151;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  border-radius: 0.75em;
-  background: #e8e8e8;
+  border-radius: 14px;
+  background: #FFFFFF;
   cursor: pointer;
-  border: 1px solid #e8e8e8;
-  transition: all 0.3s ease;
-  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  border: 1.5px solid #E5E7EB;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.btn-neu-base:hover {
-  border: 1px solid white;
+.btn-modern-base:hover {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
-.btn-neu-base:active {
-  box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
-  transform: translateY(1px);
+.btn-modern-base:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.btn-neu-primary {
-  color: #ffffff;
-  padding: 0.85em 1.7em;
-  font-size: 17px;
+.btn-modern-primary {
+  color: #FFFFFF;
+  padding: 0.95rem 1.6rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  border-radius: 0.75em;
+  border-radius: 14px;
   background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  transition: all 0.3s ease;
-  box-shadow: 6px 6px 16px rgba(180, 83, 9, 0.3), -4px -4px 12px rgba(255, 255, 255, 0.8);
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -106,38 +109,40 @@ body {
   width: 100%;
 }
 
-.btn-neu-primary:hover {
-  border: 1px solid white;
-  box-shadow: 6px 6px 20px rgba(180, 83, 9, 0.4), -4px -4px 14px rgba(255, 255, 255, 0.9);
+.btn-modern-primary:hover {
+  background: linear-gradient(135deg, #E58713 0%, #C25E0A 100%);
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.4);
+  transform: translateY(-1px);
 }
 
-.btn-neu-primary:active {
-  box-shadow: 4px 4px 12px rgba(180, 83, 9, 0.35), -2px -2px 8px rgba(255, 255, 255, 0.8);
-  transform: translateY(1px);
+.btn-modern-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
 }
 
-.btn-neu-pill {
-  color: #090909;
-  padding: 0.6em 1em;
-  font-size: 15px;
+.btn-modern-pill {
+  color: #374151;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  border-radius: 0.6em;
-  background: #e8e8e8;
+  border-radius: 12px;
+  background: #FFFFFF;
   cursor: pointer;
-  border: 1px solid #e8e8e8;
-  transition: all 0.3s ease;
-  box-shadow: 4px 4px 8px #c5c5c5, -4px -4px 8px #ffffff;
+  border: 1.5px solid #E5E7EB;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
-.btn-neu-pill:hover {
-  border: 1px solid white;
+.btn-modern-pill:hover {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
 }
 
-.btn-neu-pill.active {
+.btn-modern-pill.active {
   background: #FEF3C7;
   color: #92400E;
-  border: 1.5px solid #D97706;
-  box-shadow: inset 3px 3px 6px rgba(217, 119, 6, 0.2), inset -3px -3px 6px #ffffff;
+  border: 2px solid #D97706;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.15);
 }
 
 h1, h2, h3, h4, h5, h6 {
