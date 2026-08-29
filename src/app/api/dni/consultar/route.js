@@ -1,6 +1,24 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+// Función inteligente para inferir género por nombres peruanos si la API no lo trae
+function inferGenderFromName(firstName) {
+  if (!firstName) return 'Masculino';
+  const name = firstName.trim().toUpperCase().split(' ')[0];
+
+  const femaleNames = [
+    'DEISY', 'DEYSI', 'MARIA', 'ROSA', 'ANA', 'CARMEN', 'LIZ', 'LIZBETH', 'GLADYS', 'LUCIA',
+    'FLOR', 'ROCIO', 'YULISSA', 'DIANA', 'KAREN', 'MILAGROS', 'ESTEFANY', 'VANESSA', 'PATRICIA',
+    'ANDREA', 'GABRIELA', 'FIORELLA', 'SANDRA', 'EVELYN', 'YESSICA', 'JESSICA', 'SONIA', 'SUSANA',
+    'ELIZABETH', 'KATHERINE', 'CYNTHIA', 'CINTHIA', 'MIRIAN', 'MIRIAM', 'SHEILA', 'PILAR', 'MARITZA',
+    'ISABEL', 'BEATRIZ', 'RAQUEL', 'RUTH', 'JANET', 'YANET', 'EDITH', 'JUDITH', 'MAGALY', 'NANCY'
+  ];
+
+  if (femaleNames.includes(name)) return 'Femenino';
+  if (name.endsWith('A') && !['JOSHUA', 'LUCA', 'SASHA'].includes(name)) return 'Femenino';
+  return 'Masculino';
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -24,7 +42,7 @@ export async function GET(request) {
       }
     });
 
-    // 2. Consultar API Externa de Identidad para obtener nombres oficiales completos si faltan
+    // 2. Consultar API Externa de Identidad
     let externalData = null;
     try {
       const token = process.env.DNI_API_TOKEN || '';
@@ -49,19 +67,27 @@ export async function GET(request) {
         const apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim();
         const fullName = d.nombre_completo || `${nombres} ${apellidos}`.trim();
 
+        // Inferencia inteligente de género si viene vacío
+        let rawSexo = (d.sexo || d.genero || '').toUpperCase();
+        let sexo = rawSexo === 'F' || rawSexo === 'FEMENINO' || rawSexo === 'MUJER' 
+          ? 'Femenino' 
+          : rawSexo === 'M' || rawSexo === 'MASCULINO' || rawSexo === 'VARON'
+          ? 'Masculino'
+          : inferGenderFromName(nombres);
+
         if (nombres || fullName) {
           externalData = {
             nombres: nombres || fullName,
             apellidos: apellidos || '',
             name: fullName,
             birthDate: d.fechaNacimiento || d.fecha_nacimiento || '',
-            gender: d.sexo === 'F' ? 'Femenino' : 'Masculino',
+            gender: sexo,
             district: d.distrito || ''
           };
         }
       }
     } catch (e) {
-      // Ignorar timeout y continuar con base de datos
+      // Continuar con base de datos o fallback
     }
 
     // Si ya existe en base de datos local
@@ -70,7 +96,11 @@ export async function GET(request) {
       const nombres = externalData?.nombres || (parts.length > 2 ? parts.slice(0, parts.length - 2).join(' ') : parts[0] || existingUser.name);
       const apellidos = externalData?.apellidos || (parts.length > 2 ? parts.slice(parts.length - 2).join(' ') : parts.slice(1).join(' ') || '');
       const birthDate = existingUser.birthDate || externalData?.birthDate || '';
-      const gender = existingUser.gender === 'MUJER' ? 'Femenino' : existingUser.gender === 'VARON' ? 'Masculino' : (externalData?.gender || 'Masculino');
+      const gender = existingUser.gender === 'MUJER' 
+        ? 'Femenino' 
+        : existingUser.gender === 'VARON' 
+        ? 'Masculino' 
+        : (externalData?.gender || inferGenderFromName(nombres));
 
       return NextResponse.json({
         success: true,
