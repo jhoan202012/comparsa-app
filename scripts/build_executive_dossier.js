@@ -13,12 +13,12 @@ const htmlContent = `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dossier Institucional - Plataforma Digital Cangallo Señorial 2027</title>
+  <title>Dossier Ejecutivo Horizontal - Plataforma Digital Cangallo Señorial 2027</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap');
 
     @page {
-      size: A4 portrait;
+      size: 297mm 210mm; /* A4 Horizontal Landscape */
       margin: 0;
     }
 
@@ -34,15 +34,15 @@ const htmlContent = `<!DOCTYPE html>
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: #111827;
       background: #FAF7F2;
-      line-height: 1.45;
-      font-size: 12.5px;
+      line-height: 1.4;
+      font-size: 11.5px;
     }
 
     .page {
-      width: 210mm;
-      min-height: 297mm;
-      height: 297mm;
-      padding: 16mm 18mm;
+      width: 297mm;
+      height: 210mm;
+      max-height: 210mm;
+      padding: 12mm 15mm;
       background: #FFFFFF;
       position: relative;
       page-break-after: always;
@@ -52,39 +52,44 @@ const htmlContent = `<!DOCTYPE html>
       justify-content: space-between;
     }
 
-    /* COLORES OFICIALES CANGALLO SEÑORIAL */
+    /* COLORES INSTITUCIONALES CANGALLO SEÑORIAL */
     :root {
-      --primary: #13603A;       /* Verde Esmeralda Tradicional */
+      --primary: #13603A;       /* Verde Esmeralda */
       --primary-dark: #0E472A;  /* Verde Bosque Oscuro */
       --gold: #D99B00;          /* Dorado Festivo */
       --gold-dark: #B45309;     /* Ámbar Profundo */
-      --gold-bg: #FEF3C7;       /* Crema Cálido Dorado */
+      --gold-bg: #FEF3C7;       /* Crema Dorado */
       --accent-red: #B71C1C;    /* Rojo Ayacucho */
-      --dark: #111827;          /* Texto Principal */
-      --muted: #4B5563;         /* Texto Secundario */
-      --bg-card: #FFFFFF;
+      --dark: #111827;          /* Texto Oscuro */
+      --muted: #4B5563;         /* Gris Slate */
       --border: #E5E7EB;
       --linen: #FAF7F2;
     }
 
-    /* HEADER INSTITUCIONAL */
+    /* HEADER HORIZONTAL */
     .header-banner {
-      background: linear-gradient(135deg, #0E472A 0%, #13603A 65%, #1C1917 100%);
+      background: linear-gradient(135deg, #0E472A 0%, #13603A 60%, #1C1917 100%);
       color: #FFFFFF;
-      padding: 18px 22px;
-      border-radius: 16px;
-      position: relative;
-      box-shadow: 0 8px 20px -4px rgba(19, 96, 58, 0.25);
+      padding: 12px 18px;
+      border-radius: 12px;
       border-bottom: 3px solid var(--gold);
       display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: space-between;
+      gap: 15px;
+      box-shadow: 0 4px 15px rgba(19, 96, 58, 0.2);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .header-logo-wrap {
-      width: 68px;
-      height: 68px;
-      border-radius: 14px;
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
       overflow: hidden;
       border: 2px solid #FCD34D;
       background: #FFFFFF;
@@ -92,7 +97,6 @@ const htmlContent = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     .header-logo-wrap img {
@@ -101,51 +105,43 @@ const htmlContent = `<!DOCTYPE html>
       object-fit: contain;
     }
 
-    .header-content {
-      flex: 1;
-    }
-
     .header-tag {
       display: inline-block;
       background: rgba(217, 155, 0, 0.25);
       border: 1px solid #FCD34D;
       color: #FCD34D;
-      font-size: 9.5px;
+      font-size: 8.5px;
       font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
-      padding: 2.5px 8px;
-      border-radius: 20px;
-      margin-bottom: 4px;
+      padding: 2px 7px;
+      border-radius: 12px;
+      margin-bottom: 2px;
     }
 
     .header-title {
       font-family: 'Playfair Display', serif;
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 900;
       color: #FFFFFF;
       letter-spacing: -0.3px;
-      margin-bottom: 2px;
-      line-height: 1.15;
+      line-height: 1.1;
     }
 
     .header-sub {
       color: #E5E7EB;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
     }
 
-    .meta-bar {
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 12px;
-      font-size: 10px;
+    .header-meta {
+      text-align: right;
+      font-size: 9.5px;
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      padding-left: 15px;
     }
 
-    .meta-item strong {
+    .header-meta strong {
       color: #FCD34D;
     }
 
@@ -154,13 +150,13 @@ const htmlContent = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-top: 14px;
-      margin-bottom: 8px;
+      margin-top: 8px;
+      margin-bottom: 6px;
     }
 
     .sec-title::after {
@@ -170,340 +166,272 @@ const htmlContent = `<!DOCTYPE html>
       background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
     }
 
-    /* KPIS OPERATIVOS */
+    /* KPIS HORIZONTALES */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
     .kpi-card {
       background: #FAF7F2;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 10px;
+      border-radius: 8px;
+      padding: 7px 10px;
       text-align: center;
-      border-top: 3.5px solid var(--primary);
+      border-top: 3px solid var(--primary);
     }
 
     .kpi-num {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--primary);
-      line-height: 1.1;
+      line-height: 1;
     }
 
     .kpi-label {
-      font-size: 9px;
+      font-size: 8.5px;
       color: var(--muted);
       font-weight: 700;
       margin-top: 2px;
       text-transform: uppercase;
     }
 
-    /* BANNER DE VALOR & LISTO PARA USAR */
-    .banner-value {
-      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
-      border: 1.5px solid #10B981;
-      border-radius: 12px;
-      padding: 11px 15px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 12px;
-    }
-
-    .badge-icon-box {
-      background: var(--primary);
-      color: #FFFFFF;
-      font-size: 10.5px;
-      font-weight: 800;
-      padding: 8px 12px;
-      border-radius: 10px;
-      text-align: center;
-      white-space: nowrap;
-      box-shadow: 0 4px 8px rgba(19, 96, 58, 0.2);
-    }
-
-    .badge-icon-box span {
-      display: block;
-      font-size: 8px;
-      color: #A7F3D0;
-      font-weight: 600;
-    }
-
-    .banner-value p {
-      font-size: 10.5px;
-      color: #064E3B;
-      line-height: 1.35;
-    }
-
-    /* MÓDULOS DE LA APP */
-    .modules-grid {
+    /* MODULOS EN 4 COLUMNAS HORIZONTALES */
+    .modules-grid-4 {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
 
     .module-box {
       background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      border-radius: 8px;
+      padding: 8px 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .module-box.green { border-left: 4px solid var(--primary); }
-    .module-box.gold { border-left: 4px solid var(--gold); }
-    .module-box.blue { border-left: 4px solid #1E40AF; }
-    .module-box.red { border-left: 4px solid var(--accent-red); }
+    .module-box.green { border-top: 3px solid var(--primary); }
+    .module-box.gold { border-top: 3px solid var(--gold); }
+    .module-box.blue { border-top: 3px solid #1E40AF; }
+    .module-box.red { border-top: 3px solid var(--accent-red); }
 
     .module-head {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       color: var(--dark);
       margin-bottom: 3px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .module-desc {
-      font-size: 9.5px;
-      color: var(--muted);
-      line-height: 1.35;
-    }
-
-    /* FLUJOS VISUALES (PAGINA 2) */
-    .flow-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 13px;
-      margin-bottom: 11px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    }
-
-    .flow-title {
-      font-size: 11.5px;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 7px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .flow-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-    }
-
-    .step-item {
-      background: #FAF7F2;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 6px;
-      text-align: center;
-    }
-
-    .step-badge {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: #FFFFFF;
-      font-size: 9.5px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 4px;
-    }
-
-    .step-name {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 2px;
-    }
-
-    .step-detail {
-      font-size: 8.5px;
-      color: var(--muted);
-      line-height: 1.25;
-    }
-
-    /* ARQUITECTURA CLOUD BOXES */
-    .cloud-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .cloud-item {
-      background: #FAF7F2;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
-    }
-
-    .cloud-item strong {
-      font-size: 10.5px;
-      color: var(--primary);
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .cloud-item p {
       font-size: 9px;
       color: var(--muted);
       line-height: 1.3;
     }
 
-    /* TABLA DE PLANES POR USUARIO (PAGINA 3) */
-    .pricing-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .pricing-table th {
-      background: #0E472A;
-      color: #FFFFFF;
-      font-size: 9.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 8px 10px;
-      text-align: left;
-    }
-
-    .pricing-table td {
-      padding: 9px 10px;
-      font-size: 10px;
-      border-bottom: 1px solid var(--border);
-      color: var(--dark);
-    }
-
-    .pricing-table tr.highlight {
-      background: #FEF3C7;
-      font-weight: 700;
-    }
-
-    .pricing-table tr.highlight td {
-      color: #92400E;
-    }
-
-    .tag-recommend {
-      background: var(--gold);
-      color: #FFFFFF;
-      font-size: 8px;
-      font-weight: 800;
-      padding: 2px 5px;
-      border-radius: 4px;
-      margin-left: 5px;
-      text-transform: uppercase;
-    }
-
-    /* FILAS DE SERVICIOS */
-    .service-row {
+    /* FLUJOS EN FILAS PANORÁMICAS */
+    .flow-row {
       display: grid;
-      grid-template-columns: 2.2fr 1fr;
-      background: #FAF7F2;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 8px 12px;
+      padding: 7px 10px;
       margin-bottom: 6px;
       align-items: center;
     }
 
-    .service-info strong {
-      font-size: 10.5px;
+    .flow-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .flow-steps-horiz {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .step-horiz-item {
+      background: #FAF7F2;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 6px;
+      text-align: center;
+    }
+
+    .step-horiz-badge {
+      font-size: 8px;
+      font-weight: 800;
+      color: #FFFFFF;
+      background: var(--primary);
+      padding: 1px 5px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .step-horiz-name {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .step-horiz-desc {
+      font-size: 8px;
+      color: var(--muted);
+      line-height: 1.15;
+    }
+
+    /* CV SECTION (PÁGINA 3) */
+    .cv-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr 0.9fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .cv-card {
+      background: #FAF7F2;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .cv-card.highlight {
+      background: linear-gradient(135deg, #FAF7F2 0%, #FEF3C7 100%);
+      border: 1.5px solid var(--gold);
+    }
+
+    .cv-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1.5px solid var(--gold);
+      padding-bottom: 3px;
+    }
+
+    .cv-item {
+      margin-bottom: 7px;
+    }
+
+    .cv-item strong {
+      font-size: 10px;
       color: var(--dark);
       display: block;
     }
 
-    .service-info span {
-      font-size: 9px;
-      color: var(--muted);
-    }
-
-    .service-price {
-      text-align: right;
-    }
-
-    .service-price .amount {
-      font-size: 10.5px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .service-price .sub {
-      font-size: 8px;
-      color: #059669;
+    .cv-item span {
+      font-size: 8.5px;
+      color: var(--gold-dark);
       font-weight: 700;
       display: block;
+      margin-bottom: 1px;
     }
 
-    /* RESUMEN FINAL BOX */
-    .final-summary {
-      background: linear-gradient(135deg, #1C1917 0%, #0C0A09 100%);
+    .cv-item p {
+      font-size: 8.5px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .github-box {
+      background: #111827;
       color: #FFFFFF;
-      border-radius: 12px;
-      padding: 13px 16px;
-      border-left: 5px solid var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
       margin-top: 8px;
     }
 
-    .final-left h4 {
+    .github-box a {
+      color: #FCD34D;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 9.5px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* TABLA DE PRECIOS HORIZONTAL (PÁGINA 4) */
+    .pricing-grid-horiz {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .plan-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .plan-card.highlight {
+      background: #FEF3C7;
+      border: 2px solid var(--gold);
+      box-shadow: 0 4px 12px rgba(217, 155, 0, 0.15);
+    }
+
+    .plan-name {
       font-size: 12px;
       font-weight: 800;
-      color: #FCD34D;
-      margin-bottom: 3px;
+      color: var(--primary);
+      text-transform: uppercase;
     }
 
-    .final-left p {
+    .plan-range {
       font-size: 9px;
-      color: #A8A29E;
-      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
-    .final-right {
-      text-align: right;
-    }
-
-    .final-cost {
-      font-size: 19px;
+    .plan-price {
+      font-size: 16px;
       font-weight: 900;
-      color: #34D399;
-      line-height: 1;
+      color: var(--primary-dark);
+      margin: 4px 0;
     }
 
-    .final-per-user {
-      font-size: 9.5px;
-      color: #FCD34D;
+    .plan-sub {
+      font-size: 8.5px;
+      color: var(--gold-dark);
       font-weight: 700;
-      margin-top: 2px;
     }
 
     /* FOOTER */
     .page-footer {
       border-top: 1px solid var(--border);
-      padding-top: 8px;
+      padding-top: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 8.5px;
+      font-size: 8px;
       color: #9CA3AF;
       margin-top: auto;
     }
@@ -511,28 +439,27 @@ const htmlContent = `<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- ==================== PÁGINA 1: IDENTIDAD, QUÉ HACE & MÓDULOS ==================== -->
+  <!-- ==================== PÁGINA 1: VISIÓN, OPERACIÓN & MÓDULOS ==================== -->
   <div class="page">
     <div>
-      <!-- Banner Cabecera con Logo Oficial -->
       <div class="header-banner">
-        <div class="header-logo-wrap">
-          <img src="${logoBase64}" alt="Logo Oficial Cangallo Señorial">
-        </div>
-        <div class="header-content">
-          <div class="header-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
-          <h1 class="header-title">COMPARSA CANGALLO SEÑORIAL</h1>
-          <p class="header-sub">Dossier Técnico — Plataforma Digital de Gestión Integral, Asistencia QR & Tesorería</p>
-          
-          <div class="meta-bar">
-            <div class="meta-item"><strong>Presentado a:</strong> Sr. Próspero Huayanay & Junta Directiva</div>
-            <div class="meta-item"><strong>Implementación de Negocios:</strong> Jhoan Taboada</div>
+        <div class="header-left">
+          <div class="header-logo-wrap">
+            <img src="${logoBase64}" alt="Logo Cangallo">
           </div>
+          <div>
+            <div class="header-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
+            <h1 class="header-title">COMPARSA CANGALLO SEÑORIAL</h1>
+            <p class="header-sub">Dossier Técnico — Plataforma Digital de Gestión Integral, Asistencia QR & Tesorería</p>
+          </div>
+        </div>
+        <div class="header-meta">
+          <div><strong>Presentado a:</strong> Sr. Próspero Huayanay & Junta Directiva</div>
+          <div><strong>Implementación de Negocios:</strong> Jhoan Taboada</div>
         </div>
       </div>
 
-      <!-- Métricas de Impacto Operativo -->
-      <div class="sec-title" style="margin-top: 12px;">Métricas & Eficiencia Operativa</div>
+      <div class="sec-title">1. Métricas de Impacto & Eficiencia Operativa</div>
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-num">0.2 seg</div>
@@ -552,294 +479,332 @@ const htmlContent = `<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Propósito & Visión Institucional -->
-      <div class="banner-value">
-        <div class="badge-icon-box">
-          COBERTURA TOTAL
-          <span>NUBE 24/7</span>
-        </div>
-        <p>
-          <strong>MODELO DE SERVICIO INTEGRAL:</strong> La plataforma se entrega completamente configurada y operativa. La institución únicamente asume la inversión de <strong>Mantenimiento Operativo, Servidores en la Nube y Almacenamiento Seguro de la Información</strong> según la escala de socios, garantizando un servicio confiable, blindado y 100% autofinanciable.
-        </p>
+      <div style="background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border: 1.5px solid #10B981; border-radius: 8px; padding: 7px 12px; margin-bottom: 8px; font-size: 9.5px; color: #064E3B;">
+        <strong>MODELO DE SERVICIO INTEGRAL EN LA NUBE:</strong> La plataforma se entrega completamente configurada y operativa. La institución únicamente cubre el <strong>Mantenimiento Operativo, Servidores en la Nube y Almacenamiento Seguro de la Información</strong> según la escala de socios, garantizando un servicio confiable, blindado y 100% autofinanciable con las cuotas.
       </div>
 
-      <!-- Módulos Operativos de la Plataforma -->
-      <div class="sec-title">Módulos de la Plataforma Integrada</div>
-      <div class="modules-grid">
+      <div class="sec-title">2. Módulos Operativos de la Plataforma Integrada</div>
+      <div class="modules-grid-4">
         <div class="module-box green">
-          <div class="module-head">📱 Asistencia Digital por Código QR</div>
-          <p class="module-desc">Cada socio porta su carnet QR personal en el celular. Los delegados escanean en fracciones de segundo con la cámara o marcan en lista táctil. Reportes instantáneos en Excel.</p>
+          <div class="module-head">📱 Asistencia QR</div>
+          <p class="module-desc">Carnet digital en celular. Escaneo en fracciones de segundo con cámara o marcado manual para delegados. Reportes en Excel en vivo.</p>
         </div>
-
         <div class="module-box gold">
-          <div class="module-head">👗 Tienda de Vestuario & Tallas</div>
-          <p class="module-desc">Catálogo con camisas bordadas, polleras y accesorios. Registro estricto de tallas (S, M, L, XL) y control de entrega de prendas para evitar confusiones y mermas.</p>
+          <div class="module-head">👗 Tienda & Tallas</div>
+          <p class="module-desc">Catálogo de camisas bordadas y polleras. Registro estricto de tallas (S, M, L, XL) y control de entrega para evitar mermas.</p>
         </div>
-
         <div class="module-box blue">
-          <div class="module-head">💰 Tesorería & Validación Digital</div>
-          <p class="module-desc">Carga directa de comprobantes de pagos digitales en alta resolución. La directiva valida o revierte aportes con un solo toque, manteniendo el balance contable al día.</p>
+          <div class="module-head">💰 Tesorería Digital</div>
+          <p class="module-desc">Carga directa de comprobantes de pagos digitales en HD. Validación en 1 clic y balance contable de recaudación al día.</p>
         </div>
-
         <div class="module-box red">
-          <div class="module-head">🎶 Cancionero Oficial & Buzón Directivo</div>
-          <p class="module-desc">Letras oficiales de carnavales y huaynos en el bolsillo de todos los integrantes para los ensayos, calendario de eventos y canal confidencial de sugerencias.</p>
+          <div class="module-head">🎶 Cancionero & Buzón</div>
+          <p class="module-desc">Letras oficiales de carnavales y huaynos para ensayos, calendario de eventos y canal confidencial de sugerencias para socios.</p>
         </div>
       </div>
     </div>
 
-    <!-- Footer Pág 1 -->
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 1 de 3</span>
+      <span>Página 1 de 4</span>
     </div>
   </div>
 
-  <!-- ==================== PÁGINA 2: ARQUITECTURA CLOUD, SEGURIDAD & FLUJOS ==================== -->
+  <!-- ==================== PÁGINA 2: ARQUITECTURA & FLUJOS PANORÁMICOS ==================== -->
   <div class="page">
     <div>
-      <div class="header-banner" style="padding: 13px 18px;">
-        <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-          <img src="${logoBase64}" alt="Logo Cangallo">
-        </div>
-        <div class="header-content">
-          <h2 style="font-size: 16px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
-          <p style="color: #E5E7EB; font-size: 10px;">Seguridad corporativa, infraestructura en la nube y funcionamiento en vivo</p>
-        </div>
-      </div>
-
-      <!-- Seguridad y Nube -->
-      <div class="sec-title">Infraestructura & Almacenamiento en la Nube</div>
-      <div class="cloud-grid">
-        <div class="cloud-item">
-          <strong>☁️ Servidores Cloud de Alta Disponibilidad</strong>
-          <p>Red distribuida para carga ultrarrápida en cualquier celular 4G/5G con 99.9% de operatividad.</p>
-        </div>
-        <div class="cloud-item">
-          <strong>🔒 Almacenamiento Seguro de Información</strong>
-          <p>Base de datos corporativa blindada con copias de seguridad continuas y redundantes.</p>
-        </div>
-        <div class="cloud-item">
-          <strong>⚙️ Mantenimiento & Monitoreo 24/7</strong>
-          <p>Procesos automatizados de diagnóstico que garantizan que el sistema responda sin demoras.</p>
-        </div>
-        <div class="cloud-item">
-          <strong>📊 Soberanía y Control de Datos</strong>
-          <p>Descarga del padrón y reportes de tesorería a Microsoft Excel (.xlsx) en cualquier momento.</p>
-        </div>
-      </div>
-
-      <!-- Flujo 1: Asistencia -->
-      <div class="sec-title">Flujo 1: Asistencia en Ensayos con Código QR</div>
-      <div class="flow-card">
-        <div class="flow-steps">
-          <div class="step-item">
-            <div class="step-badge">1</div>
-            <div class="step-name">Carnet Digital</div>
-            <div class="step-detail">El socio abre su carnet QR personal desde su celular.</div>
+      <div class="header-banner" style="padding: 10px 16px;">
+        <div class="header-left">
+          <div class="header-logo-wrap" style="width: 40px; height: 40px;">
+            <img src="${logoBase64}" alt="Logo Cangallo">
           </div>
-          <div class="step-item">
-            <div class="step-badge">2</div>
-            <div class="step-name">Escaneo Cámara</div>
-            <div class="step-detail">El delegado apunta la cámara y lee el código en 0.2 seg.</div>
-          </div>
-          <div class="step-item">
-            <div class="step-badge">3</div>
-            <div class="step-name">Registro Nube</div>
-            <div class="step-detail">El servidor seguro valida identidad y registra hora exacta.</div>
-          </div>
-          <div class="step-item">
-            <div class="step-badge">4</div>
-            <div class="step-name">Métricas en Vivo</div>
-            <div class="step-detail">El dashboard directivo actualiza los presentes en tiempo real.</div>
+          <div>
+            <h2 style="font-size: 15px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
+            <p style="color: #E5E7EB; font-size: 9px;">Infraestructura corporativa, servidores en la nube y funcionamiento en ensayos</p>
           </div>
         </div>
       </div>
 
-      <!-- Flujo 2: Vestuario y Tesorería -->
-      <div class="sec-title">Flujo 2: Tienda de Vestuario & Validación de Pagos</div>
-      <div class="flow-card">
-        <div class="flow-steps">
-          <div class="step-item">
-            <div class="step-badge">1</div>
-            <div class="step-name">Elección & Talla</div>
-            <div class="step-detail">El socio elige prenda (Camisa/Pollera) y su talla exacta.</div>
+      <div class="sec-title" style="margin-top: 6px;">1. Infraestructura & Almacenamiento Seguro en la Nube</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px;">
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--primary); display: block;">☁️ Servidores Cloud</strong>
+          <p style="font-size: 8px; color: var(--muted);">Red distribuida para carga ultrarrápida 4G/5G con 99.9% de operatividad.</p>
+        </div>
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--primary); display: block;">🔒 Almacenamiento Seguro</strong>
+          <p style="font-size: 8px; color: var(--muted);">Base de datos corporativa cifrada con respaldos automáticos continuos.</p>
+        </div>
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--primary); display: block;">⚙️ Monitoreo 24/7</strong>
+          <p style="font-size: 8px; color: var(--muted);">Procesos automatizados que mantienen la plataforma activa sin demoras.</p>
+        </div>
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--primary); display: block;">📊 Exportación a Excel</strong>
+          <p style="font-size: 8px; color: var(--muted);">Descarga instantánea del padrón y tesorería en cualquier momento.</p>
+        </div>
+      </div>
+
+      <div class="sec-title">2. Flujos Operativos del Sistema</div>
+
+      <!-- Flujo 1 -->
+      <div class="flow-row">
+        <div class="flow-label">📱 Asistencia QR en Ensayos</div>
+        <div class="flow-steps-horiz">
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">1</span>
+            <div class="step-horiz-name">Carnet Digital</div>
+            <div class="step-horiz-desc">Socio abre su QR personal.</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge">2</div>
-            <div class="step-name">Adjunto Digital</div>
-            <div class="step-detail">Sube la captura de su comprobante desde el celular.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">2</span>
+            <div class="step-horiz-name">Escaneo Cámara</div>
+            <div class="step-horiz-desc">Delegado lee en 0.2 seg.</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge">3</div>
-            <div class="step-name">Aprobación 1-Clic</div>
-            <div class="step-detail">Tesorería revisa el comprobante en HD y aprueba en 1 toque.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">3</span>
+            <div class="step-horiz-name">Registro Nube</div>
+            <div class="step-horiz-desc">Valida y sella hora exacta.</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge">4</div>
-            <div class="step-name">Control Entrega</div>
-            <div class="step-detail">Se marca como "Entregado" al dar la prenda, sin mermas.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">4</span>
+            <div class="step-horiz-name">Métricas en Vivo</div>
+            <div class="step-horiz-desc">Dashboard se actualiza al instante.</div>
           </div>
         </div>
       </div>
 
-      <!-- Flujo 3: Despliegue -->
-      <div class="sec-title">Ruta de Implementación en 4 Fases</div>
-      <div class="flow-card" style="border-left: 4px solid var(--gold); margin-bottom: 0;">
-        <div class="flow-steps">
-          <div class="step-item">
-            <div class="step-badge" style="background: var(--gold);">F1</div>
-            <div class="step-name">Padrón Digital</div>
-            <div class="step-detail">Carga de socios y generación automática de carnets QR.</div>
+      <!-- Flujo 2 -->
+      <div class="flow-row">
+        <div class="flow-label">👗 Vestuario & Tesorería</div>
+        <div class="flow-steps-horiz">
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">1</span>
+            <div class="step-horiz-name">Elección & Talla</div>
+            <div class="step-horiz-desc">Camisa/Pollera (S, M, L, XL).</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge" style="background: var(--gold);">F2</div>
-            <div class="step-name">Capacitación</div>
-            <div class="step-detail">Taller práctico con la directiva y delegados para uso fluido.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">2</span>
+            <div class="step-horiz-name">Adjunto Digital</div>
+            <div class="step-horiz-desc">Sube captura de comprobante.</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge" style="background: var(--gold);">F3</div>
-            <div class="step-name">Piloto en Ensayo</div>
-            <div class="step-detail">Prueba en vivo en el primer ensayo con soporte presencial.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">3</span>
+            <div class="step-horiz-name">Validación 1 Clic</div>
+            <div class="step-horiz-desc">Tesorería aprueba en HD.</div>
           </div>
-          <div class="step-item">
-            <div class="step-badge" style="background: var(--gold);">F4</div>
-            <div class="step-name">Carnaval 2027</div>
-            <div class="step-detail">Operación continua y consolidación de reportes finales.</div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge">4</span>
+            <div class="step-horiz-name">Control Entrega</div>
+            <div class="step-horiz-desc">Se marca como Entregado.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flujo 3 -->
+      <div class="flow-row" style="border-left: 3px solid var(--gold); margin-bottom: 0;">
+        <div class="flow-label" style="color: var(--gold-dark);">🗺️ Ruta de Implementación</div>
+        <div class="flow-steps-horiz">
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge" style="background: var(--gold);">F1</span>
+            <div class="step-horiz-name">Padrón Digital</div>
+            <div class="step-horiz-desc">Carga y claves iniciales.</div>
+          </div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge" style="background: var(--gold);">F2</span>
+            <div class="step-horiz-name">Capacitación</div>
+            <div class="step-horiz-desc">Taller directiva y delegados.</div>
+          </div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge" style="background: var(--gold);">F3</span>
+            <div class="step-horiz-name">Piloto en Ensayo</div>
+            <div class="step-horiz-desc">Prueba real con soporte.</div>
+          </div>
+          <div class="step-horiz-item">
+            <span class="step-horiz-badge" style="background: var(--gold);">F4</span>
+            <div class="step-horiz-name">Carnaval 2027</div>
+            <div class="step-horiz-desc">Operación continua blindada.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Footer Pág 2 -->
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 2 de 3</span>
+      <span>Página 2 de 4</span>
     </div>
   </div>
 
-  <!-- ==================== PÁGINA 3: PLANES POR USUARIO & SERVICIOS ==================== -->
+  <!-- ==================== PÁGINA 3: PERFIL PROFESIONAL (RESPALDO & CONFIANZA) ==================== -->
   <div class="page">
     <div>
-      <div class="header-banner" style="padding: 13px 18px;">
-        <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-          <img src="${logoBase64}" alt="Logo Cangallo">
+      <div class="header-banner" style="padding: 10px 16px;">
+        <div class="header-left">
+          <div class="header-logo-wrap" style="width: 40px; height: 40px;">
+            <img src="${logoBase64}" alt="Logo Cangallo">
+          </div>
+          <div>
+            <h2 style="font-size: 15px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h2>
+            <p style="color: #E5E7EB; font-size: 9px;">Trayectoria en Economía, Inteligencia Empresarial, Startups & Transformación Digital</p>
+          </div>
         </div>
-        <div class="header-content">
-          <h2 style="font-size: 16px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
-          <p style="color: #E5E7EB; font-size: 10px;">Inversión operativa de infraestructura y almacenamiento por socio</p>
-        </div>
-      </div>
-
-      <!-- Planes por Escala -->
-      <div class="sec-title">1. Mantenimiento, Servidores en Nube & Almacenamiento Seguro</div>
-      <table class="pricing-table">
-        <thead>
-          <tr>
-            <th>Plan Institucional</th>
-            <th>Escala de Integrantes</th>
-            <th>Costo Mensual / Socio</th>
-            <th>Inversión por Temporada</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Plan Base</strong></td>
-            <td>Hasta 500 socios activos</td>
-            <td>S/ 0.30 por socio / mes</td>
-            <td>S/ 3.60 al año por socio</td>
-          </tr>
-          <tr class="highlight">
-            <td><strong>Plan Señorial</strong> <span class="tag-recommend">Recomendado</span></td>
-            <td><strong>Hasta 1,000 socios activos</strong></td>
-            <td><strong>S/ 0.20 por socio / mes</strong></td>
-            <td><strong>S/ 2.40 al año por socio</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Plan Élite / Masivo</strong></td>
-            <td>Hasta 1,500 socios activos</td>
-            <td>S/ 0.17 por socio / mes</td>
-            <td>S/ 2.00 al año por socio</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Servicios de Acompañamiento -->
-      <div class="sec-title">2. Capacitación & Soporte Técnico Incluido</div>
-      
-      <div class="service-row">
-        <div class="service-info">
-          <strong>Taller de Capacitación para Directiva & Delegados</strong>
-          <span>Inducción práctica de 1.5 horas para escaneo QR, validación de pagos y reportes.</span>
-        </div>
-        <div class="service-price">
-          <span class="amount">INCLUIDO</span>
-          <span class="sub">EN EL SERVICIO</span>
+        <div class="header-meta">
+          <div><strong>Jhoan Taboada Huamán</strong></div>
+          <div>PUCP • Economía & Aplicaciones con IA</div>
         </div>
       </div>
 
-      <div class="service-row">
-        <div class="service-info">
-          <strong>Acompañamiento Técnico en Ensayo de Lanzamiento</strong>
-          <span>Soporte presencial en puerta durante el primer ensayo oficial para garantizar 0 fallas.</span>
-        </div>
-        <div class="service-price">
-          <span class="amount">INCLUIDO</span>
-          <span class="sub">EN EL SERVICIO</span>
-        </div>
-      </div>
+      <div class="sec-title" style="margin-top: 6px;">Trayectoria & Experiencia Aplicada</div>
+      <div class="cv-grid">
+        
+        <!-- Columna 1: Formación -->
+        <div class="cv-card">
+          <div class="cv-title">🎓 Formación & Especialización</div>
+          
+          <div class="cv-item">
+            <strong>Pontificia Universidad Católica del Perú (PUCP)</strong>
+            <span>Bachiller en Economía</span>
+            <p>Formación sólida en análisis económico, finanzas, evaluación de proyectos y optimización de recursos.</p>
+          </div>
 
-      <div class="service-row">
-        <div class="service-info">
-          <strong>Dominio Web Propio Oficial (cangallosenorial.com)</strong>
-          <span>Enlace institucional personalizado con certificado de seguridad SSL candado verde.</span>
-        </div>
-        <div class="service-price">
-          <span class="amount">S/ 120.00 / año</span>
-          <span class="sub" style="color: #64748B;">OPCIONAL</span>
-        </div>
-      </div>
+          <div class="cv-item">
+            <strong>Diplomado en Aplicaciones con IA & Automatización (PUCP)</strong>
+            <span>Setiembre 2025 – Abril 2026</span>
+            <p>Construcción de soluciones analíticas, automatización de procesos y desarrollo de software moderno.</p>
+          </div>
 
-      <!-- Resumen Cuota Autofinanciada -->
-      <div class="final-summary">
-        <div class="final-left">
-          <h4>RESUMEN DEL PLAN SEÑORIAL (1,000 INTEGRANTES)</h4>
-          <p>
-            • Plataforma y Sistema Web: Provisionado & Operativo<br>
-            • Servidores Cloud 24/7 + Almacenamiento Seguro de Datos: Incluidos<br>
-            • Capacitación & Acompañamiento en Ensayo Inicial: Incluidos<br>
-            • Dominio Personalizado Web (1 Año): S/ 120.00
+          <div class="cv-item">
+            <strong>Beca de Excelencia Académica — QLAB PUCP</strong>
+            <span>Certificación en Machine Learning & Finanzas</span>
+            <p>Métodos cuantitativos avanzados y análisis financiero corporativo.</p>
+          </div>
+        </div>
+
+        <!-- Columna 2: Experiencia Operativa -->
+        <div class="cv-card highlight">
+          <div class="cv-title">💼 Experiencia en Operaciones & Negocios</div>
+          
+          <div class="cv-item">
+            <strong>Adecco Perú / América Móvil (Claro)</strong>
+            <span>Analista de Inteligencia Empresarial</span>
+            <p>Diseño y optimización de reportería estratégica y trazabilidad comercial para más de 400 colaboradores. Capacitación al 100% de supervisores.</p>
+          </div>
+
+          <div class="cv-item">
+            <strong>Surgir – Santander Microfinanzas</strong>
+            <span>Trainee de Operaciones</span>
+            <p>Control de desembolsos, pagos y recaudación. Automatización de flujos de información y monitoreo presentado a Directorio.</p>
+          </div>
+
+          <div class="cv-item">
+            <strong>180 Degrees Consulting PUCP</strong>
+            <span>Coordinador del Programa de Incubación</span>
+            <p>Diseño y validación de modelos de negocio y transformación digital para cerca de 30 emprendimientos y startups de impacto.</p>
+          </div>
+        </div>
+
+        <!-- Columna 3: Confianza & GitHub -->
+        <div class="cv-card">
+          <div class="cv-title">🛡️ Enfoque & Repositorio</div>
+          
+          <p style="font-size: 8.5px; color: var(--muted); line-height: 1.35; margin-bottom: 8px;">
+            Mi propósito es llevar la tecnología de alto nivel empresarial a instituciones culturales y organizaciones, haciéndola simple, transparente y útil para los directivos y socios.
           </p>
-        </div>
-        <div class="final-right">
-          <div class="final-cost">S/ 2.50</div>
-          <div class="final-per-user">por socio al año</div>
-        </div>
-      </div>
 
-      <!-- SLA y Compromiso -->
-      <div style="margin-top: 10px; padding: 8px 12px; background: #FAF7F2; border: 1px solid var(--border); border-radius: 8px; font-size: 9px; color: var(--muted);">
-        <strong>COMPROMISO DE CALIDAD (SLA):</strong> 99.9% de disponibilidad en la nube, respaldo automático continuo, protección de datos de los integrantes y exportación libre de la información a Excel en cualquier momento.
+          <div class="github-box">
+            <span style="font-size: 8.5px; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Portafolio & Código Fuente</span>
+            <a href="https://github.com/jhoan202012" target="_blank">🌐 github.com/jhoan202012</a>
+          </div>
+
+          <div style="margin-top: 8px; padding: 6px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 6px; font-size: 8px; color: var(--dark);">
+            <strong>Contacto Directo:</strong><br>
+            📱 (+51) 912 802 226<br>
+            ✉️ jhoanth1998@gmail.com
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Firma & Footer Pág 3 -->
+    <div class="page-footer">
+      <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
+      <span>Página 3 de 4</span>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA 4: PLANES POR USUARIO & SERVICIOS ==================== -->
+  <div class="page">
     <div>
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px;">
-        <div>
-          <strong style="font-size: 11px; color: var(--dark);">Jhoan Taboada</strong><br>
-          <span style="font-size: 9px; color: var(--muted);">Especialista en Implementación de Negocios & Soluciones Tecnológicas</span>
-        </div>
-        <div style="text-align: right; font-size: 9px; color: var(--muted);">
-          <span>WhatsApp / Contacto: +51 988 888 888</span><br>
-          <span>Email: jhoan.taboada@comparsa.pe</span>
+      <div class="header-banner" style="padding: 10px 16px;">
+        <div class="header-left">
+          <div class="header-logo-wrap" style="width: 40px; height: 40px;">
+            <img src="${logoBase64}" alt="Logo Cangallo">
+          </div>
+          <div>
+            <h2 style="font-size: 15px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
+            <p style="color: #E5E7EB; font-size: 9px;">Inversión operativa de infraestructura, servidores y almacenamiento seguro por socio</p>
+          </div>
         </div>
       </div>
 
-      <div class="page-footer">
-        <span>Comparsa Cangallo Señorial — Propuesta Técnica & Económica 2027</span>
-        <span>Página 3 de 3</span>
+      <div class="sec-title" style="margin-top: 6px;">1. Mantenimiento, Servidores en Nube & Almacenamiento Seguro</div>
+      <div class="pricing-grid-horiz">
+        <div class="plan-card">
+          <div class="plan-name">Plan Base</div>
+          <div class="plan-range">Hasta 500 socios activos</div>
+          <div class="plan-price">S/ 0.30</div>
+          <div class="plan-sub">por socio al mes (S/ 3.60 año)</div>
+        </div>
+
+        <div class="plan-card highlight">
+          <div class="plan-name">★ Plan Señorial (Recomendado)</div>
+          <div class="plan-range">Hasta 1,000 socios activos</div>
+          <div class="plan-price" style="color: var(--primary); font-size: 18px;">S/ 0.20</div>
+          <div class="plan-sub">por socio al mes (S/ 2.40 año)</div>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-name">Plan Élite / Masivo</div>
+          <div class="plan-range">Hasta 1,500 socios activos</div>
+          <div class="plan-price">S/ 0.17</div>
+          <div class="plan-sub">por socio al mes (S/ 2.00 año)</div>
+        </div>
       </div>
+
+      <div class="sec-title">2. Servicios de Acompañamiento & Respaldo Técnico</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--dark); display: block;">🎓 Taller de Capacitación</strong>
+          <span style="font-size: 8px; color: var(--muted); display: block; margin-bottom: 2px;">Inducción para directivos y delegados.</span>
+          <span style="font-size: 8px; color: #059669; font-weight: 800;">INCLUIDO EN EL SERVICIO</span>
+        </div>
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--dark); display: block;">🤝 Acompañamiento en Ensayo</strong>
+          <span style="font-size: 8px; color: var(--muted); display: block; margin-bottom: 2px;">Soporte presencial en ensayo inicial.</span>
+          <span style="font-size: 8px; color: #059669; font-weight: 800;">INCLUIDO EN EL SERVICIO</span>
+        </div>
+        <div style="background: #FAF7F2; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;">
+          <strong style="font-size: 9.5px; color: var(--dark); display: block;">🌐 Dominio Oficial Propio</strong>
+          <span style="font-size: 8px; color: var(--muted); display: block; margin-bottom: 2px;">cangallosenorial.com con SSL candado.</span>
+          <span style="font-size: 8px; color: #B45309; font-weight: 800;">S/ 120.00 / AÑO (OPCIONAL)</span>
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #1C1917 0%, #0C0A09 100%); color: #FFFFFF; border-radius: 8px; padding: 8px 14px; border-left: 4px solid var(--gold); display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h4 style="font-size: 11px; font-weight: 800; color: #FCD34D;">RESUMEN DEL PLAN SEÑORIAL (1,000 INTEGRANTES)</h4>
+          <p style="font-size: 8.5px; color: #A8A29E;">• Plataforma Web Provisionada &bull; Servidores Cloud 24/7 &bull; Almacenamiento Seguro &bull; Capacitación y Soporte Inicial Incluidos</p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 16px; font-weight: 900; color: #34D399;">S/ 2.50</div>
+          <div style="font-size: 8.5px; color: #FCD34D; font-weight: 700;">por socio al año</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Comparsa Cangallo Señorial — Propuesta Técnica & Económica 2027</span>
+      <span>Página 4 de 4</span>
     </div>
   </div>
 
@@ -864,5 +829,5 @@ execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF actualizado formalmente con Pagos Digitales y Cobertura Total.');
+  console.log('PDF Horizontal de 4 páginas generado con éxito.');
 }
