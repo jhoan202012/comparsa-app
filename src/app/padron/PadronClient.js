@@ -279,8 +279,8 @@ export default function PadronClient({ members = [] }) {
                       <div style={{ fontWeight: 800, color: '#13603A', fontSize: '0.92rem', letterSpacing: '0.5px' }}>
                         {m.dni || '—'}
                       </div>
-                      <span style={{ display: 'inline-block', fontSize: '0.72rem', color: '#92400E', background: '#FEF3C7', border: '1px solid #FCD34D', padding: '1px 6px', borderRadius: '6px', fontWeight: 800, marginTop: '2px' }}>
-                        CÓD: {m.affiliationYear || '2027'}-{m.dni || ''}
+                      <span style={{ display: 'inline-block', fontSize: '0.75rem', color: '#92400E', background: '#FEF3C7', border: '1px solid #FCD34D', padding: '2px 7px', borderRadius: '6px', fontWeight: 800, marginTop: '2px' }}>
+                        CÓD: {m.affiliationYear || '2027'}{m.dni || ''}
                       </span>
                     </td>
 

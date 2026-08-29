@@ -830,14 +830,14 @@ export default function EmpadronamientoClient() {
                 background: 'rgba(217, 155, 0, 0.25)',
                 border: '1px solid #FCD34D',
                 color: '#FCD34D',
-                fontSize: '0.82rem',
+                fontSize: '0.85rem',
                 fontWeight: 900,
                 letterSpacing: '1px',
-                padding: '2px 10px',
+                padding: '3px 12px',
                 borderRadius: '8px',
                 marginBottom: '0.5rem'
               }}>
-                CÓDIGO: {savedUser.affiliationYear || '2027'}-{savedUser.dni}
+                CÓDIGO: {savedUser.affiliationYear || '2027'}{savedUser.dni}
               </div>
               <div style={{ fontSize: '0.85rem', color: '#E5E7EB', fontWeight: 600, marginBottom: '0.85rem' }}>
                 DNI: {savedUser.dni} &bull; Talla: {savedUser.clothingSize || 'L'}

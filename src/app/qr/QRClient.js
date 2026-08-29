@@ -114,14 +114,14 @@ export default function QRClient({ initialUser, initialActiveEvent, initialAtten
               background: '#FEF3C7',
               border: '1px solid #F59E0B',
               color: '#92400E',
-              fontSize: '0.8rem',
+              fontSize: '0.82rem',
               fontWeight: 800,
               letterSpacing: '1px',
-              padding: '2px 10px',
+              padding: '3px 12px',
               borderRadius: '8px',
               margin: '0.2rem auto 0.4rem auto'
             }}>
-              CÓDIGO: {initialUser.affiliationYear || '2027'}-{initialUser.dni || ''}
+              CÓDIGO: {initialUser.affiliationYear || '2027'}{initialUser.dni || ''}
             </div>
             <p className={styles.role}>{initialUser.role === 'MUSICIAN' ? '🎺 Músico de Banda' : initialUser.role === 'ADMIN' ? '👑 Directiva' : '💃 Socio Danzante'}</p>
 

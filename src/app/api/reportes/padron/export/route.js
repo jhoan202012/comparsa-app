@@ -67,7 +67,7 @@ export async function GET(request) {
     };
 
     const rows = users.map(u => [
-      escapeCsv(`${u.affiliationYear || '2027'}-${u.dni || ''}`),
+      escapeCsv(`${u.affiliationYear || '2027'}${u.dni || ''}`),
       escapeCsv(u.dni || ''),
       escapeCsv(u.name || ''),
       escapeCsv(u.phone || ''),
