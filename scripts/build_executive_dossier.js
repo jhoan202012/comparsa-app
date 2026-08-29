@@ -1,0 +1,774 @@
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dossier Ejecutivo - Plataforma Digital Cangallo Señorial 2027</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #0F172A;
+      background: #F8FAFC;
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      height: 297mm;
+      padding: 16mm 18mm;
+      background: #FFFFFF;
+      position: relative;
+      page-break-after: always;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* COLORES INSTITUCIONALES */
+    :root {
+      --primary: #0D4A2B;
+      --primary-light: #166534;
+      --gold: #D97706;
+      --gold-light: #F59E0B;
+      --gold-bg: #FEF3C7;
+      --dark: #0F172A;
+      --gray-bg: #F1F5F9;
+      --border: #E2E8F0;
+      --accent-red: #DC2626;
+    }
+
+    /* HEADER */
+    .header-banner {
+      background: linear-gradient(135deg, #0A361F 0%, #14532D 60%, #0F172A 100%);
+      color: #FFFFFF;
+      padding: 20px 24px;
+      border-radius: 14px;
+      position: relative;
+      box-shadow: 0 8px 20px -4px rgba(10, 54, 31, 0.2);
+    }
+
+    .header-tag {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #F59E0B;
+      color: #FCD34D;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 23px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+      margin-bottom: 2px;
+    }
+
+    .header-sub {
+      color: #94A3B8;
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+
+    .meta-bar {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      font-size: 10.5px;
+    }
+
+    .meta-item strong {
+      color: #FCD34D;
+    }
+
+    /* TITULOS DE SECCIÓN */
+    .sec-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 14px;
+      margin-bottom: 10px;
+    }
+
+    .sec-title::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #D97706 0%, transparent 100%);
+    }
+
+    /* TARJETAS DE IMPACTO */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kpi-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      border-top: 3.5px solid var(--primary);
+    }
+
+    .kpi-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .kpi-label {
+      font-size: 9.5px;
+      color: #64748B;
+      font-weight: 600;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    /* BANNER DE ALIANZA S/ 0 */
+    .banner-highlight {
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border: 1.5px solid #10B981;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .badge-zero {
+      background: #065F46;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 10px;
+      white-space: nowrap;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(6, 95, 70, 0.25);
+    }
+
+    .badge-zero span {
+      display: block;
+      font-size: 8.5px;
+      color: #A7F3D0;
+      font-weight: 600;
+    }
+
+    .banner-highlight p {
+      font-size: 11px;
+      color: #064E3B;
+      line-height: 1.4;
+    }
+
+    /* MODULOS GRID */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .module-box {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .module-box.green { border-left: 4px solid var(--primary); }
+    .module-box.gold { border-left: 4px solid var(--gold); }
+    .module-box.blue { border-left: 4px solid #2563EB; }
+    .module-box.red { border-left: 4px solid var(--accent-red); }
+
+    .module-head {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .module-desc {
+      font-size: 10px;
+      color: #475569;
+      line-height: 1.35;
+    }
+
+    /* FLUJOS VISUALES (PAGINA 2) */
+    .flow-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 6px -1px rgba(0,0,0,0.03);
+    }
+
+    .flow-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      position: relative;
+    }
+
+    .step-item {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      position: relative;
+    }
+
+    .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 5px;
+    }
+
+    .step-name {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 2px;
+    }
+
+    .step-detail {
+      font-size: 9px;
+      color: #64748B;
+      line-height: 1.25;
+    }
+
+    /* TABLA DE PRECIOS */
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .pricing-table th {
+      background: #0F3A22;
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 9px 11px;
+      text-align: left;
+    }
+
+    .pricing-table td {
+      padding: 9px 11px;
+      font-size: 10.5px;
+      border-bottom: 1px solid var(--border);
+      color: var(--dark);
+    }
+
+    .pricing-table tr.highlight {
+      background: #FEF3C7;
+      font-weight: 700;
+    }
+
+    .pricing-table tr.highlight td {
+      color: #92400E;
+    }
+
+    .tag-recommend {
+      background: #D97706;
+      color: #FFFFFF;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-left: 5px;
+      text-transform: uppercase;
+    }
+
+    /* SERVICIOS COMPLEMENTARIOS */
+    .service-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+
+    .service-info strong {
+      font-size: 11px;
+      color: var(--dark);
+      display: block;
+    }
+
+    .service-info span {
+      font-size: 9.5px;
+      color: #64748B;
+    }
+
+    .service-price {
+      text-align: right;
+    }
+
+    .service-price .amount {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .service-price .sub {
+      font-size: 8.5px;
+      color: #059669;
+      font-weight: 700;
+      display: block;
+    }
+
+    /* RESUMEN FINAL BOX */
+    .final-summary {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #FFFFFF;
+      border-radius: 12px;
+      padding: 14px 18px;
+      border-left: 5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .final-left h4 {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #FCD34D;
+      margin-bottom: 3px;
+    }
+
+    .final-left p {
+      font-size: 9.5px;
+      color: #94A3B8;
+      line-height: 1.35;
+    }
+
+    .final-right {
+      text-align: right;
+    }
+
+    .final-cost {
+      font-size: 20px;
+      font-weight: 900;
+      color: #34D399;
+      line-height: 1;
+    }
+
+    .final-per-user {
+      font-size: 10px;
+      color: #FCD34D;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: #94A3B8;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PÁGINA 1: VISIÓN & MÓDULOS ==================== -->
+  <div class="page">
+    <div>
+      <!-- Banner Cabecera -->
+      <div class="header-banner">
+        <div class="header-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
+        <h1 class="header-title">COMPARSA CANGALLO SEÑORIAL</h1>
+        <p class="header-sub">Dossier Técnico y Comercial — Plataforma Digital de Gestión Integral & Asistencia QR</p>
+        
+        <div class="meta-bar">
+          <div class="meta-item"><strong>Presentado a:</strong> Sr. Próspero Huayanay & Junta Directiva</div>
+          <div class="meta-item"><strong>Consultoría & Software:</strong> Jhoan Taboada (Soluciones Digitales)</div>
+        </div>
+      </div>
+
+      <!-- Métricas de Impacto -->
+      <div class="sec-title" style="margin-top: 14px;">Métricas & Eficiencia Operativa</div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-num">0.2 seg</div>
+          <div class="kpi-label">Tiempo por Escaneo QR</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num">100%</div>
+          <div class="kpi-label">Cuentas Claras Yape</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num">+1,000</div>
+          <div class="kpi-label">Capacidad de Integrantes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num">24 / 7</div>
+          <div class="kpi-label">Disponibilidad en la Nube</div>
+        </div>
+      </div>
+
+      <!-- Alianza S/ 0.00 -->
+      <div class="banner-highlight">
+        <div class="badge-zero">
+          S/ 0.00
+          <span>COSTO DESARROLLO</span>
+        </div>
+        <p>
+          <strong>MODELO DE ALIANZA E INNOVACIÓN:</strong> El costo de arquitectura, ingeniería y desarrollo del software (valorizado en <strong>S/ 5,500.00</strong>) está <strong>100% BONIFICADO</strong> para Cangallo Señorial. La institución solo asume el costo operativo de infraestructura y mantenimiento por usuario, permitiendo que el sistema se autofinancie con las cuotas.
+        </p>
+      </div>
+
+      <!-- Módulos del Sistema -->
+      <div class="sec-title">Módulos del Sistema Integrado</div>
+      <div class="modules-grid">
+        <div class="module-box green">
+          <div class="module-head">📱 Asistencia Digital por Código QR</div>
+          <p class="module-desc">Cada socio porta su carnet QR en el celular. Los delegados escanean en segundos con cámara o marcan en lista táctil. Reportes instantáneos en Excel.</p>
+        </div>
+
+        <div class="module-box gold">
+          <div class="module-head">👗 Tienda de Vestuario & Tallas</div>
+          <p class="module-desc">Catálogo con camisas bordadas, polleras y accesorios. Registro estricto de tallas (S, M, L, XL) y control de estado de entrega para evitar mermas.</p>
+        </div>
+
+        <div class="module-box blue">
+          <div class="module-head">💰 Tesorería & Validación de Vouchers</div>
+          <p class="module-desc">Carga directa de comprobantes Yape/Plin en alta resolución. La directiva valida o revierte con un solo toque, manteniendo balances al día.</p>
+        </div>
+
+        <div class="module-box red">
+          <div class="module-head">🎶 Cancionero Oficial & Buzón Directivo</div>
+          <p class="module-desc">Letras completas de huaynos y carnavales para ensayos en el bolsillo de los integrantes, calendario de eventos y canal confidencial de opiniones.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Pág 1 -->
+    <div class="page-footer">
+      <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
+      <span>Página 1 de 3</span>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA 2: FLUJOS DE TRABAJO & IMPLEMENTACIÓN ==================== -->
+  <div class="page">
+    <div>
+      <div class="header-banner" style="padding: 14px 20px;">
+        <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">FLUJOS OPERATIVOS & RUTA DE IMPLEMENTACIÓN</h2>
+        <p style="color: #94A3B8; font-size: 10.5px;">Mapeo visual del funcionamiento en ensayos, tesorería y despliegue institucional</p>
+      </div>
+
+      <!-- Flujo 1: Asistencia -->
+      <div class="sec-title">Flujo 1: Control de Asistencia en Ensayos (QR)</div>
+      <div class="flow-card">
+        <div class="flow-steps">
+          <div class="step-item">
+            <div class="step-badge">1</div>
+            <div class="step-name">Carnet Digital</div>
+            <div class="step-detail">El socio abre su QR personal desde su celular al llegar al ensayo.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">2</div>
+            <div class="step-name">Escaneo Rápido</div>
+            <div class="step-detail">El delegado apunta la cámara y lee el código en 0.2 segundos.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">3</div>
+            <div class="step-name">Registro en Nube</div>
+            <div class="step-detail">Supabase valida la identidad y registra hora y estado (Presente/Tarde).</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">4</div>
+            <div class="step-name">Métricas en Vivo</div>
+            <div class="step-detail">El panel del directivo actualiza el porcentaje de asistencia al instante.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flujo 2: Vestuario y Tesorería -->
+      <div class="sec-title">Flujo 2: Adquisición de Vestuario & Validación de Cuotas</div>
+      <div class="flow-card">
+        <div class="flow-steps">
+          <div class="step-item">
+            <div class="step-badge">1</div>
+            <div class="step-name">Selección & Talla</div>
+            <div class="step-detail">El socio escoge su prenda (Camisa/Pollera) y selecciona su talla exacta.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">2</div>
+            <div class="step-name">Adjunto Yape/Plin</div>
+            <div class="step-detail">Sube la captura del comprobante desde la galería de su teléfono.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">3</div>
+            <div class="step-name">Validación 1 Clic</div>
+            <div class="step-detail">Tesorería revisa el voucher y aprueba el pago con un solo toque.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge">4</div>
+            <div class="step-name">Control de Entrega</div>
+            <div class="step-detail">Se marca como "Entregado" al entregar la prenda, evitando reclamos.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flujo 3: Roadmap de Despliegue -->
+      <div class="sec-title">Ruta de Implementación en 4 Fases</div>
+      <div class="flow-card" style="border-left: 4px solid var(--gold);">
+        <div class="flow-steps">
+          <div class="step-item">
+            <div class="step-badge" style="background: var(--gold);">F1</div>
+            <div class="step-name">Carga de Padrón</div>
+            <div class="step-detail">Importación del listado de socios y generación de claves y códigos QR.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge" style="background: var(--gold);">F2</div>
+            <div class="step-name">Capacitación</div>
+            <div class="step-detail">Taller práctico con la directiva y delegados para el uso del sistema.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge" style="background: var(--gold);">F3</div>
+            <div class="step-name">Piloto en Ensayo</div>
+            <div class="step-detail">Prueba real en el primer ensayo oficial con acompañamiento presencial.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-badge" style="background: var(--gold);">F4</div>
+            <div class="step-name">Carnaval 2027</div>
+            <div class="step-detail">Operación continua con soporte técnico y reportes consolidados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Pág 2 -->
+    <div class="page-footer">
+      <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
+      <span>Página 2 de 3</span>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA 3: COTIZACIÓN & PLANES ==================== -->
+  <div class="page">
+    <div>
+      <div class="header-banner" style="padding: 14px 20px;">
+        <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PROPUESTA ECONÓMICA & PLANES POR USUARIO</h2>
+        <p style="color: #94A3B8; font-size: 10.5px;">Estructura de inversión transparente, sin costos ocultos y 100% autofinanciada</p>
+      </div>
+
+      <!-- Tabla de Planes -->
+      <div class="sec-title">1. Planes de Mantenimiento e Infraestructura Cloud</div>
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Plan de Servicio</th>
+            <th>Escala de Integrantes</th>
+            <th>Costo Temporada</th>
+            <th>Inversión por Socio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Plan Base</strong></td>
+            <td>Hasta 500 integrantes</td>
+            <td>S/ 1,800.00 / año</td>
+            <td>S/ 3.60 / socio al año</td>
+          </tr>
+          <tr class="highlight">
+            <td><strong>Plan Señorial</strong> <span class="tag-recommend">Recomendado</span></td>
+            <td><strong>Hasta 1,000 integrantes</strong></td>
+            <td><strong>S/ 2,400.00 / año</strong></td>
+            <td><strong>S/ 2.40 / socio al año</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Plan Élite / Masivo</strong></td>
+            <td>Hasta 1,500 integrantes</td>
+            <td>S/ 3,000.00 / año</td>
+            <td>S/ 2.00 / socio al año</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Servicios Profesionales -->
+      <div class="sec-title">2. Capacitación & Soporte Técnico Incluido</div>
+      
+      <div class="service-row">
+        <div class="service-info">
+          <strong>Taller de Capacitación a Directiva y Delegados</strong>
+          <span>Sesión de 1.5 horas de inducción para escaneo QR, validación de pagos y reportes.</span>
+        </div>
+        <div class="service-price">
+          <span class="amount">S/ 350.00</span>
+          <span class="sub">100% BONIFICADO GRATIS</span>
+        </div>
+      </div>
+
+      <div class="service-row">
+        <div class="service-info">
+          <strong>Acompañamiento Técnico en Ensayo de Lanzamiento</strong>
+          <span>Soporte presencial en puerta durante el primer ensayo oficial para garantizar 0 fallas.</span>
+        </div>
+        <div class="service-price">
+          <span class="amount">S/ 200.00</span>
+          <span class="sub">100% BONIFICADO GRATIS</span>
+        </div>
+      </div>
+
+      <div class="service-row">
+        <div class="service-info">
+          <strong>Dominio Web Propio (cangallosenorial.com)</strong>
+          <span>Enlace web institucional personalizado con certificado de seguridad SSL candado verde.</span>
+        </div>
+        <div class="service-price">
+          <span class="amount">S/ 120.00 / año</span>
+          <span class="sub" style="color: #64748B;">OPCIONAL</span>
+        </div>
+      </div>
+
+      <!-- Resumen Final -->
+      <div class="final-summary">
+        <div class="final-left">
+          <h4>PAQUETE INTEGRAL RECOMENDADO (TEMPORADA 2027)</h4>
+          <p>
+            • Desarrollo de Software: S/ 0.00 (Bonificado)<br>
+            • Mantenimiento Cloud (1,000 socios): S/ 2,400.00<br>
+            • Capacitación + Soporte en Ensayo Inicial: INCLUIDOS GRATIS<br>
+            • Dominio Personalizado Web (1 Año): S/ 120.00
+          </p>
+        </div>
+        <div class="final-right">
+          <div class="final-cost">S/ 2,520.00</div>
+          <div class="final-per-user">≈ S/ 2.50 por socio al año</div>
+        </div>
+      </div>
+
+      <!-- SLA y Garantías -->
+      <div style="margin-top: 10px; padding: 8px 12px; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; font-size: 9.5px; color: #475569;">
+        <strong>GARANTÍA DE SERVICIO (SLA):</strong> Disponibilidad 99.9% en la nube, copias de seguridad redundantes, cifrado de credenciales de socios y exportación directa de padrón y tesorería a Microsoft Excel en cualquier momento.
+      </div>
+    </div>
+
+    <!-- Firma & Footer Pág 3 -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px;">
+        <div>
+          <strong style="font-size: 11px; color: var(--dark);">Jhoan Taboada</strong><br>
+          <span style="font-size: 9px; color: #64748B;">Consultor en Soluciones Tecnológicas & Digitalización</span>
+        </div>
+        <div style="text-align: right; font-size: 9px; color: #64748B;">
+          <span>WhatsApp / Contacto: +51 988 888 888</span><br>
+          <span>Email: jhoan.taboada@comparsa.pe</span>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span>Comparsa Cangallo Señorial — Propuesta Técnica & Económica 2027</span>
+        <span>Página 3 de 3</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+`;
+
+const htmlPath = path.join(__dirname, '..', 'public', 'dossier_propuesta.html');
+fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+console.log('HTML generado en:', htmlPath);
+
+const pdfOutputPath1 = path.join(__dirname, '..', 'public', 'Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf');
+const pdfOutputPath2 = 'C:\\Users\\jhoan\\.gemini\\antigravity\\brain\\03e53288-970f-4e84-abdf-a8ce111ba82e\\Propuesta_Tecnica_Comercial_Cangallo_Senorial.pdf';
+
+const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+let browserPath = fs.existsSync(edgePath) ? edgePath : chromePath;
+
+const cmd = `"${browserPath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOutputPath1}" --no-pdf-header-footer "file:///${htmlPath.replace(/\\/g, '/')}"`;
+
+console.log('Ejecutando renderizado de alta fidelidad con Chrome/Edge Headless...');
+execSync(cmd);
+
+if (fs.existsSync(pdfOutputPath1)) {
+  fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
+  console.log('PDF de Alta Fidelidad generado con éxito en:');
+  console.log('1.', pdfOutputPath1);
+  console.log('2.', pdfOutputPath2);
+} else {
+  console.error('No se pudo generar el PDF con el navegador.');
+}
