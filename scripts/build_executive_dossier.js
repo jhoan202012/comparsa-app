@@ -100,12 +100,6 @@ const htmlContent = `<!DOCTYPE html>
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    .header-logo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
     .header-tag {
       display: inline-block;
       background: rgba(217, 155, 0, 0.25);
@@ -405,13 +399,6 @@ const htmlContent = `<!DOCTYPE html>
       font-size: 11px;
       color: var(--dark);
       display: block;
-    }
-
-    .cv-item-block span {
-      font-size: 9.5px;
-      color: var(--gold-dark);
-      font-weight: 700;
-      display: block;
       margin-bottom: 2px;
     }
 
@@ -581,7 +568,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="header-banner">
         <div class="header-left">
           <div class="header-logo-wrap">
-            <img src="${logoBase64}" alt="Logo Cangallo">
+            <img src="${logoBase64}" width="54" height="54" alt="Logo Cangallo" style="display: block; width: 54px; height: 54px; object-fit: contain;">
           </div>
           <div>
             <div class="header-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
@@ -678,7 +665,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="header-banner" style="padding: 12px 20px;">
         <div class="header-left">
           <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-            <img src="${logoBase64}" alt="Logo Cangallo">
+            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
             <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
@@ -803,7 +790,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="header-banner" style="padding: 12px 20px;">
         <div class="header-left">
           <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-            <img src="${logoBase64}" alt="Logo Cangallo">
+            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
             <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h2>
@@ -825,42 +812,36 @@ const htmlContent = `<!DOCTYPE html>
           
           <div class="cv-item-block">
             <strong>Pontificia Universidad Católica del Perú (PUCP)</strong>
-            <span>Bachiller en Economía</span>
-            <p>Formación sólida en análisis económico, finanzas, evaluación de proyectos y optimización de recursos.</p>
+            <p>Bachiller en Economía con formación en análisis económico, finanzas corporativas, evaluación de proyectos y optimización de recursos.</p>
           </div>
 
           <div class="cv-item-block">
             <strong>Diplomado en Aplicaciones con IA & Automatización (PUCP)</strong>
-            <span>Setiembre 2025 – Abril 2026</span>
-            <p>Construcción de soluciones analíticas, automatización de procesos y desarrollo de software moderno.</p>
+            <p>Construcción de soluciones analíticas, automatización de procesos empresariales y desarrollo de software moderno.</p>
           </div>
 
           <div class="cv-item-block">
             <strong>Beca de Excelencia Académica — QLAB PUCP</strong>
-            <span>Certificación en Machine Learning & Finanzas</span>
-            <p>Métodos cuantitativos avanzados y análisis financiero corporativo.</p>
+            <p>Certificación en Machine Learning Aplicado y métodos cuantitativos avanzados.</p>
           </div>
         </div>
 
-        <!-- Columna 2: Experiencia Operativa -->
+        <!-- Columna 2: Experiencia Operativa (Sin Puestos) -->
         <div class="cv-column highlight">
           <div class="cv-col-title">💼 Experiencia en Operaciones & Negocios</div>
           
           <div class="cv-item-block">
             <strong>Adecco Perú / América Móvil (Claro)</strong>
-            <span>Analista de Inteligencia Empresarial</span>
             <p>Diseño y optimización de reportería estratégica y trazabilidad comercial para más de 400 colaboradores. Capacitación al 100% de supervisores.</p>
           </div>
 
           <div class="cv-item-block">
-            <strong>Surgir – Santander Microfinanzas</strong>
-            <span>Trainee de Operaciones</span>
-            <p>Control de desembolsos, pagos y recaudación. Automatización de flujos de información y monitoreo presentado a Directorio.</p>
+            <strong>Grupo Santander</strong>
+            <p>Control de desembolsos, pagos y recaudación. Automatización de flujos de información y monitoreo operativo presentado a Directorio.</p>
           </div>
 
           <div class="cv-item-block">
             <strong>180 Degrees Consulting PUCP</strong>
-            <span>Coordinador del Programa de Incubación</span>
             <p>Diseño y validación de modelos de negocio y transformación digital para cerca de 30 emprendimientos y startups de impacto.</p>
           </div>
         </div>
@@ -900,7 +881,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="header-banner" style="padding: 12px 20px;">
         <div class="header-left">
           <div class="header-logo-wrap" style="width: 48px; height: 48px;">
-            <img src="${logoBase64}" alt="Logo Cangallo">
+            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
             <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
@@ -909,7 +890,7 @@ const htmlContent = `<!DOCTYPE html>
         </div>
       </div>
 
-      <div class="sec-title">1. Mantenimiento, Servidores en Nube & Almacenamiento Seguro</div>
+      <div class="sec-title" style="margin-top: 6px;">1. Mantenimiento, Servidores en Nube & Almacenamiento Seguro</div>
       <div class="pricing-cards-grid">
         <div class="plan-box-large">
           <div class="plan-title-lg">Plan Base</div>
@@ -985,11 +966,11 @@ const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 let browserPath = fs.existsSync(edgePath) ? edgePath : chromePath;
 
-const cmd = `"${browserPath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOutputPath1}" --no-pdf-header-footer "file:///${htmlPath.replace(/\\/g, '/')}"`;
+const cmd = `"${browserPath}" --headless --disable-gpu --virtual-time-budget=3000 --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOutputPath1}" --no-pdf-header-footer "file:///${htmlPath.replace(/\\/g, '/')}"`;
 
 execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF Horizontal balanceado con 100% de ocupación generado con éxito.');
+  console.log('PDF actualizado con logo embebido con dimensiones explicitas y experiencia ajustada sin puestos.');
 }
