@@ -154,13 +154,13 @@ export default function PadronClient({ members: initialMembers = [] }) {
 
       {/* Cabecera & Acciones Principales */}
       <div style={{
-        background: 'linear-gradient(135deg, #002F18 0%, #0E472A 65%, #1A3624 100%)',
+        background: 'linear-gradient(135deg, #1F2937 0%, #111827 65%, #374151 100%)',
         color: '#FFFFFF',
         padding: '1.75rem 2rem',
         borderRadius: '22px',
-        borderBottom: '4px solid #D99B00',
+        borderBottom: '4px solid #D97706',
         marginBottom: '1.5rem',
-        boxShadow: '0 12px 32px rgba(14, 71, 42, 0.16)'
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
           <div>

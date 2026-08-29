@@ -210,12 +210,11 @@ export default function EmpadronamientoClient() {
   };
 
   return (
-    <div style={{ maxWidth: '560px', margin: '0 auto', fontFamily: 'var(--font-inter, sans-serif)' }}>
+    <div style={{ maxWidth: '540px', margin: '0 auto', fontFamily: 'var(--font-inter, sans-serif)' }}>
       
-      {/* ==================== GOOGLE STITCH APP HEADER ==================== */}
+      {/* ==================== BARRA SUPERIOR (PASOS & DIRECTIVA) ==================== */}
       {step < 5 && (
         <div style={{ marginBottom: '1.25rem' }}>
-          {/* Top Bar con Botón Volver, Paso y Acceso Directiva */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
             {step > 1 ? (
               <button
@@ -227,7 +226,7 @@ export default function EmpadronamientoClient() {
                   borderRadius: '50%',
                   border: '1.5px solid #E5E7EB',
                   background: '#FFFFFF',
-                  color: '#002F18',
+                  color: '#92400E',
                   fontSize: '1rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -268,16 +267,16 @@ export default function EmpadronamientoClient() {
                 height: '36px',
                 padding: '0 12px',
                 borderRadius: '9999px',
-                border: '1.5px solid #D99B00',
-                background: '#FAF7F2',
-                color: '#7D5800',
+                border: '1.5px solid #D97706',
+                background: '#FFFBEB',
+                color: '#92400E',
                 fontSize: '0.78rem',
                 fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '5px',
                 cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                boxShadow: '0 2px 6px rgba(217, 119, 6, 0.1)',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -285,64 +284,59 @@ export default function EmpadronamientoClient() {
             </button>
           </div>
 
-          {/* Barra de Progreso Fina de Stitch */}
+          {/* Barra de Progreso Fina en Oro Señorial */}
           <div style={{ height: '4px', background: '#E5E7EB', borderRadius: '9999px', overflow: 'hidden' }}>
             <div style={{
               height: '100%',
               width: `${(step / 4) * 100}%`,
-              background: 'linear-gradient(90deg, #002F18 0%, #D99B00 100%)',
+              background: 'linear-gradient(90deg, #D97706 0%, #F59E0B 100%)',
               transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
             }} />
           </div>
         </div>
       )}
 
-      {/* ==================== HERO DE SECCIÓN ELEVADO CON IMAGEN Y COLOR SUTIL ==================== */}
+      {/* ==================== CABECERA INSTITUCIONAL CON FOTO DE LA COMPARSA ==================== */}
       {step < 5 && (
         <div style={{
-          position: 'relative',
-          borderRadius: '22px',
-          overflow: 'hidden',
+          textAlign: 'center',
           marginBottom: '1.25rem',
-          boxShadow: '0 10px 28px rgba(0, 47, 24, 0.15)',
-          border: '1.5px solid #D99B00'
+          background: '#FFFFFF',
+          borderRadius: '22px',
+          border: '1px solid #FDE68A',
+          boxShadow: '0 8px 24px rgba(217, 119, 6, 0.08)',
+          overflow: 'hidden'
         }}>
-          {/* Fondo con Fotografía Institucional y Gradiente Sutil */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: 'url(/images/cangallo_1.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.35)'
-          }} />
-          
-          {/* Capa de Color Esmeralda Imperial & Oro */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(135deg, rgba(0, 47, 24, 0.94) 0%, rgba(14, 71, 42, 0.85) 60%, rgba(30, 27, 24, 0.92) 100%)'
-          }} />
-
-          {/* Contenido del Hero Banner */}
-          <div style={{ position: 'relative', zIndex: 2, padding: '1.6rem 1.25rem', textAlign: 'center' }}>
-            
-            {/* Logo o Escudo Circular */}
+          {/* Fotografía de las Danzantes de Cangallo en la Plaza Mayor */}
+          <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
+            <img
+              src="/images/cangallo_1.jpg"
+              alt="Comparsa Cangallo Señorial"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 35%' }}
+            />
+            {/* Degradado cálido sobre la foto */}
             <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(30, 27, 24, 0.8) 100%)'
+            }} />
+            
+            {/* Logo de la Comparsa sobre la foto */}
+            <div style={{
+              position: 'absolute',
+              bottom: '-24px',
+              left: '50%',
+              transform: 'translateX(-50%)',
               width: '56px',
               height: '56px',
               borderRadius: '50%',
               overflow: 'hidden',
-              border: '2.5px solid #FCD34D',
-              margin: '0 auto 0.6rem auto',
-              background: '#FFFFFF',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.35)'
+              border: '3px solid #FFFFFF',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+              background: '#FFFFFF'
             }}>
               <img
                 src="/images/Logo_1.jpg"
@@ -350,46 +344,47 @@ export default function EmpadronamientoClient() {
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
+          </div>
 
-            {/* Badge Dorado */}
+          <div style={{ padding: '2rem 1.25rem 1.25rem 1.25rem' }}>
+            {/* Badge Dorado de la Comparsa */}
             <div style={{
               display: 'inline-block',
-              background: 'rgba(217, 155, 0, 0.25)',
+              background: '#FEF3C7',
               border: '1px solid #FCD34D',
-              color: '#FCD34D',
+              color: '#92400E',
               fontSize: '0.72rem',
               fontWeight: 900,
-              letterSpacing: '1.5px',
+              letterSpacing: '1.2px',
               textTransform: 'uppercase',
               padding: '3px 12px',
               borderRadius: '9999px',
               marginBottom: '0.45rem'
             }}>
-              Comparsa Cangallo Señorial
+              ✨ CANGALLO SEÑORIAL 2027
             </div>
 
-            {/* Gran Título Oficial */}
+            {/* Título Principal Solicitado */}
             <h1 style={{
               fontFamily: 'var(--font-playfair, "Libre Caslon Text", serif)',
-              fontSize: '1.65rem',
+              fontSize: '1.75rem',
               fontWeight: 900,
-              color: '#FFFFFF',
+              color: '#1F2937',
               lineHeight: 1.15,
-              margin: '0 0 0.5rem 0',
-              letterSpacing: '0.5px'
+              margin: '0 0 0.4rem 0'
             }}>
-              EMPADRONAMIENTO CARNAVAL 2027
+              Empadronamiento Carnaval 2027
             </h1>
 
-            {/* Chips de Disciplinas */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
-              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+            {/* Pastillas de Disciplinas */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.74rem', fontWeight: 800, padding: '2px 10px', borderRadius: '8px' }}>
                 💃 Danzantes
               </span>
-              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.74rem', fontWeight: 800, padding: '2px 10px', borderRadius: '8px' }}>
                 🎺 Músicos
               </span>
-              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+              <span style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', fontSize: '0.74rem', fontWeight: 800, padding: '2px 10px', borderRadius: '8px' }}>
                 👑 Directivos
               </span>
             </div>
@@ -404,19 +399,19 @@ export default function EmpadronamientoClient() {
         </div>
       )}
 
-      {/* ==================== TARJETA PRINCIPAL (GOOGLE STITCH SPEC) ==================== */}
+      {/* ==================== TARJETA PRINCIPAL DEL FORMULARIO ==================== */}
       <div style={{
         background: '#FFFFFF',
         border: '1px solid #E5E7EB',
         borderRadius: '24px',
-        boxShadow: '0 16px 40px rgba(0, 47, 24, 0.06)',
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.05)',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Borde Superior Dorado Sutil */}
+        {/* Borde Superior en Oro Señorial */}
         <div style={{
           height: '4px',
-          background: 'linear-gradient(90deg, #D99B00 0%, #FEBB30 50%, #D99B00 100%)',
+          background: 'linear-gradient(90deg, #D97706 0%, #F59E0B 50%, #D97706 100%)',
           width: '100%'
         }} />
 
@@ -425,15 +420,15 @@ export default function EmpadronamientoClient() {
           {/* ==================== PASO 1: VALIDACIÓN DNI ==================== */}
           {step === 1 && (
             <div>
-              {/* Campo DNI Principal con Look Premium */}
+              {/* Campo DNI Principal */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                   <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px' }}>
                     NÚMERO DE DNI (8 DÍGITOS)
                   </label>
                   {dniLoading && (
-                    <span style={{ fontSize: '0.75rem', color: '#002F18', fontWeight: 800 }}>
-                      🔍 Consultando RENIEC...
+                    <span style={{ fontSize: '0.75rem', color: '#B45309', fontWeight: 800 }}>
+                      🔍 Consultando...
                     </span>
                   )}
                 </div>
@@ -453,8 +448,8 @@ export default function EmpadronamientoClient() {
                       fontSize: '1.3rem',
                       fontWeight: 800,
                       letterSpacing: '3px',
-                      background: '#FFF8F5',
-                      color: '#002F18',
+                      background: '#FAF7F2',
+                      color: '#1F2937',
                       outline: 'none',
                       boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
                       transition: 'border 0.2s ease'
@@ -498,7 +493,7 @@ export default function EmpadronamientoClient() {
                     {/* Nombres */}
                     <div>
                       <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
-                        Nombres Oficiales {isLocked && <span style={{ color: '#D99B00' }}>🔒</span>}
+                        Nombres Oficiales {isLocked && <span style={{ color: '#D97706' }}>🔒</span>}
                       </label>
                       <input
                         type="text"
@@ -514,7 +509,7 @@ export default function EmpadronamientoClient() {
                           fontSize: '1rem',
                           fontWeight: 700,
                           background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                          color: isLocked ? '#065F46' : '#1E1B18',
+                          color: isLocked ? '#065F46' : '#1F2937',
                           cursor: isLocked ? 'not-allowed' : 'text',
                           outline: 'none'
                         }}
@@ -524,7 +519,7 @@ export default function EmpadronamientoClient() {
                     {/* Apellidos */}
                     <div>
                       <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.3rem' }}>
-                        Apellidos Oficiales {isLocked && <span style={{ color: '#D99B00' }}>🔒</span>}
+                        Apellidos Oficiales {isLocked && <span style={{ color: '#D97706' }}>🔒</span>}
                       </label>
                       <input
                         type="text"
@@ -540,7 +535,7 @@ export default function EmpadronamientoClient() {
                           fontSize: '1rem',
                           fontWeight: 700,
                           background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                          color: isLocked ? '#065F46' : '#1E1B18',
+                          color: isLocked ? '#065F46' : '#1F2937',
                           cursor: isLocked ? 'not-allowed' : 'text',
                           outline: 'none'
                         }}
@@ -564,7 +559,7 @@ export default function EmpadronamientoClient() {
                             fontSize: '0.95rem',
                             fontWeight: 700,
                             background: '#FFFFFF',
-                            color: '#1E1B18',
+                            color: '#1F2937',
                             outline: 'none'
                           }}
                         >
@@ -589,7 +584,7 @@ export default function EmpadronamientoClient() {
                             fontSize: '0.92rem',
                             fontWeight: 700,
                             background: '#FFFFFF',
-                            color: '#1E1B18',
+                            color: '#1F2937',
                             outline: 'none'
                           }}
                         />
@@ -606,14 +601,14 @@ export default function EmpadronamientoClient() {
                       width: '100%',
                       padding: '1.1rem',
                       borderRadius: '16px',
-                      background: (!dni || !nombres) ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                      background: (!dni || !nombres) ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                       color: '#FFFFFF',
-                      border: (!dni || !nombres) ? 'none' : '1px solid #D99B00',
+                      border: 'none',
                       fontSize: '1.05rem',
                       fontWeight: 800,
                       letterSpacing: '0.5px',
                       cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
-                      boxShadow: (!dni || !nombres) ? 'none' : '0 8px 24px rgba(0, 47, 24, 0.28)',
+                      boxShadow: (!dni || !nombres) ? 'none' : '0 8px 24px rgba(217, 119, 6, 0.3)',
                       transition: 'all 0.2s ease'
                     }}
                   >
@@ -644,7 +639,7 @@ export default function EmpadronamientoClient() {
                       border: '1.5px solid #D1D5DB',
                       fontSize: '1.05rem',
                       fontWeight: 800,
-                      background: '#FFF8F5',
+                      background: '#FAF7F2',
                       outline: 'none'
                     }}
                   />
@@ -751,13 +746,13 @@ export default function EmpadronamientoClient() {
                     width: '100%',
                     padding: '1.1rem',
                     borderRadius: '16px',
-                    background: !phone ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                    background: !phone ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                     color: '#FFFFFF',
-                    border: !phone ? 'none' : '1px solid #D99B00',
+                    border: 'none',
                     fontSize: '1.05rem',
                     fontWeight: 800,
                     cursor: !phone ? 'not-allowed' : 'pointer',
-                    boxShadow: !phone ? 'none' : '0 8px 24px rgba(0, 47, 24, 0.28)'
+                    boxShadow: !phone ? 'none' : '0 8px 24px rgba(217, 119, 6, 0.3)'
                   }}
                 >
                   Continuar al Paso 3 ➔
@@ -786,20 +781,20 @@ export default function EmpadronamientoClient() {
                         key={item.id}
                         onClick={() => setMemberType(item.id)}
                         style={{
-                          border: active ? '2px solid #D99B00' : '1.5px solid #E5E7EB',
-                          background: active ? '#002F18' : '#FFF8F5',
-                          color: active ? '#FFFFFF' : '#1E1B18',
+                          border: active ? '2px solid #D97706' : '1.5px solid #E5E7EB',
+                          background: active ? '#FEF3C7' : '#FAF7F2',
+                          color: '#1F2937',
                           borderRadius: '16px',
                           padding: '14px 8px',
                           textAlign: 'center',
                           cursor: 'pointer',
-                          boxShadow: active ? '0 6px 16px rgba(0, 47, 24, 0.25)' : 'none',
+                          boxShadow: active ? '0 6px 16px rgba(217, 119, 6, 0.2)' : 'none',
                           transition: 'all 0.2s ease'
                         }}
                       >
                         <div style={{ fontSize: '1.6rem', marginBottom: '4px' }}>{item.icon}</div>
-                        <div style={{ fontWeight: 900, fontSize: '0.92rem', color: active ? '#FCD34D' : '#002F18' }}>{item.label}</div>
-                        <div style={{ fontSize: '0.72rem', color: active ? '#A7F3D0' : '#6B7280', marginTop: '2px' }}>{item.desc}</div>
+                        <div style={{ fontWeight: 900, fontSize: '0.92rem', color: active ? '#92400E' : '#1F2937' }}>{item.label}</div>
+                        <div style={{ fontSize: '0.72rem', color: active ? '#B45309' : '#6B7280', marginTop: '2px' }}>{item.desc}</div>
                       </div>
                     );
                   })}
@@ -822,7 +817,7 @@ export default function EmpadronamientoClient() {
                     fontSize: '0.95rem',
                     fontWeight: 800,
                     background: '#FFFFFF',
-                    color: '#002F18',
+                    color: '#1F2937',
                     outline: 'none'
                   }}
                 >
@@ -837,16 +832,16 @@ export default function EmpadronamientoClient() {
               </div>
 
               {/* Familiares en la Comparsa */}
-              <div style={{ marginBottom: '1.75rem', background: '#FFF8F5', borderRadius: '16px', padding: '1.1rem', border: '1px solid #E5E7EB' }}>
+              <div style={{ marginBottom: '1.75rem', background: '#FAF7F2', borderRadius: '16px', padding: '1.1rem', border: '1px solid #E5E7EB' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#002F18' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#1F2937' }}>
                     ¿Tienes familiares en la comparsa?
                   </span>
                   <input
                     type="checkbox"
                     checked={hasRelatives}
                     onChange={e => setHasRelatives(e.target.checked)}
-                    style={{ width: '22px', height: '22px', accentColor: '#002F18', cursor: 'pointer' }}
+                    style={{ width: '22px', height: '22px', accentColor: '#D97706', cursor: 'pointer' }}
                   />
                 </div>
 
@@ -878,13 +873,13 @@ export default function EmpadronamientoClient() {
                   width: '100%',
                   padding: '1.1rem',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                  background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                   color: '#FFFFFF',
-                  border: '1px solid #D99B00',
+                  border: 'none',
                   fontSize: '1.05rem',
                   fontWeight: 800,
                   cursor: 'pointer',
-                  boxShadow: '0 8px 24px rgba(0, 47, 24, 0.28)'
+                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.3)'
                 }}
               >
                 Continuar al Paso 4 ➔
@@ -915,8 +910,8 @@ export default function EmpadronamientoClient() {
                         key={item.id}
                         onClick={() => handleTalentToggle(item.id)}
                         style={{
-                          border: isSelected ? '1.5px solid #002F18' : '1px solid #E5E7EB',
-                          background: isSelected ? '#ECFDF5' : '#FFFFFF',
+                          border: isSelected ? '1.5px solid #D97706' : '1px solid #E5E7EB',
+                          background: isSelected ? '#FEF3C7' : '#FFFFFF',
                           borderRadius: '14px',
                           padding: '10px 12px',
                           cursor: 'pointer',
@@ -927,10 +922,10 @@ export default function EmpadronamientoClient() {
                         }}
                       >
                         <div>
-                          <div style={{ fontSize: '0.88rem', fontWeight: 800, color: isSelected ? '#002F18' : '#1E1B18' }}>{item.label}</div>
+                          <div style={{ fontSize: '0.88rem', fontWeight: 800, color: isSelected ? '#92400E' : '#1F2937' }}>{item.label}</div>
                           <div style={{ fontSize: '0.7rem', color: '#6B7280' }}>{item.desc}</div>
                         </div>
-                        <span style={{ fontSize: '1rem', fontWeight: 900, color: isSelected ? '#002F18' : '#D1D5DB' }}>
+                        <span style={{ fontSize: '1rem', fontWeight: 900, color: isSelected ? '#D97706' : '#D1D5DB' }}>
                           {isSelected ? '✓' : '+'}
                         </span>
                       </div>
@@ -947,7 +942,7 @@ export default function EmpadronamientoClient() {
                   </label>
                   <input
                     type="text"
-                    placeholder="Ej. Guitarra, Mandolina, Quena, Trompeta"
+                    placeholder="Ej. Mandolina, Quena, Guitarra, Trompeta"
                     value={musicalInstrument}
                     onChange={e => setMusicalInstrument(e.target.value)}
                     style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '10px', border: '1px solid #F59E0B', fontSize: '0.9rem', background: '#FFFFFF', outline: 'none' }}
@@ -971,13 +966,13 @@ export default function EmpadronamientoClient() {
                         style={{
                           padding: '0.85rem 0',
                           borderRadius: '12px',
-                          border: active ? '2px solid #D99B00' : '1px solid #D1D5DB',
-                          background: active ? '#002F18' : '#FFF8F5',
-                          color: active ? '#FFFFFF' : '#1E1B18',
+                          border: active ? '2px solid #D97706' : '1px solid #D1D5DB',
+                          background: active ? '#FEF3C7' : '#FAF7F2',
+                          color: active ? '#92400E' : '#1F2937',
                           fontWeight: 900,
                           fontSize: '1rem',
                           cursor: 'pointer',
-                          boxShadow: active ? '0 4px 12px rgba(0, 47, 24, 0.25)' : 'none',
+                          boxShadow: active ? '0 4px 12px rgba(217, 119, 6, 0.2)' : 'none',
                           transition: 'all 0.15s ease'
                         }}
                       >
@@ -1008,8 +1003,8 @@ export default function EmpadronamientoClient() {
                     fontWeight: 900,
                     letterSpacing: '6px',
                     textAlign: 'center',
-                    background: '#FFF8F5',
-                    color: '#002F18',
+                    background: '#FAF7F2',
+                    color: '#1F2937',
                     outline: 'none'
                   }}
                 />
@@ -1018,13 +1013,13 @@ export default function EmpadronamientoClient() {
               {/* Fotografía al Final */}
               <div style={{
                 marginBottom: '1.75rem',
-                background: '#FFF8F5',
-                border: '1.5px dashed #D99B00',
+                background: '#FAF7F2',
+                border: '1.5px dashed #D97706',
                 borderRadius: '20px',
                 padding: '1.5rem',
                 textAlign: 'center'
               }}>
-                <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#7D5800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.35rem' }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#92400E', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.35rem' }}>
                   📸 FOTOGRAFÍA / SELFIE PARA TU CARNET QR
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: '0 0 1rem 0' }}>
@@ -1036,7 +1031,7 @@ export default function EmpadronamientoClient() {
                     <img
                       src={avatarUrl}
                       alt="Foto de Perfil"
-                      style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #D99B00', boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}
+                      style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #D97706', boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}
                     />
                     <button
                       type="button"
@@ -1087,13 +1082,13 @@ export default function EmpadronamientoClient() {
                   width: '100%',
                   padding: '1.15rem',
                   borderRadius: '16px',
-                  background: loading ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                  background: loading ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                   color: '#FFFFFF',
-                  border: '1px solid #D99B00',
+                  border: 'none',
                   fontSize: '1.1rem',
                   fontWeight: 900,
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 8px 24px rgba(0, 47, 24, 0.35)'
+                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.35)'
                 }}
               >
                 {loading ? 'Generando Carnet Oficial 2027...' : '✓ Finalizar Empadronamiento'}
@@ -1120,23 +1115,23 @@ export default function EmpadronamientoClient() {
                 ✓
               </div>
 
-              <h2 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '1.75rem', color: '#002F18', fontWeight: 900, marginBottom: '0.25rem' }}>
+              <h2 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '1.75rem', color: '#1F2937', fontWeight: 900, marginBottom: '0.25rem' }}>
                 ¡EMPADRONAMIENTO EXITOSO!
               </h2>
               <p style={{ fontSize: '0.9rem', color: '#4B5563', marginBottom: '1.5rem' }}>
                 Ya eres parte del <strong>Padrón Oficial Carnaval 2027</strong> de Cangallo Señorial.
               </p>
 
-              {/* Tarjeta de Lujo del Carnet */}
+              {/* Tarjeta de Lujo del Carnet en Oro Señorial y Grafito */}
               <div style={{
-                background: 'linear-gradient(135deg, #002F18 0%, #0E472A 70%, #1A3624 100%)',
+                background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
                 color: '#FFFFFF',
                 borderRadius: '24px',
                 padding: '1.75rem',
                 maxWidth: '380px',
                 margin: '0 auto 1.5rem auto',
-                boxShadow: '0 20px 48px rgba(0, 47, 24, 0.4)',
-                border: '2.5px solid #D99B00',
+                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.3)',
+                border: '2.5px solid #D97706',
                 position: 'relative',
                 textAlign: 'center'
               }}>
@@ -1157,7 +1152,7 @@ export default function EmpadronamientoClient() {
 
                 <div style={{
                   display: 'inline-block',
-                  background: 'rgba(217, 155, 0, 0.25)',
+                  background: 'rgba(217, 119, 6, 0.25)',
                   border: '1.5px solid #FCD34D',
                   color: '#FCD34D',
                   fontSize: '0.92rem',
@@ -1182,7 +1177,7 @@ export default function EmpadronamientoClient() {
                   />
                 </div>
 
-                <div style={{ fontSize: '0.78rem', color: '#A7F3D0', fontWeight: 700 }}>
+                <div style={{ fontSize: '0.78rem', color: '#FCD34D', fontWeight: 700 }}>
                   {savedUser.memberType === 'MUSICO' ? '🎺 Músico de Banda' : savedUser.memberType === 'DIRECTIVO' ? '👑 Comité Directivo' : '💃 Socio Danzante'} &bull; Cangallo Señorial
                 </div>
               </div>
@@ -1205,10 +1200,10 @@ export default function EmpadronamientoClient() {
                     width: '100%',
                     padding: '0.9rem',
                     background: '#FAF7F2',
-                    color: '#002F18',
+                    color: '#92400E',
                     borderRadius: '14px',
                     fontWeight: 800,
-                    border: '1.5px solid #D99B00',
+                    border: '1.5px solid #D97706',
                     cursor: 'pointer'
                   }}
                 >
@@ -1244,7 +1239,7 @@ export default function EmpadronamientoClient() {
             padding: '2rem 1.75rem',
             position: 'relative',
             boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
-            border: '2px solid #D99B00',
+            border: '2px solid #D97706',
             textAlign: 'center'
           }}>
             <button
@@ -1273,7 +1268,7 @@ export default function EmpadronamientoClient() {
               borderRadius: '50%',
               background: '#FEF3C7',
               border: '2px solid #FCD34D',
-              color: '#D99B00',
+              color: '#D97706',
               fontSize: '1.8rem',
               display: 'flex',
               alignItems: 'center',
@@ -1287,7 +1282,7 @@ export default function EmpadronamientoClient() {
               fontFamily: 'var(--font-playfair, serif)',
               fontSize: '1.45rem',
               fontWeight: 900,
-              color: '#002F18',
+              color: '#1F2937',
               margin: '0 0 0.35rem 0'
             }}>
               Acceso de Directiva
@@ -1330,7 +1325,7 @@ export default function EmpadronamientoClient() {
                     fontSize: '0.95rem',
                     fontWeight: 700,
                     outline: 'none',
-                    background: '#FFF8F5'
+                    background: '#FAF7F2'
                   }}
                 />
               </div>
@@ -1353,7 +1348,7 @@ export default function EmpadronamientoClient() {
                     fontSize: '0.95rem',
                     fontWeight: 700,
                     outline: 'none',
-                    background: '#FFF8F5'
+                    background: '#FAF7F2'
                   }}
                 />
               </div>
@@ -1365,13 +1360,13 @@ export default function EmpadronamientoClient() {
                   width: '100%',
                   padding: '1rem',
                   borderRadius: '14px',
-                  background: adminLoading ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                  background: adminLoading ? '#CBD5E1' : 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                   color: '#FFFFFF',
-                  border: '1px solid #D99B00',
+                  border: 'none',
                   fontSize: '1rem',
                   fontWeight: 900,
                   cursor: adminLoading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 8px 20px rgba(0, 47, 24, 0.3)'
+                  boxShadow: '0 8px 20px rgba(217, 119, 6, 0.3)'
                 }}
               >
                 {adminLoading ? 'Verificando...' : 'Ingresar al Padrón Oficial ➔'}
