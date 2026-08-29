@@ -254,7 +254,7 @@ export default function EmpadronamientoClient() {
                   outline: 'none'
                 }}
               />
-              {dniVerified && (
+              {dniVerified && !alreadyRegisteredUser && (
                 <div style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
                   ✅ <span>Identidad Verificada con RENIEC</span>
                 </div>
@@ -263,71 +263,18 @@ export default function EmpadronamientoClient() {
 
             {/* Si el socio ya está empadronado en el sistema */}
             {alreadyRegisteredUser ? (
-              <div style={{ background: '#FAF7F2', border: '2px solid #10B981', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', marginTop: '1.25rem' }}>
-                <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#D1FAE5', color: '#059669', fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.65rem auto' }}>
-                  ✓
-                </div>
-                <h3 style={{ fontSize: '1.25rem', color: '#13603A', fontWeight: 900, margin: '0 0 0.25rem 0' }}>
-                  ¡Ya te encuentras Empadronado!
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: '#4B5563', margin: '0 0 0.75rem 0' }}>
-                  Hola <strong>{alreadyRegisteredUser.name}</strong>, tu registro oficial para el <strong>Carnaval 2027</strong> ya está activo.
-                </p>
-                
-                <div style={{
-                  display: 'inline-block',
-                  background: '#FEF3C7',
-                  border: '1.5px solid #F59E0B',
-                  color: '#92400E',
-                  padding: '4px 14px',
-                  borderRadius: '10px',
-                  fontWeight: 900,
-                  fontSize: '0.95rem',
-                  letterSpacing: '1px',
-                  marginBottom: '1.25rem'
-                }}>
-                  CÓDIGO OFICIAL: {alreadyRegisteredUser.affiliationYear || '2027'}{alreadyRegisteredUser.dni}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSavedUser(alreadyRegisteredUser);
-                      setStep(5);
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '0.85rem',
-                      background: 'linear-gradient(135deg, #13603A 0%, #0E472A 100%)',
-                      color: '#FFFFFF',
-                      borderRadius: '12px',
-                      border: 'none',
-                      fontWeight: 800,
-                      fontSize: '1rem',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 14px rgba(19, 96, 58, 0.3)'
-                    }}
-                  >
-                    📱 Ver / Descargar Mi Carnet QR ➔
-                  </button>
-                  <Link
-                    href="/login"
-                    style={{
-                      display: 'block',
-                      padding: '0.75rem',
-                      background: '#FFFFFF',
-                      color: '#13603A',
-                      border: '1.5px solid #13603A',
-                      borderRadius: '12px',
-                      fontWeight: 700,
-                      fontSize: '0.9rem',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    🔑 Ingresar a Mi Perfil en la App
-                  </Link>
-                </div>
+              <div style={{
+                marginTop: '1.25rem',
+                padding: '1.25rem',
+                background: '#FEF3C7',
+                border: '1.5px solid #F59E0B',
+                color: '#92400E',
+                borderRadius: '14px',
+                fontSize: '1rem',
+                fontWeight: 800,
+                textAlign: 'center'
+              }}>
+                ⚠️ El usuario ya se encuentra empadronado.
               </div>
             ) : (
               <>
