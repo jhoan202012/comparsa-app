@@ -125,7 +125,7 @@ export default function EmpadronamientoClient() {
     }
   };
 
-  // Manejador de Foto / Selfie con compresión en Canvas (Al final)
+  // Manejador de Foto / Selfie con compresión en Canvas
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -214,21 +214,21 @@ export default function EmpadronamientoClient() {
       
       {/* ==================== GOOGLE STITCH APP HEADER ==================== */}
       {step < 5 && (
-        <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
           {/* Top Bar con Botón Volver, Paso y Acceso Directiva */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '50%',
                   border: '1.5px solid #E5E7EB',
                   background: '#FFFFFF',
                   color: '#002F18',
-                  fontSize: '1.1rem',
+                  fontSize: '1rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -239,7 +239,7 @@ export default function EmpadronamientoClient() {
                 ←
               </button>
             ) : (
-              <div style={{ width: '40px' }} />
+              <div style={{ width: '38px' }} />
             )}
 
             <div style={{
@@ -297,48 +297,103 @@ export default function EmpadronamientoClient() {
         </div>
       )}
 
-      {/* ==================== HERO DE SECCIÓN ==================== */}
+      {/* ==================== HERO DE SECCIÓN ELEVADO CON IMAGEN Y COLOR SUTIL ==================== */}
       {step < 5 && (
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          {/* Badge Dorado */}
+        <div style={{
+          position: 'relative',
+          borderRadius: '22px',
+          overflow: 'hidden',
+          marginBottom: '1.25rem',
+          boxShadow: '0 10px 28px rgba(0, 47, 24, 0.15)',
+          border: '1.5px solid #D99B00'
+        }}>
+          {/* Fondo con Fotografía Institucional y Gradiente Sutil */}
           <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'rgba(217, 155, 0, 0.12)',
-            border: '1px solid rgba(217, 155, 0, 0.35)',
-            color: '#7D5800',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            letterSpacing: '1.2px',
-            textTransform: 'uppercase',
-            padding: '4px 14px',
-            borderRadius: '9999px',
-            marginBottom: '0.75rem'
-          }}>
-            <span>✨</span> CANGALLO SEÑORIAL 2027
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: 'url(/images/cangallo_1.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.35)'
+          }} />
+          
+          {/* Capa de Color Esmeralda Imperial & Oro */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, rgba(0, 47, 24, 0.94) 0%, rgba(14, 71, 42, 0.85) 60%, rgba(30, 27, 24, 0.92) 100%)'
+          }} />
+
+          {/* Contenido del Hero Banner */}
+          <div style={{ position: 'relative', zIndex: 2, padding: '1.6rem 1.25rem', textAlign: 'center' }}>
+            
+            {/* Logo o Escudo Circular */}
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '2.5px solid #FCD34D',
+              margin: '0 auto 0.6rem auto',
+              background: '#FFFFFF',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.35)'
+            }}>
+              <img
+                src="/images/Logo_1.jpg"
+                alt="Logo Cangallo Señorial"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+
+            {/* Badge Dorado */}
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(217, 155, 0, 0.25)',
+              border: '1px solid #FCD34D',
+              color: '#FCD34D',
+              fontSize: '0.72rem',
+              fontWeight: 900,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              padding: '3px 12px',
+              borderRadius: '9999px',
+              marginBottom: '0.45rem'
+            }}>
+              Comparsa Cangallo Señorial
+            </div>
+
+            {/* Gran Título Oficial */}
+            <h1 style={{
+              fontFamily: 'var(--font-playfair, "Libre Caslon Text", serif)',
+              fontSize: '1.65rem',
+              fontWeight: 900,
+              color: '#FFFFFF',
+              lineHeight: 1.15,
+              margin: '0 0 0.5rem 0',
+              letterSpacing: '0.5px'
+            }}>
+              EMPADRONAMIENTO CARNAVAL 2027
+            </h1>
+
+            {/* Chips de Disciplinas */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+                💃 Danzantes
+              </span>
+              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+                🎺 Músicos
+              </span>
+              <span style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', fontSize: '0.72rem', fontWeight: 700, padding: '2px 9px', borderRadius: '6px' }}>
+                👑 Directivos
+              </span>
+            </div>
           </div>
-
-          <h1 style={{
-            fontFamily: 'var(--font-playfair, "Libre Caslon Text", serif)',
-            fontSize: '1.9rem',
-            fontWeight: 900,
-            color: '#002F18',
-            lineHeight: 1.15,
-            margin: '0 0 0.5rem 0'
-          }}>
-            {step === 1 && 'Validación de Identidad'}
-            {step === 2 && 'Contacto & Residencia'}
-            {step === 3 && 'Membresía & Familia'}
-            {step === 4 && 'Talentos & Fotografía'}
-          </h1>
-
-          <p style={{ fontSize: '0.9rem', color: '#4B5563', margin: 0, maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto' }}>
-            {step === 1 && 'Ingresa tu DNI para autocompletar tus datos oficiales de RENIEC.'}
-            {step === 2 && 'Indica tu WhatsApp principal para recibir comunicados oficiales.'}
-            {step === 3 && 'Selecciona tu rol institucional en la comparsa y familiares.'}
-            {step === 4 && 'Elige tu talla de vestuario, disciplinas y sube tu foto carnet.'}
-          </p>
         </div>
       )}
 
@@ -365,7 +420,7 @@ export default function EmpadronamientoClient() {
           width: '100%'
         }} />
 
-        <div style={{ padding: '2rem 1.75rem' }}>
+        <div style={{ padding: '1.75rem 1.5rem' }}>
 
           {/* ==================== PASO 1: VALIDACIÓN DNI ==================== */}
           {step === 1 && (
