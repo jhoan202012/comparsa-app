@@ -66,11 +66,124 @@ const htmlContent = `<!DOCTYPE html>
       --linen: #FAF7F2;
     }
 
-    /* HEADER HORIZONTAL */
+    /* ==================== PORTADA OFICIAL (SLIDE 1) ==================== */
+    .cover-page {
+      background: linear-gradient(135deg, #092B1A 0%, #0E472A 40%, #13603A 80%, #1C1917 100%);
+      color: #FFFFFF;
+      padding: 18mm 20mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cover-page::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 3.5px solid var(--gold);
+      margin: 8mm;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    .cover-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cover-tag {
+      display: inline-block;
+      background: rgba(217, 155, 0, 0.25);
+      border: 1.5px solid #FCD34D;
+      color: #FCD34D;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    .cover-center {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin: auto 0;
+    }
+
+    .cover-logo-frame {
+      width: 125px;
+      height: 125px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 3.5px solid #FCD34D;
+      background: #FFFFFF;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .cover-titles h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+      line-height: 1.05;
+      margin-bottom: 6px;
+    }
+
+    .cover-titles h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FCD34D;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .cover-titles p {
+      font-size: 12.5px;
+      color: #E5E7EB;
+      max-width: 680px;
+      line-height: 1.45;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.8fr;
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      border-radius: 12px;
+      padding: 12px 18px;
+    }
+
+    .cover-meta-col strong {
+      font-size: 10px;
+      color: #FCD34D;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .cover-meta-col span {
+      font-size: 11.5px;
+      color: #FFFFFF;
+      font-weight: 600;
+      display: block;
+    }
+
+    /* HEADER HORIZONTAL PARA SLIDES 2-5 */
     .header-banner {
       background: linear-gradient(135deg, #0E472A 0%, #13603A 60%, #1C1917 100%);
       color: #FFFFFF;
-      padding: 14px 22px;
+      padding: 12px 20px;
       border-radius: 14px;
       border-bottom: 3.5px solid var(--gold);
       display: flex;
@@ -87,9 +200,9 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .header-logo-wrap {
-      width: 58px;
-      height: 58px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
       overflow: hidden;
       border: 2px solid #FCD34D;
       background: #FFFFFF;
@@ -105,18 +218,18 @@ const htmlContent = `<!DOCTYPE html>
       background: rgba(217, 155, 0, 0.25);
       border: 1px solid #FCD34D;
       color: #FCD34D;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 800;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      padding: 3px 9px;
+      padding: 2.5px 8px;
       border-radius: 12px;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .header-title {
       font-family: 'Playfair Display', serif;
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 900;
       color: #FFFFFF;
       letter-spacing: -0.3px;
@@ -125,16 +238,16 @@ const htmlContent = `<!DOCTYPE html>
 
     .header-sub {
       color: #E5E7EB;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 500;
     }
 
     .header-meta {
       text-align: right;
-      font-size: 10.5px;
+      font-size: 10px;
       border-left: 1.5px solid rgba(255, 255, 255, 0.2);
-      padding-left: 18px;
-      line-height: 1.45;
+      padding-left: 16px;
+      line-height: 1.4;
     }
 
     .header-meta strong {
@@ -146,13 +259,13 @@ const htmlContent = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 800;
       color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-top: 10px;
-      margin-bottom: 8px;
+      margin-top: 8px;
+      margin-bottom: 7px;
     }
 
     .sec-title::after {
@@ -162,36 +275,36 @@ const htmlContent = `<!DOCTYPE html>
       background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
     }
 
-    /* KPIS HORIZONTALES CON ALTURA GENEROSA */
+    /* KPIS HORIZONTALES */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
     }
 
     .kpi-card {
       background: #FAF7F2;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       text-align: center;
       border-top: 4px solid var(--primary);
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
 
     .kpi-num {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 800;
       color: var(--primary);
       line-height: 1.1;
     }
 
     .kpi-label {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--muted);
       font-weight: 700;
-      margin-top: 4px;
+      margin-top: 3px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
@@ -201,20 +314,20 @@ const htmlContent = `<!DOCTYPE html>
       background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
       border: 1.5px solid #10B981;
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 9px 15px;
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-bottom: 10px;
+      gap: 15px;
+      margin-bottom: 9px;
     }
 
     .badge-icon-box {
       background: var(--primary);
       color: #FFFFFF;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
-      padding: 8px 14px;
-      border-radius: 10px;
+      padding: 7px 12px;
+      border-radius: 9px;
       text-align: center;
       white-space: nowrap;
       box-shadow: 0 4px 8px rgba(19, 96, 58, 0.2);
@@ -222,36 +335,36 @@ const htmlContent = `<!DOCTYPE html>
 
     .badge-icon-box span {
       display: block;
-      font-size: 8.5px;
+      font-size: 8px;
       color: #A7F3D0;
       font-weight: 600;
     }
 
     .banner-value-horiz p {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #064E3B;
       line-height: 1.4;
     }
 
-    /* MÓDULOS EN 4 COLUMNAS CON ALTURA Y BULLETS */
+    /* MÓDULOS EN 4 COLUMNAS */
     .modules-grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      gap: 11px;
       flex: 1;
-      min-height: 175px;
+      min-height: 170px;
     }
 
     .module-box {
       background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 14px;
+      padding: 13px 13px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.03);
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 6px;
+      gap: 5px;
     }
 
     .module-box.green { border-top: 4px solid var(--primary); }
@@ -260,7 +373,7 @@ const htmlContent = `<!DOCTYPE html>
     .module-box.red { border-top: 4px solid var(--accent-red); }
 
     .module-head {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--dark);
       margin-bottom: 2px;
@@ -274,7 +387,7 @@ const htmlContent = `<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       gap: 4px;
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--muted);
       line-height: 1.35;
     }
@@ -292,21 +405,21 @@ const htmlContent = `<!DOCTYPE html>
       flex-shrink: 0;
     }
 
-    /* FLUJOS EN FILAS PANORÁMICAS AMPLIAS (PAG 3) */
+    /* FLUJOS EN FILAS PANORÁMICAS AMPLIAS (PAG 4) */
     .flow-row-large {
       background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 11px 15px;
-      margin-bottom: 9px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
 
     .flow-head-bar {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -315,45 +428,45 @@ const htmlContent = `<!DOCTYPE html>
     .flow-steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 9px;
     }
 
     .step-box-item {
       background: #FAF7F2;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 10px;
+      border-radius: 9px;
+      padding: 8px 9px;
       text-align: center;
     }
 
     .step-box-badge {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: var(--primary);
       color: #FFFFFF;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 5px;
+      margin: 0 auto 4px;
     }
 
     .step-box-title {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       color: var(--dark);
       margin-bottom: 2px;
     }
 
     .step-box-desc {
-      font-size: 9.5px;
+      font-size: 9px;
       color: var(--muted);
       line-height: 1.25;
     }
 
-    /* CV SECTION EN 3 COLUMNAS TALL (PÁGINA 1) */
+    /* CV SECTION EN 3 COLUMNAS TALL (PÁGINA 2) */
     .cv-grid-tall {
       display: grid;
       grid-template-columns: 1.1fr 1.35fr 0.95fr;
@@ -366,7 +479,7 @@ const htmlContent = `<!DOCTYPE html>
       background: #FAF7F2;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 13px 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -378,12 +491,12 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .cv-col-title {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -392,18 +505,18 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .cv-item-block {
-      margin-bottom: 10px;
+      margin-bottom: 9px;
     }
 
     .cv-item-block strong {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--dark);
       display: block;
       margin-bottom: 2px;
     }
 
     .cv-item-block p {
-      font-size: 9.5px;
+      font-size: 9px;
       color: var(--muted);
       line-height: 1.35;
     }
@@ -412,9 +525,9 @@ const htmlContent = `<!DOCTYPE html>
       background: #111827;
       color: #FFFFFF;
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 11px 13px;
       text-align: center;
-      margin-top: 10px;
+      margin-top: 9px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
@@ -422,24 +535,24 @@ const htmlContent = `<!DOCTYPE html>
       color: #FCD34D;
       text-decoration: none;
       font-weight: 800;
-      font-size: 11px;
+      font-size: 10.5px;
       display: block;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
-    /* TABLA DE PRECIOS & SERVICIOS (PÁGINA 4) */
+    /* TABLA DE PRECIOS & SERVICIOS (PÁGINA 5) */
     .pricing-cards-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 10px;
+      gap: 13px;
+      margin-bottom: 9px;
     }
 
     .plan-box-large {
       background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 13px 15px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -454,29 +567,29 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .plan-title-lg {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 800;
       color: var(--primary);
       text-transform: uppercase;
     }
 
     .plan-range-lg {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--muted);
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .plan-price-lg {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 900;
       color: var(--primary-dark);
-      margin: 4px 0;
+      margin: 3px 0;
       line-height: 1;
     }
 
     .plan-sub-lg {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--gold-dark);
       font-weight: 700;
     }
@@ -484,33 +597,33 @@ const htmlContent = `<!DOCTYPE html>
     .services-3col {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 10px;
+      gap: 11px;
+      margin-bottom: 9px;
     }
 
     .service-card-item {
       background: #FAF7F2;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 9px 11px;
     }
 
     .service-card-item strong {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--dark);
       display: block;
       margin-bottom: 2px;
     }
 
     .service-card-item p {
-      font-size: 9.5px;
+      font-size: 9px;
       color: var(--muted);
       line-height: 1.3;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .service-tag-inc {
-      font-size: 9px;
+      font-size: 8.5px;
       color: #059669;
       font-weight: 800;
       text-transform: uppercase;
@@ -520,7 +633,7 @@ const htmlContent = `<!DOCTYPE html>
       background: linear-gradient(135deg, #1C1917 0%, #0C0A09 100%);
       color: #FFFFFF;
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 11px 16px;
       border-left: 5px solid var(--gold);
       display: flex;
       align-items: center;
@@ -528,20 +641,20 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .final-summary-wide h4 {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 800;
       color: #FCD34D;
       margin-bottom: 2px;
     }
 
     .final-summary-wide p {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #A8A29E;
       line-height: 1.35;
     }
 
     .final-cost-val {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 900;
       color: #34D399;
       line-height: 1;
@@ -562,17 +675,51 @@ const htmlContent = `<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- ==================== LÁMINA 1: PERFIL PROFESIONAL & RESPALDO (INICIO) ==================== -->
+  <!-- ==================== LÁMINA 1: PORTADA OFICIAL DE IMPACTO ==================== -->
+  <div class="page cover-page">
+    <div class="cover-top">
+      <div class="cover-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
+      <div style="font-size: 11px; color: #FCD34D; font-weight: 700; letter-spacing: 1px;">PATRIMONIO & INNOVACIÓN</div>
+    </div>
+
+    <div class="cover-center">
+      <div class="cover-logo-frame">
+        <img src="${logoBase64}" width="115" height="115" alt="Logo Cangallo Señorial" style="display: block; width: 115px; height: 115px; object-fit: contain;">
+      </div>
+      <div class="cover-titles">
+        <h1>COMPARSA CANGALLO SEÑORIAL</h1>
+        <h2>Dossier Ejecutivo & Técnico — Transformación Digital</h2>
+        <p>Plataforma Web Integral de Asistencia por Código QR, Gestión de Vestuario, Validación de Pagos Digitales y Transparencia en Tesorería.</p>
+      </div>
+    </div>
+
+    <div class="cover-meta-grid">
+      <div class="cover-meta-col">
+        <strong>Presentado a:</strong>
+        <span>Sr. Próspero Huayanay & Junta Directiva</span>
+      </div>
+      <div class="cover-meta-col">
+        <strong>Implementación de Negocios:</strong>
+        <span>Jhoan Taboada (PUCP • Economía & IA)</span>
+      </div>
+      <div class="cover-meta-col" style="text-align: right;">
+        <strong>Temporada Oficial:</strong>
+        <span>Carnavales 2027 • Ayacucho</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LÁMINA 2: PERFIL PROFESIONAL & RESPALDO (QUIÉN SOY) ==================== -->
   <div class="page">
     <div>
-      <div class="header-banner" style="padding: 12px 20px;">
+      <div class="header-banner">
         <div class="header-left">
-          <div class="header-logo-wrap" style="width: 48px; height: 48px;">
+          <div class="header-logo-wrap">
             <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
-            <div class="header-tag">Presentación Institucional • Carnaval Ayacuchano 2027</div>
-            <h1 class="header-title" style="font-size: 20px;">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h1>
+            <div class="header-tag">Presentación Profesional • Carnaval Ayacuchano 2027</div>
+            <h2 class="header-title">PERFIL PROFESIONAL & RESPALDO TÉCNICO</h2>
             <p class="header-sub">Economía, Inteligencia Empresarial, Startups & Transformación Digital</p>
           </div>
         </div>
@@ -651,17 +798,17 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Perfil Profesional</span>
-      <span>Página 1 de 4</span>
+      <span>Página 2 de 5</span>
     </div>
   </div>
 
-  <!-- ==================== LÁMINA 2: VISIÓN, OPERACIÓN & MÓDULOS ==================== -->
+  <!-- ==================== LÁMINA 3: VISIÓN, OPERACIÓN & MÓDULOS ==================== -->
   <div class="page">
     <div>
       <div class="header-banner">
         <div class="header-left">
           <div class="header-logo-wrap">
-            <img src="${logoBase64}" width="54" height="54" alt="Logo Cangallo" style="display: block; width: 54px; height: 54px; object-fit: contain;">
+            <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
             <div class="header-tag">Propuesta Oficial • Carnaval Ayacuchano 2027</div>
@@ -748,21 +895,21 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 2 de 4</span>
+      <span>Página 3 de 5</span>
     </div>
   </div>
 
-  <!-- ==================== LÁMINA 3: ARQUITECTURA & FLUJOS PANORÁMICOS ==================== -->
+  <!-- ==================== LÁMINA 4: ARQUITECTURA & FLUJOS PANORÁMICOS ==================== -->
   <div class="page">
     <div>
-      <div class="header-banner" style="padding: 12px 20px;">
+      <div class="header-banner">
         <div class="header-left">
-          <div class="header-logo-wrap" style="width: 48px; height: 48px;">
+          <div class="header-logo-wrap">
             <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
-            <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
-            <p style="color: #E5E7EB; font-size: 10px;">Infraestructura corporativa, servidores en la nube y funcionamiento en ensayos</p>
+            <h2 class="header-title" style="font-size: 17px;">ARQUITECTURA CLOUD & FLUJOS OPERATIVOS</h2>
+            <p class="header-sub">Infraestructura corporativa, servidores en la nube y funcionamiento en ensayos</p>
           </div>
         </div>
       </div>
@@ -873,21 +1020,21 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Plataforma Digital 2027</span>
-      <span>Página 3 de 4</span>
+      <span>Página 4 de 5</span>
     </div>
   </div>
 
-  <!-- ==================== LÁMINA 4: PLANES POR USUARIO & SERVICIOS ==================== -->
+  <!-- ==================== LÁMINA 5: PLANES POR USUARIO & SERVICIOS ==================== -->
   <div class="page">
     <div>
-      <div class="header-banner" style="padding: 12px 20px;">
+      <div class="header-banner">
         <div class="header-left">
-          <div class="header-logo-wrap" style="width: 48px; height: 48px;">
+          <div class="header-logo-wrap">
             <img src="${logoBase64}" width="44" height="44" alt="Logo Cangallo" style="display: block; width: 44px; height: 44px; object-fit: contain;">
           </div>
           <div>
-            <h2 style="font-size: 17px; font-weight: 800; color: #FFF; font-family: 'Playfair Display', serif;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
-            <p style="color: #E5E7EB; font-size: 10px;">Inversión operativa de infraestructura, servidores y almacenamiento seguro por socio</p>
+            <h2 class="header-title" style="font-size: 17px;">PLANES FLEXIBLES POR USUARIO & MANTENIMIENTO</h2>
+            <p class="header-sub">Inversión operativa de infraestructura, servidores y almacenamiento seguro por socio</p>
           </div>
         </div>
       </div>
@@ -949,7 +1096,7 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="page-footer">
       <span>Comparsa Cangallo Señorial — Propuesta Técnica & Económica 2027</span>
-      <span>Página 4 de 4</span>
+      <span>Página 5 de 5</span>
     </div>
   </div>
 
@@ -974,5 +1121,5 @@ execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF reordenado con éxito: Perfil Profesional en Lámina 1 y Plataforma en Láminas 2-4.');
+  console.log('PDF de 5 láminas con Portada Oficial generado con éxito.');
 }
