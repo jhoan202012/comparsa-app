@@ -540,7 +540,7 @@ const htmlContent = `<!DOCTYPE html>
         </div>
         <div class="kpi-card">
           <div class="kpi-num">100%</div>
-          <div class="kpi-label">Cuentas Claras Yape</div>
+          <div class="kpi-label">Pagos Digitales & Cuotas</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-num">+1,000</div>
@@ -577,8 +577,8 @@ const htmlContent = `<!DOCTYPE html>
         </div>
 
         <div class="module-box blue">
-          <div class="module-head">💰 Tesorería & Validación de Vouchers</div>
-          <p class="module-desc">Carga directa de comprobantes Yape/Plin en alta resolución. La directiva valida o revierte aportes con un solo toque, manteniendo el balance al día.</p>
+          <div class="module-head">💰 Tesorería & Validación Digital</div>
+          <p class="module-desc">Carga directa de comprobantes de pagos digitales en alta resolución. La directiva valida o revierte aportes con un solo toque, manteniendo el balance contable al día.</p>
         </div>
 
         <div class="module-box red">
@@ -657,7 +657,7 @@ const htmlContent = `<!DOCTYPE html>
       </div>
 
       <!-- Flujo 2: Vestuario y Tesorería -->
-      <div class="sec-title">Flujo 2: Tienda de Vestuario & Validación Yape/Plin</div>
+      <div class="sec-title">Flujo 2: Tienda de Vestuario & Validación de Pagos</div>
       <div class="flow-card">
         <div class="flow-steps">
           <div class="step-item">
@@ -667,13 +667,13 @@ const htmlContent = `<!DOCTYPE html>
           </div>
           <div class="step-item">
             <div class="step-badge">2</div>
-            <div class="step-name">Adjunto Yape</div>
-            <div class="step-detail">Sube la captura de su voucher desde la galería del celular.</div>
+            <div class="step-name">Adjunto Digital</div>
+            <div class="step-detail">Sube la captura de su comprobante desde el celular.</div>
           </div>
           <div class="step-item">
             <div class="step-badge">3</div>
             <div class="step-name">Aprobación 1-Clic</div>
-            <div class="step-detail">Tesorería revisa el voucher en HD y aprueba con un toque.</div>
+            <div class="step-detail">Tesorería revisa el comprobante en HD y aprueba en 1 toque.</div>
           </div>
           <div class="step-item">
             <div class="step-badge">4</div>
@@ -864,5 +864,5 @@ execSync(cmd);
 
 if (fs.existsSync(pdfOutputPath1)) {
   fs.copyFileSync(pdfOutputPath1, pdfOutputPath2);
-  console.log('PDF actualizado formalmente sin palabras de regateo y con rutas correctas.');
+  console.log('PDF actualizado formalmente con Pagos Digitales y Cobertura Total.');
 }
