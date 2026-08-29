@@ -7,16 +7,15 @@ export default function EmpadronamientoClient() {
   const [loading, setLoading] = useState(false);
   const [dniLoading, setDniLoading] = useState(false);
   const [dniVerified, setDniVerified] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  // Form Fields
-  // Paso 1: Identidad
+  // Paso 1: Identidad (Campos Desglosados y Bloqueables)
   const [dni, setDni] = useState('');
-  const [name, setName] = useState('');
+  const [nombres, setNombres] = useState('');
+  const [apellidos, setApellidos] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [gender, setGender] = useState('VARON');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const fileInputRef = useRef(null);
+  const [gender, setGender] = useState('Masculino'); // 'Masculino' | 'Femenino'
 
   // Paso 2: Contacto & Residencia
   const [phone, setPhone] = useState('');
@@ -32,23 +31,23 @@ export default function EmpadronamientoClient() {
   const [hasRelatives, setHasRelatives] = useState(false);
   const [relativesDetail, setRelativesDetail] = useState('');
 
-  // Paso 4: Talentos & Vestuario
+  // Paso 4: Talentos, Vestuario, PIN & FOTOGRAFÍA AL FINAL
   const [selectedTalents, setSelectedTalents] = useState(['Danza']);
   const [musicalInstrument, setMusicalInstrument] = useState('');
-  const [artCategory, setArtCategory] = useState('Danza');
-  const [artDetail, setArtDetail] = useState('Bailarín / Danzante');
   const [clothingSize, setClothingSize] = useState('L');
   const [pin, setPin] = useState('1234');
-  const [notes, setNotes] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const fileInputRef = useRef(null);
 
   // Paso 5: Resultado / Carnet Generado
   const [savedUser, setSavedUser] = useState(null);
 
-  // Consulta Inteligente DNI
+  // Consulta Inteligente DNI con Desglose y Bloqueo
   const handleDniInput = async (val) => {
     const clean = val.replace(/\D/g, '').slice(0, 8);
     setDni(clean);
     setDniVerified(false);
+    setIsLocked(false);
     setErrorMsg(null);
 
     if (clean.length === 8) {
@@ -58,15 +57,20 @@ export default function EmpadronamientoClient() {
         const data = await res.json();
 
         if (res.ok && data.success) {
-          if (data.name) {
-            setName(data.name);
+          if (data.nombres || data.name) {
+            setNombres(data.nombres || data.name);
+            setApellidos(data.apellidos || '');
             setDniVerified(true);
+            setIsLocked(true); // Bloquear campos automáticamente
           }
           if (data.birthDate) {
             setBirthDate(data.birthDate);
           }
           if (data.gender) {
-            setGender(data.gender === 'F' ? 'MUJER' : 'VARON');
+            setGender(data.gender);
+          }
+          if (data.district) {
+            setDistrict(data.district);
           }
         }
       } catch (err) {
@@ -77,7 +81,7 @@ export default function EmpadronamientoClient() {
     }
   };
 
-  // Manejador de Foto / Selfie con compresión en Canvas
+  // Manejador de Foto / Selfie con compresión en Canvas (Al final)
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -117,15 +121,17 @@ export default function EmpadronamientoClient() {
     setErrorMsg(null);
     setLoading(true);
 
+    const fullName = `${nombres} ${apellidos}`.trim();
+
     try {
       const res = await fetch('/api/empadronamiento', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           dni,
-          name,
+          name: fullName,
           birthDate,
-          gender,
+          gender: gender === 'Femenino' ? 'MUJER' : 'VARON',
           avatarUrl,
           phone,
           email,
@@ -139,11 +145,8 @@ export default function EmpadronamientoClient() {
           affiliationYear,
           talents: selectedTalents,
           musicalInstrument: selectedTalents.includes('Música') ? musicalInstrument : null,
-          artCategory,
-          artDetail,
           clothingSize,
-          pin,
-          notes
+          pin
         })
       });
 
@@ -185,7 +188,7 @@ export default function EmpadronamientoClient() {
             <span style={{ color: step >= 1 ? '#13603A' : '#9CA3AF' }}>1. Identidad DNI</span>
             <span style={{ color: step >= 2 ? '#13603A' : '#9CA3AF' }}>2. Contacto</span>
             <span style={{ color: step >= 3 ? '#13603A' : '#9CA3AF' }}>3. Membresía</span>
-            <span style={{ color: step >= 4 ? '#13603A' : '#9CA3AF' }}>4. Talentos</span>
+            <span style={{ color: step >= 4 ? '#13603A' : '#9CA3AF' }}>4. Talentos & Foto</span>
           </div>
           <div style={{ height: '6px', background: '#E5E7EB', borderRadius: '10px', overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(step / 4) * 100}%`, background: 'linear-gradient(90deg, #13603A, #D99B00)', transition: 'width 0.3s ease' }} />
@@ -203,25 +206,25 @@ export default function EmpadronamientoClient() {
       {/* Contenido por Pasos */}
       <div style={{ padding: '1.5rem' }}>
 
-        {/* ==================== PASO 1: IDENTIDAD & FOTO ==================== */}
+        {/* ==================== PASO 1: IDENTIDAD DNI DESGLOSADA Y BLOQUEADA ==================== */}
         {step === 1 && (
           <div>
             <h2 style={{ fontSize: '1.25rem', color: '#13603A', fontWeight: 800, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              👤 Paso 1: Datos de Identidad
+              👤 Paso 1: Validación de Identidad por DNI
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.25rem' }}>
-              Digita tu DNI para validar automáticamente tus nombres con el padrón:
+              Digita tu DNI de 8 dígitos para autocompletar y verificar tu identidad oficial:
             </p>
 
             {/* DNI con autolookup */}
-            <div style={{ marginBottom: '1.1rem' }}>
+            <div style={{ marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
                 <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>
                   Nº de DNI (8 dígitos): <span style={{ color: '#DC2626' }}>*</span>
                 </label>
                 {dniLoading && (
                   <span style={{ fontSize: '0.78rem', color: '#13603A', fontWeight: 700 }}>
-                    🔍 Consultando RENIEC...
+                    🔍 Validando en tiempo real...
                   </span>
                 )}
               </div>
@@ -231,103 +234,165 @@ export default function EmpadronamientoClient() {
                 placeholder="Escribe tu DNI (Ej. 74839201)"
                 value={dni}
                 onChange={e => handleDniInput(e.target.value)}
-                style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '12px', border: dniVerified ? '2px solid #10B981' : '1px solid #D1D5DB', fontSize: '1.05rem', fontWeight: 700, letterSpacing: '1px', background: '#FAF7F2', outline: 'none' }}
+                style={{
+                  width: '100%',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  border: dniVerified ? '2px solid #10B981' : '1px solid #D1D5DB',
+                  fontSize: '1.1rem',
+                  fontWeight: 800,
+                  letterSpacing: '1.5px',
+                  background: '#FAF7F2',
+                  outline: 'none'
+                }}
               />
               {dniVerified && (
-                <div style={{ marginTop: '0.35rem', fontSize: '0.8rem', color: '#059669', fontWeight: 700 }}>
-                  ✅ Identidad Verificada
+                <div style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  ✅ <span>Identidad Verificada con RENIEC</span>
                 </div>
               )}
             </div>
 
-            {/* Nombres y Apellidos */}
-            <div style={{ marginBottom: '1.1rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                Nombres y Apellidos Completos: <span style={{ color: '#DC2626' }}>*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Se autocompleta con tu DNI"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.95rem', fontWeight: name ? 700 : 400, background: name ? '#F0FDF4' : '#FFFFFF', outline: 'none' }}
-              />
+            {/* Banner de Bloqueo de Seguridad */}
+            {isLocked && (
+              <div style={{
+                background: '#ECFDF5',
+                border: '1px solid #A7F3D0',
+                borderRadius: '12px',
+                padding: '0.65rem 0.9rem',
+                marginBottom: '1.1rem',
+                fontSize: '0.78rem',
+                color: '#065F46',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                🔒 <strong>Datos Oficiales Bloqueados:</strong> La información obtenida de tu DNI no puede ser modificada para garantizar la validez del padrón.
+              </div>
+            )}
+
+            {/* Nombres y Apellidos Desglosados */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.1rem' }}>
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                  Nombre: <span style={{ color: '#DC2626' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Jhoan"
+                  value={nombres}
+                  readOnly={isLocked}
+                  onChange={e => setNombres(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.8rem',
+                    borderRadius: '12px',
+                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                    color: isLocked ? '#065F46' : '#111827',
+                    cursor: isLocked ? 'not-allowed' : 'text',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                  Apellidos: <span style={{ color: '#DC2626' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Taboada Huaman"
+                  value={apellidos}
+                  readOnly={isLocked}
+                  onChange={e => setApellidos(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.8rem',
+                    borderRadius: '12px',
+                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                    color: isLocked ? '#065F46' : '#111827',
+                    cursor: isLocked ? 'not-allowed' : 'text',
+                    outline: 'none'
+                  }}
+                />
+              </div>
             </div>
 
-            {/* Fecha de Nacimiento y Sexo */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.25rem' }}>
+            {/* Sexo y Fecha de Nacimiento Desglosados y Bloqueados */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                  Sexo:
+                </label>
+                <input
+                  type="text"
+                  value={gender}
+                  readOnly={isLocked}
+                  onChange={e => setGender(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.8rem',
+                    borderRadius: '12px',
+                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                    color: isLocked ? '#065F46' : '#111827',
+                    cursor: isLocked ? 'not-allowed' : 'text',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
               <div>
                 <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
                   Fecha de Nacimiento:
                 </label>
                 <input
-                  type="date"
+                  type="text"
+                  placeholder="DD/MM/AAAA"
                   value={birthDate}
+                  readOnly={isLocked && Boolean(birthDate)}
                   onChange={e => setBirthDate(e.target.value)}
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.8rem',
+                    borderRadius: '12px',
+                    border: (isLocked && birthDate) ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    background: (isLocked && birthDate) ? '#F0FDF4' : '#FFFFFF',
+                    color: (isLocked && birthDate) ? '#065F46' : '#111827',
+                    cursor: (isLocked && birthDate) ? 'not-allowed' : 'text',
+                    outline: 'none'
+                  }}
                 />
               </div>
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Género:
-                </label>
-                <select
-                  value={gender}
-                  onChange={e => setGender(e.target.value)}
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '0.9rem', background: '#FFFFFF', outline: 'none' }}
-                >
-                  <option value="VARON">Varón</option>
-                  <option value="MUJER">Mujer</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Subir Foto / Selfie con Cámara */}
-            <div style={{ marginBottom: '1.5rem', background: '#FAF7F2', border: '1.5px dashed #D99B00', borderRadius: '14px', padding: '1rem', textAlign: 'center' }}>
-              <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#13603A', display: 'block', marginBottom: '0.5rem' }}>
-                📸 Foto de Perfil o Selfie para tu Carnet QR:
-              </label>
-
-              {avatarUrl ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                  <img src={avatarUrl} alt="Preview" style={{ width: '85px', height: '85px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #13603A', boxShadow: '0 4px 10px rgba(0,0,0,0.15)' }} />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ background: 'none', border: 'none', color: '#13603A', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    Cambiar fotografía
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ background: '#13603A', color: '#FFFFFF', padding: '0.65rem 1.2rem', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                  >
-                    📷 Tomar Foto / Subir desde Celular
-                  </button>
-                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#6B7280', marginTop: '0.35rem' }}>
-                    Aparecerá en tu Carnet Digital Oficial 2027
-                  </span>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="user"
-                onChange={handlePhotoUpload}
-                style={{ display: 'none' }}
-              />
             </div>
 
             <button
               type="button"
-              disabled={!dni || !name}
+              disabled={!dni || !nombres}
               onClick={() => setStep(2)}
-              style={{ width: '100%', padding: '0.9rem', borderRadius: '14px', background: (!dni || !name) ? '#9CA3AF' : '#13603A', color: '#FFFFFF', border: 'none', fontSize: '1rem', fontWeight: 700, cursor: (!dni || !name) ? 'not-allowed' : 'pointer', boxShadow: '0 4px 12px rgba(19, 96, 58, 0.25)' }}
+              style={{
+                width: '100%',
+                padding: '0.9rem',
+                borderRadius: '14px',
+                background: (!dni || !nombres) ? '#9CA3AF' : '#13603A',
+                color: '#FFFFFF',
+                border: 'none',
+                fontSize: '1rem',
+                fontWeight: 700,
+                cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 12px rgba(19, 96, 58, 0.25)'
+              }}
             >
               Continuar al Paso 2 ➔
             </button>
@@ -341,7 +406,7 @@ export default function EmpadronamientoClient() {
               📍 Paso 2: Contacto & Residencia
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.25rem' }}>
-              ¿Dónde resides actualmente y a qué número podemos coordinar?
+              ¿Dónde resides actualmente y a qué número de WhatsApp podemos coordinar?
             </p>
 
             <div style={{ marginBottom: '1.1rem' }}>
@@ -444,7 +509,7 @@ export default function EmpadronamientoClient() {
               🏛️ Paso 3: Membresía & Familiares
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.25rem' }}>
-              Tu trayectoria en la comparsa y lazos familiares institucionales:
+              Tu rol institucional en Cangallo Señorial y vínculos familiares:
             </p>
 
             <div style={{ marginBottom: '1.25rem' }}>
@@ -545,14 +610,14 @@ export default function EmpadronamientoClient() {
           </div>
         )}
 
-        {/* ==================== PASO 4: TALENTOS, VESTUARIO & PIN ==================== */}
+        {/* ==================== PASO 4: TALENTOS, VESTUARIO, PIN & FOTOGRAFÍA AL FINAL ==================== */}
         {step === 4 && (
           <form onSubmit={handleSubmit}>
             <h2 style={{ fontSize: '1.25rem', color: '#13603A', fontWeight: 800, marginBottom: '0.35rem' }}>
-              🎨 Paso 4: Talentos Artísticos & Vestuario
+              🎨 Paso 4: Talentos, Vestuario & Fotografía Final
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.25rem' }}>
-              Conoce tus destrezas para los elencos, grabaciones y la talla de tu indumentaria:
+              Completa tus disciplinas, talla de ropa, PIN y sube tu foto para el carnet QR:
             </p>
 
             {/* Talentos Selección */}
@@ -643,7 +708,7 @@ export default function EmpadronamientoClient() {
             </div>
 
             {/* PIN de 4 dígitos */}
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
                 Crea tu PIN de Acceso (4 dígitos):
               </label>
@@ -655,9 +720,50 @@ export default function EmpadronamientoClient() {
                 onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
                 style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid #D1D5DB', fontSize: '1.1rem', fontWeight: 700, letterSpacing: '4px', textAlign: 'center', background: '#FAF7F2', outline: 'none' }}
               />
-              <span style={{ fontSize: '0.72rem', color: '#6B7280', display: 'block', textAlign: 'center', marginTop: '3px' }}>
-                Lo usarás para ingresar a ver tu carnet y tus asistencias en ensayos.
-              </span>
+            </div>
+
+            {/* FOTOGRAFÍA AL FINAL DEL FORMULARIO (REQUERIMIENTO DEL USUARIO) */}
+            <div style={{ marginBottom: '1.5rem', background: '#FAF7F2', border: '1.5px dashed #D99B00', borderRadius: '14px', padding: '1.1rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '0.25rem' }}>
+                Paso Final • Emisión de Carnet
+              </div>
+              <label style={{ fontSize: '0.92rem', fontWeight: 800, color: '#13603A', display: 'block', marginBottom: '0.5rem' }}>
+                📸 Sube tu Fotografía o Tómate una Selfie:
+              </label>
+
+              {avatarUrl ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                  <img src={avatarUrl} alt="Preview" style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #13603A', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{ background: 'none', border: 'none', color: '#13603A', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    Cambiar fotografía
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{ background: '#13603A', color: '#FFFFFF', padding: '0.75rem 1.3rem', borderRadius: '12px', border: 'none', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 2px 8px rgba(19, 96, 58, 0.2)' }}
+                  >
+                    📷 Tomar Foto / Subir desde Celular
+                  </button>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#6B7280', marginTop: '0.4rem' }}>
+                    Esta foto aparecerá impresa en tu Carnet Digital Oficial 2027
+                  </span>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="user"
+                onChange={handlePhotoUpload}
+                style={{ display: 'none' }}
+              />
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
