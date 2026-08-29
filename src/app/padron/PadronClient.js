@@ -2,43 +2,49 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 
-export default function PadronClient({ members = [] }) {
+export default function PadronClient({ members: initialMembers = [] }) {
+  const [membersList, setMembersList] = useState(initialMembers);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [talentFilter, setTalentFilter] = useState('ALL');
   const [districtFilter, setDistrictFilter] = useState('ALL');
   const [copied, setCopied] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  
+  // Estado para el Modal de Edición
+  const [editingMember, setEditingMember] = useState(null);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [toastMsg, setToastMsg] = useState(null);
 
   // Estadísticas del Padrón
   const stats = useMemo(() => {
-    const total = members.length;
-    const danzantes = members.filter(m => (m.memberType === 'SOCIO' || m.role === 'MEMBER') && m.memberType !== 'MUSICO' && m.memberType !== 'DIRECTIVO').length;
-    const musicos = members.filter(m => m.memberType === 'MUSICO' || m.role === 'MUSICIAN').length;
-    const directivos = members.filter(m => m.memberType === 'DIRECTIVO' || m.role === 'ADMIN').length;
+    const total = membersList.length;
+    const danzantes = membersList.filter(m => (m.memberType === 'SOCIO' || m.role === 'MEMBER') && m.memberType !== 'MUSICO' && m.memberType !== 'DIRECTIVO').length;
+    const musicos = membersList.filter(m => m.memberType === 'MUSICO' || m.role === 'MUSICIAN').length;
+    const directivos = membersList.filter(m => m.memberType === 'DIRECTIVO' || m.role === 'ADMIN').length;
     
     const tallas = {};
-    members.forEach(m => {
+    membersList.forEach(m => {
       if (m.clothingSize) {
         tallas[m.clothingSize] = (tallas[m.clothingSize] || 0) + 1;
       }
     });
 
     return { total, danzantes, musicos, directivos, tallas };
-  }, [members]);
+  }, [membersList]);
 
   // Lista única de distritos para el filtro
   const districts = useMemo(() => {
     const set = new Set();
-    members.forEach(m => {
+    membersList.forEach(m => {
       if (m.district) set.add(m.district.trim());
     });
     return Array.from(set);
-  }, [members]);
+  }, [membersList]);
 
   // Filtrado de integrantes
   const filteredMembers = useMemo(() => {
-    return members.filter(m => {
+    return membersList.filter(m => {
       const matchSearch = search === '' ||
         (m.name && m.name.toLowerCase().includes(search.toLowerCase())) ||
         (m.dni && m.dni.includes(search)) ||
@@ -57,7 +63,7 @@ export default function PadronClient({ members = [] }) {
 
       return matchSearch && matchRole && matchTalent && matchDistrict;
     });
-  }, [members, search, roleFilter, talentFilter, districtFilter]);
+  }, [membersList, search, roleFilter, talentFilter, districtFilter]);
 
   const copyPublicLink = () => {
     const url = `${window.location.origin}/empadronamiento`;
@@ -66,10 +72,87 @@ export default function PadronClient({ members = [] }) {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  // Abrir Modal de Edición
+  const handleOpenEdit = (m) => {
+    setEditingMember({
+      id: m.id,
+      name: m.name || '',
+      dni: m.dni || '',
+      phone: m.phone || '',
+      email: m.email || '',
+      memberType: m.memberType || (m.role === 'MUSICIAN' ? 'MUSICO' : m.role === 'ADMIN' ? 'DIRECTIVO' : 'SOCIO'),
+      role: m.role || 'MEMBER',
+      status: m.status || 'ACTIVE',
+      birthDate: m.birthDate || '',
+      gender: m.gender || 'VARON',
+      department: m.department || 'Ayacucho',
+      province: m.province || 'Cangallo',
+      district: m.district || '',
+      address: m.address || '',
+      affiliationYear: m.affiliationYear || 2027,
+      talents: m.talents || 'Danza',
+      musicalInstrument: m.musicalInstrument || '',
+      clothingSize: m.clothingSize || 'L',
+      hasRelatives: Boolean(m.hasRelatives),
+      relativesDetail: m.relativesDetail || '',
+      notes: m.notes || ''
+    });
+  };
+
+  // Guardar Cambios del Socio
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editingMember) return;
+    setSaveLoading(true);
+
+    try {
+      const res = await fetch('/api/padron/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingMember)
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Actualizar lista local de inmediato
+        setMembersList(prev => prev.map(item => item.id === editingMember.id ? { ...item, ...data.user } : item));
+        setToastMsg(`✅ Datos de ${editingMember.name} actualizados correctamente.`);
+        setEditingMember(null);
+        setTimeout(() => setToastMsg(null), 3500);
+      } else {
+        alert(data.error || 'Error al guardar los cambios');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión al guardar cambios.');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   return (
     <div>
       
-      {/* Cabecera & Acciones Principales (Google Stitch Andean Luxury Banner) */}
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: '#0E472A',
+          color: '#FFFFFF',
+          padding: '12px 20px',
+          borderRadius: '12px',
+          border: '1.5px solid #D99B00',
+          fontWeight: 800,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          zIndex: 99999
+        }}>
+          {toastMsg}
+        </div>
+      )}
+
+      {/* Cabecera & Acciones Principales */}
       <div style={{
         background: 'linear-gradient(135deg, #002F18 0%, #0E472A 65%, #1A3624 100%)',
         color: '#FFFFFF',
@@ -150,7 +233,7 @@ export default function PadronClient({ members = [] }) {
         </div>
       </div>
 
-      {/* Tarjetas KPI de Resumen (Google Stitch Minimalist Elevation) */}
+      {/* Tarjetas KPI de Resumen */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '1.5rem' }}>
         <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderTop: '4px solid #0E472A', borderRadius: '18px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0E472A' }}>{stats.total}</div>
@@ -191,8 +274,7 @@ export default function PadronClient({ members = [] }) {
                 border: '1.5px solid #D1D5DB',
                 fontSize: '0.92rem',
                 background: '#FAF7F2',
-                outline: 'none',
-                transition: 'border 0.2s ease'
+                outline: 'none'
               }}
             />
           </div>
@@ -243,7 +325,7 @@ export default function PadronClient({ members = [] }) {
         </div>
 
         <div style={{ marginTop: '0.85rem', fontSize: '0.85rem', color: '#6B7280', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>Mostrando <strong>{filteredMembers.length}</strong> de <strong>{members.length}</strong> integrantes registrados</span>
+          <span>Mostrando <strong>{filteredMembers.length}</strong> de <strong>{membersList.length}</strong> integrantes registrados</span>
           {(search || roleFilter !== 'ALL' || talentFilter !== 'ALL' || districtFilter !== 'ALL') && (
             <button
               onClick={() => { setSearch(''); setRoleFilter('ALL'); setTalentFilter('ALL'); setDistrictFilter('ALL'); }}
@@ -255,7 +337,7 @@ export default function PadronClient({ members = [] }) {
         </div>
       </div>
 
-      {/* Tabla del Padrón (Estilo Ledger Google Stitch) */}
+      {/* Tabla del Padrón */}
       <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -268,7 +350,7 @@ export default function PadronClient({ members = [] }) {
                 <th style={{ padding: '14px 16px' }}>Talentos & Arte</th>
                 <th style={{ padding: '14px 16px' }}>Talla</th>
                 <th style={{ padding: '14px 16px' }}>Procedencia</th>
-                <th style={{ padding: '14px 16px' }}>Acción</th>
+                <th style={{ padding: '14px 16px', textAlign: 'center' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -373,23 +455,43 @@ export default function PadronClient({ members = [] }) {
                       {m.district ? `${m.district} (${m.department || 'Ayacucho'})` : m.department || 'Ayacucho'}
                     </td>
 
-                    {/* Acción / Ver Carnet */}
-                    <td style={{ padding: '14px 16px' }}>
-                      <button
-                        onClick={() => setSelectedMember(m)}
-                        style={{
-                          background: '#FAF7F2',
-                          border: '1px solid #D99B00',
-                          color: '#92400E',
-                          padding: '5px 10px',
-                          borderRadius: '8px',
-                          fontWeight: 800,
-                          fontSize: '0.78rem',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        🪪 Carnet
-                      </button>
+                    {/* Botones de Acción (Editar y Carnet) */}
+                    <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                      <div style={{ display: 'inline-flex', gap: '6px' }}>
+                        <button
+                          onClick={() => handleOpenEdit(m)}
+                          style={{
+                            background: '#0E472A',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            padding: '6px 11px',
+                            borderRadius: '8px',
+                            fontWeight: 800,
+                            fontSize: '0.78rem',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          ✏️ Modificar
+                        </button>
+                        <button
+                          onClick={() => setSelectedMember(m)}
+                          style={{
+                            background: '#FAF7F2',
+                            border: '1px solid #D99B00',
+                            color: '#92400E',
+                            padding: '6px 10px',
+                            borderRadius: '8px',
+                            fontWeight: 800,
+                            fontSize: '0.78rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          🪪 Carnet
+                        </button>
+                      </div>
                     </td>
 
                   </tr>
@@ -400,7 +502,270 @@ export default function PadronClient({ members = [] }) {
         </div>
       </div>
 
-      {/* Modal / Vista Previa del Carnet Digital Oficial de cada Socio */}
+      {/* ==================== MODAL DE MODIFICACIÓN / EDICIÓN ==================== */}
+      {editingMember && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '22px',
+            maxWidth: '540px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '1.75rem',
+            position: 'relative',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+            border: '2px solid #0E472A'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '2px solid #FAF7F2', paddingBottom: '0.75rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0E472A', margin: 0 }}>
+                  ✏️ Modificar Datos del Socio
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+                  Corrige cualquier error tipográfico o actualiza su información oficial.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingMember(null)}
+                style={{ background: '#F3F4F6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 900 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                
+                {/* Nombre Completo */}
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    Nombres y Apellidos:
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingMember.name}
+                    onChange={e => setEditingMember({ ...editingMember, name: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+
+                {/* DNI y Teléfono */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      DNI (8 dígitos):
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={8}
+                      value={editingMember.dni}
+                      onChange={e => setEditingMember({ ...editingMember, dni: e.target.value.replace(/\D/g, '').slice(0, 8) })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Celular / WhatsApp:
+                    </label>
+                    <input
+                      type="text"
+                      value={editingMember.phone}
+                      onChange={e => setEditingMember({ ...editingMember, phone: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Rol y Talla */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Rol / Membresía:
+                    </label>
+                    <select
+                      value={editingMember.memberType}
+                      onChange={e => setEditingMember({ ...editingMember, memberType: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                    >
+                      <option value="SOCIO">💃 Danzante</option>
+                      <option value="MUSICO">🎺 Músico</option>
+                      <option value="DIRECTIVO">👑 Directivo</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Talla de Vestuario:
+                    </label>
+                    <select
+                      value={editingMember.clothingSize}
+                      onChange={e => setEditingMember({ ...editingMember, clothingSize: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                    >
+                      <option value="S">S</option>
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                      <option value="XL">XL</option>
+                      <option value="XXL">XXL</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Año de Ingreso y Sexo */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Año de Afiliación:
+                    </label>
+                    <select
+                      value={editingMember.affiliationYear}
+                      onChange={e => setEditingMember({ ...editingMember, affiliationYear: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                    >
+                      <option value="2027">2027</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2020">2020</option>
+                      <option value="2015">2015</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Género:
+                    </label>
+                    <select
+                      value={editingMember.gender}
+                      onChange={e => setEditingMember({ ...editingMember, gender: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                    >
+                      <option value="VARON">Varón</option>
+                      <option value="MUJER">Mujer</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Distrito y Dirección */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Distrito:
+                    </label>
+                    <input
+                      type="text"
+                      value={editingMember.district}
+                      onChange={e => setEditingMember({ ...editingMember, district: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                      Dirección / Ref:
+                    </label>
+                    <input
+                      type="text"
+                      value={editingMember.address}
+                      onChange={e => setEditingMember({ ...editingMember, address: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Disciplinas / Talentos e Instrumento */}
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    Talentos & Disciplinas:
+                  </label>
+                  <input
+                    type="text"
+                    value={editingMember.talents}
+                    onChange={e => setEditingMember({ ...editingMember, talents: e.target.value })}
+                    placeholder="Ej. Danza, Música, Canto"
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                  />
+                </div>
+
+                {editingMember.memberType === 'MUSICO' && (
+                  <div>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#92400E', display: 'block', marginBottom: '3px' }}>
+                      🎺 Instrumento Musical:
+                    </label>
+                    <input
+                      type="text"
+                      value={editingMember.musicalInstrument}
+                      onChange={e => setEditingMember({ ...editingMember, musicalInstrument: e.target.value })}
+                      placeholder="Ej. Mandolina, Quena, Trompeta"
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #F59E0B', fontSize: '0.88rem', background: '#FEF3C7', outline: 'none' }}
+                    />
+                  </div>
+                )}
+
+                {/* Familiares */}
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    Familiares en Comparsa (Opcional):
+                  </label>
+                  <input
+                    type="text"
+                    value={editingMember.relativesDetail}
+                    onChange={e => setEditingMember({ ...editingMember, relativesDetail: e.target.value, hasRelatives: Boolean(e.target.value) })}
+                    placeholder="Ej. Hermano de Carlos Taboada"
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                  />
+                </div>
+
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '1.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingMember(null)}
+                  style={{ flex: 1, padding: '0.85rem', background: '#F3F4F6', color: '#374151', border: 'none', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={saveLoading}
+                  style={{
+                    flex: 2,
+                    padding: '0.85rem',
+                    background: 'linear-gradient(135deg, #0E472A 0%, #13603A 100%)',
+                    color: '#FFFFFF',
+                    border: '1px solid #D99B00',
+                    borderRadius: '12px',
+                    fontWeight: 900,
+                    cursor: saveLoading ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 14px rgba(14, 71, 42, 0.3)'
+                  }}
+                >
+                  {saveLoading ? 'Guardando...' : '💾 Guardar Cambios'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL DE VISTA DE CARNET ==================== */}
       {selectedMember && (
         <div style={{
           position: 'fixed',
@@ -458,7 +823,7 @@ export default function PadronClient({ members = [] }) {
               <div style={{ fontSize: '0.68rem', letterSpacing: '1.8px', textTransform: 'uppercase', color: '#FCD34D', fontWeight: 800, marginBottom: '0.35rem' }}>
                 CARNET DIGITAL OFICIAL • 2027
               </div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: '1.15', marginBottom: '0.85rem' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: 1.15, marginBottom: '0.85rem' }}>
                 CANGALLO SEÑORIAL
               </div>
 
