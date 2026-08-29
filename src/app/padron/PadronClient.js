@@ -114,9 +114,8 @@ export default function PadronClient({ members: initialMembers = [] }) {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        // Actualizar lista local de inmediato
         setMembersList(prev => prev.map(item => item.id === editingMember.id ? { ...item, ...data.user } : item));
-        setToastMsg(`✅ Datos de ${editingMember.name} actualizados correctamente.`);
+        setToastMsg(`Datos de ${editingMember.name} actualizados correctamente.`);
         setEditingMember(null);
         setTimeout(() => setToastMsg(null), 3500);
       } else {
@@ -131,7 +130,7 @@ export default function PadronClient({ members: initialMembers = [] }) {
   };
 
   return (
-    <div>
+    <div style={{ fontFamily: 'var(--font-inter, sans-serif)' }}>
       
       {/* Toast Notification */}
       {toastMsg && (
@@ -139,95 +138,93 @@ export default function PadronClient({ members: initialMembers = [] }) {
           position: 'fixed',
           top: '20px',
           right: '20px',
-          background: '#0E472A',
+          background: '#1F2937',
           color: '#FFFFFF',
           padding: '12px 20px',
           borderRadius: '12px',
-          border: '1.5px solid #D99B00',
-          fontWeight: 800,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          border: '1px solid #D97706',
+          fontSize: '0.9rem',
+          fontWeight: 600,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
           zIndex: 99999
         }}>
           {toastMsg}
         </div>
       )}
 
-      {/* Cabecera & Acciones Principales */}
+      {/* Cabecera Ejecutiva Sobria */}
       <div style={{
-        background: 'linear-gradient(135deg, #1F2937 0%, #111827 65%, #374151 100%)',
-        color: '#FFFFFF',
-        padding: '1.75rem 2rem',
-        borderRadius: '22px',
-        borderBottom: '4px solid #D97706',
-        marginBottom: '1.5rem',
-        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)'
+        background: '#FFFFFF',
+        borderRadius: '16px',
+        border: '1px solid #E5E7EB',
+        padding: '1.5rem 1.75rem',
+        marginBottom: '1.25rem',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
           <div>
             <div style={{
               display: 'inline-block',
-              background: 'rgba(217, 155, 0, 0.22)',
-              border: '1px solid #FCD34D',
-              color: '#FCD34D',
-              fontSize: '0.78rem',
+              background: '#FEF3C7',
+              color: '#92400E',
+              fontSize: '0.72rem',
               fontWeight: 800,
-              letterSpacing: '1.2px',
+              letterSpacing: '1px',
               textTransform: 'uppercase',
-              padding: '3px 12px',
-              borderRadius: '9999px',
-              marginBottom: '0.4rem'
+              padding: '3px 10px',
+              borderRadius: '6px',
+              marginBottom: '0.35rem'
             }}>
               Base de Datos Oficial • Carnaval 2027
             </div>
-            <h1 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '1.85rem', fontWeight: 900, margin: 0, color: '#FFFFFF', letterSpacing: '0.5px' }}>
-              PADRÓN GENERAL DE SOCIOS ACTIVOS
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: '#1F2937' }}>
+              Padrón General de Socios Activos
             </h1>
-            <p style={{ fontSize: '0.92rem', color: '#E5E7EB', margin: '0.25rem 0 0 0', fontWeight: 500 }}>
-              Censo institucional de identidad, talentos, vestuario y procedencia — Cangallo Señorial
+            <p style={{ fontSize: '0.88rem', color: '#6B7280', margin: '0.2rem 0 0 0' }}>
+              Censo institucional de identidad, vestuario, procedencia y talentos — Cangallo Señorial
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <button
               onClick={copyPublicLink}
               style={{
-                background: copied ? '#059669' : '#FEF3C7',
-                color: copied ? '#FFFFFF' : '#92400E',
-                border: '1.5px solid #F59E0B',
-                padding: '0.75rem 1.25rem',
-                borderRadius: '14px',
-                fontWeight: 800,
-                fontSize: '0.88rem',
+                background: copied ? '#ECFDF5' : '#FFFFFF',
+                color: copied ? '#059669' : '#374151',
+                border: copied ? '1px solid #10B981' : '1px solid #D1D5DB',
+                padding: '0.65rem 1rem',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.85rem',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                transition: 'all 0.2s ease'
+                gap: '6px',
+                transition: 'all 0.15s ease'
               }}
             >
-              {copied ? '✓ ¡Enlace Copiado!' : '🔗 Copiar Link de Empadronamiento'}
+              {copied ? '✓ Enlace Copiado' : 'Copiar Link de Censo'}
             </button>
 
             <a
               href="/api/reportes/padron/export"
               download
               style={{
-                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                background: '#10B981',
                 color: '#FFFFFF',
                 textDecoration: 'none',
-                padding: '0.75rem 1.35rem',
-                borderRadius: '14px',
-                fontWeight: 900,
-                fontSize: '0.88rem',
+                padding: '0.65rem 1.1rem',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.85rem',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
-                transition: 'all 0.2s ease'
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
+                transition: 'all 0.15s ease'
               }}
             >
-              📥 Descargar Backup en Excel (.xlsx)
+              Descargar Excel (.xlsx)
             </a>
 
             <button
@@ -236,65 +233,65 @@ export default function PadronClient({ members: initialMembers = [] }) {
                 window.location.href = '/empadronamiento';
               }}
               style={{
-                background: 'rgba(255,255,255,0.12)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.3)',
-                padding: '0.75rem 1rem',
-                borderRadius: '14px',
-                fontWeight: 800,
+                background: '#F3F4F6',
+                color: '#4B5563',
+                border: '1px solid #E5E7EB',
+                padding: '0.65rem 0.9rem',
+                borderRadius: '10px',
+                fontWeight: 700,
                 fontSize: '0.85rem',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '4px'
               }}
             >
-              🚪 Salir
+              Salir
             </button>
           </div>
         </div>
       </div>
 
-      {/* Tarjetas KPI de Resumen */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '1.5rem' }}>
-        <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderTop: '4px solid #0E472A', borderRadius: '18px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-          <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0E472A' }}>{stats.total}</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Empadronados</div>
+      {/* Tarjetas KPI Limpias y Uniformes (Sin saturación de colores) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '1.25rem' }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '14px', padding: '1.1rem', textAlign: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#D97706' }}>{stats.total}</div>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Empadronados</div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderTop: '4px solid #D99B00', borderRadius: '18px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-          <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#D99B00' }}>{stats.danzantes}</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>💃 Danzantes / Bailarines</div>
+        <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '14px', padding: '1.1rem', textAlign: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#1F2937' }}>{stats.danzantes}</div>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Danzantes</div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderTop: '4px solid #2563EB', borderRadius: '18px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-          <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#2563EB' }}>{stats.musicos}</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🎺 Músicos de Banda</div>
+        <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '14px', padding: '1.1rem', textAlign: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#1F2937' }}>{stats.musicos}</div>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Músicos de Banda</div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderTop: '4px solid #B71C1C', borderRadius: '18px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-          <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#B71C1C' }}>{stats.directivos}</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>👑 Directiva & Delegados</div>
+        <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '14px', padding: '1.1rem', textAlign: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#1F2937' }}>{stats.directivos}</div>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Comité Directivo</div>
         </div>
       </div>
 
       {/* Barra de Búsqueda y Filtros */}
-      <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '18px', padding: '1.25rem 1.5rem', marginBottom: '1.25rem', boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '12px', alignItems: 'center' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '14px', padding: '1rem 1.25rem', marginBottom: '1.25rem', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '10px', alignItems: 'center' }}>
           
           {/* Buscador de Texto */}
           <div>
             <input
               type="text"
-              placeholder="🔍 Buscar por nombre, DNI, celular o talento..."
+              placeholder="Buscar por nombre, DNI, celular o talento..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{
                 width: '100%',
-                padding: '0.85rem 1.1rem',
-                borderRadius: '12px',
-                border: '1.5px solid #D1D5DB',
-                fontSize: '0.92rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid #D1D5DB',
+                fontSize: '0.88rem',
                 background: '#FAF7F2',
                 outline: 'none'
               }}
@@ -306,12 +303,12 @@ export default function PadronClient({ members: initialMembers = [] }) {
             <select
               value={roleFilter}
               onChange={e => setRoleFilter(e.target.value)}
-              style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none', fontWeight: 600 }}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #D1D5DB', fontSize: '0.85rem', background: '#FFFFFF', outline: 'none', color: '#374151' }}
             >
               <option value="ALL">Todos los Roles</option>
-              <option value="SOCIO">💃 Danzantes</option>
-              <option value="MUSICO">🎺 Músicos</option>
-              <option value="DIRECTIVO">👑 Directivos</option>
+              <option value="SOCIO">Danzantes</option>
+              <option value="MUSICO">Músicos</option>
+              <option value="DIRECTIVO">Directivos</option>
             </select>
           </div>
 
@@ -320,14 +317,14 @@ export default function PadronClient({ members: initialMembers = [] }) {
             <select
               value={talentFilter}
               onChange={e => setTalentFilter(e.target.value)}
-              style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none', fontWeight: 600 }}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #D1D5DB', fontSize: '0.85rem', background: '#FFFFFF', outline: 'none', color: '#374151' }}
             >
               <option value="ALL">Todos los Talentos</option>
-              <option value="Danza">💃 Danza</option>
-              <option value="Música">🎺 Música / Instrumentos</option>
-              <option value="Canto">🎤 Canto</option>
-              <option value="Creación">✍️ Creación / Letras</option>
-              <option value="Arte">📸 Fotografía / Arte</option>
+              <option value="Danza">Danza</option>
+              <option value="Música">Música / Instrumentos</option>
+              <option value="Canto">Canto</option>
+              <option value="Creación">Creación / Letras</option>
+              <option value="Arte">Fotografía / Arte</option>
             </select>
           </div>
 
@@ -336,7 +333,7 @@ export default function PadronClient({ members: initialMembers = [] }) {
             <select
               value={districtFilter}
               onChange={e => setDistrictFilter(e.target.value)}
-              style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none', fontWeight: 600 }}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #D1D5DB', fontSize: '0.85rem', background: '#FFFFFF', outline: 'none', color: '#374151' }}
             >
               <option value="ALL">Todos los Distritos</option>
               {districts.map(d => (
@@ -346,12 +343,12 @@ export default function PadronClient({ members: initialMembers = [] }) {
           </div>
         </div>
 
-        <div style={{ marginTop: '0.85rem', fontSize: '0.85rem', color: '#6B7280', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginTop: '0.75rem', fontSize: '0.82rem', color: '#6B7280', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>Mostrando <strong>{filteredMembers.length}</strong> de <strong>{membersList.length}</strong> integrantes registrados</span>
           {(search || roleFilter !== 'ALL' || talentFilter !== 'ALL' || districtFilter !== 'ALL') && (
             <button
               onClick={() => { setSearch(''); setRoleFilter('ALL'); setTalentFilter('ALL'); setDistrictFilter('ALL'); }}
-              style={{ background: 'none', border: 'none', color: '#B71C1C', fontWeight: 800, cursor: 'pointer', fontSize: '0.82rem' }}
+              style={{ background: 'none', border: 'none', color: '#DC2626', fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}
             >
               Limpiar Filtros ✕
             </button>
@@ -359,26 +356,26 @@ export default function PadronClient({ members: initialMembers = [] }) {
         </div>
       </div>
 
-      {/* Tabla del Padrón */}
-      <div style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
+      {/* Tabla del Padrón (Estilo Ejecutivo y Limpio) */}
+      <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
             <thead>
-              <tr style={{ background: '#0E472A', color: '#FFFFFF', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-                <th style={{ padding: '14px 18px' }}>Socio / Identidad</th>
-                <th style={{ padding: '14px 16px' }}>DNI & Código</th>
-                <th style={{ padding: '14px 16px' }}>Contacto WhatsApp</th>
-                <th style={{ padding: '14px 16px' }}>Rol / Membresía</th>
-                <th style={{ padding: '14px 16px' }}>Talentos & Arte</th>
-                <th style={{ padding: '14px 16px' }}>Talla</th>
-                <th style={{ padding: '14px 16px' }}>Procedencia</th>
-                <th style={{ padding: '14px 16px', textAlign: 'center' }}>Acciones</th>
+              <tr style={{ background: '#F9FAFB', color: '#4B5563', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1.5px solid #E5E7EB' }}>
+                <th style={{ padding: '12px 16px' }}>Socio / Identidad</th>
+                <th style={{ padding: '12px 14px' }}>DNI & Código</th>
+                <th style={{ padding: '12px 14px' }}>WhatsApp</th>
+                <th style={{ padding: '12px 14px' }}>Rol</th>
+                <th style={{ padding: '12px 14px' }}>Talentos</th>
+                <th style={{ padding: '12px 14px' }}>Talla</th>
+                <th style={{ padding: '12px 14px' }}>Procedencia</th>
+                <th style={{ padding: '12px 14px', textAlign: 'center' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#9CA3AF', fontSize: '0.95rem' }}>
+                  <td colSpan={8} style={{ padding: '2.5rem', textAlign: 'center', color: '#9CA3AF', fontSize: '0.9rem' }}>
                     No se encontraron socios con los filtros aplicados.
                   </td>
                 </tr>
@@ -387,51 +384,50 @@ export default function PadronClient({ members: initialMembers = [] }) {
                   <tr key={m.id} style={{ borderBottom: '1px solid #F3F4F6', background: idx % 2 === 0 ? '#FFFFFF' : '#FAF7F2' }}>
                     
                     {/* Foto y Nombre */}
-                    <td style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <td style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <img
                         src={m.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg'}
                         alt={m.name}
-                        style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #0E472A' }}
+                        style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #E5E7EB' }}
                       />
                       <div>
-                        <strong style={{ color: '#1E1B18', display: 'block', fontSize: '0.95rem' }}>{m.name}</strong>
-                        <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>
-                          Afiliado: {m.affiliationYear || '2027'} &bull; {m.gender === 'MUJER' ? 'Mujer' : 'Varón'}
+                        <strong style={{ color: '#1F2937', display: 'block', fontSize: '0.9rem', fontWeight: 700 }}>{m.name}</strong>
+                        <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                          {m.affiliationYear || '2027'} &bull; {m.gender === 'MUJER' ? 'Mujer' : 'Varón'}
                         </span>
                       </div>
                     </td>
 
-                    {/* DNI & Código Continuo de Socio */}
-                    <td style={{ padding: '14px 16px' }}>
-                      <div style={{ fontWeight: 800, color: '#0E472A', fontSize: '0.95rem', letterSpacing: '0.5px' }}>
+                    {/* DNI & Código */}
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontWeight: 700, color: '#1F2937', fontSize: '0.9rem' }}>
                         {m.dni || '—'}
                       </div>
                       <span style={{
                         display: 'inline-block',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         color: '#92400E',
                         background: '#FEF3C7',
                         border: '1px solid #FCD34D',
-                        padding: '2px 8px',
-                        borderRadius: '6px',
-                        fontWeight: 900,
-                        marginTop: '3px',
-                        letterSpacing: '0.5px'
+                        padding: '1px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 700,
+                        marginTop: '2px'
                       }}>
                         CÓD: {m.affiliationYear || '2027'}{m.dni || ''}
                       </span>
                     </td>
 
                     {/* WhatsApp */}
-                    <td style={{ padding: '14px 16px' }}>
+                    <td style={{ padding: '12px 14px' }}>
                       {m.phone ? (
                         <a
                           href={`https://wa.me/51${m.phone.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ color: '#059669', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                          style={{ color: '#059669', fontWeight: 600, textDecoration: 'none', fontSize: '0.85rem' }}
                         >
-                          📱 {m.phone}
+                          {m.phone}
                         </a>
                       ) : (
                         <span style={{ color: '#9CA3AF' }}>—</span>
@@ -439,79 +435,77 @@ export default function PadronClient({ members: initialMembers = [] }) {
                     </td>
 
                     {/* Rol */}
-                    <td style={{ padding: '14px 16px' }}>
+                    <td style={{ padding: '12px 14px' }}>
                       <span style={{
                         display: 'inline-block',
-                        padding: '4px 10px',
-                        borderRadius: '8px',
-                        fontSize: '0.78rem',
-                        fontWeight: 800,
-                        background: m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '#DBEAFE' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '#FEE2E2' : '#D1FAE5',
-                        color: m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '#1E40AF' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '#991B1B' : '#065F46'
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        background: m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '#EFF6FF' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '#FEF2F2' : '#F0FDF4',
+                        color: m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '#1D4ED8' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '#B91C1C' : '#15803D',
+                        border: m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '1px solid #BFDBFE' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '1px solid #FECACA' : '1px solid #BBF7D0'
                       }}>
-                        {m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? '🎺 Músico' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? '👑 Directiva' : '💃 Danzante'}
+                        {m.memberType === 'MUSICO' || m.role === 'MUSICIAN' ? 'Músico' : m.memberType === 'DIRECTIVO' || m.role === 'ADMIN' ? 'Directivo' : 'Danzante'}
                       </span>
                     </td>
 
                     {/* Talentos */}
-                    <td style={{ padding: '14px 16px' }}>
-                      <div style={{ fontSize: '0.85rem', color: '#1E1B18', fontWeight: 700 }}>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontSize: '0.82rem', color: '#374151' }}>
                         {m.talents || 'Danza'}
                       </div>
                       {m.musicalInstrument && (
-                        <span style={{ fontSize: '0.75rem', color: '#B45309', fontWeight: 800, display: 'block' }}>
-                          Instrumento: {m.musicalInstrument}
+                        <span style={{ fontSize: '0.72rem', color: '#B45309', fontWeight: 600, display: 'block' }}>
+                          {m.musicalInstrument}
                         </span>
                       )}
                     </td>
 
                     {/* Talla */}
-                    <td style={{ padding: '14px 16px' }}>
-                      <span style={{ display: 'inline-block', padding: '3px 10px', borderRadius: '8px', background: '#FEF3C7', color: '#92400E', fontWeight: 900, fontSize: '0.85rem' }}>
+                    <td style={{ padding: '12px 14px' }}>
+                      <span style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '4px', background: '#F3F4F6', color: '#374151', fontWeight: 700, fontSize: '0.8rem', border: '1px solid #E5E7EB' }}>
                         {m.clothingSize || 'L'}
                       </span>
                     </td>
 
                     {/* Procedencia */}
-                    <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: '#4B5563' }}>
+                    <td style={{ padding: '12px 14px', fontSize: '0.82rem', color: '#4B5563' }}>
                       {m.district ? `${m.district} (${m.department || 'Ayacucho'})` : m.department || 'Ayacucho'}
                     </td>
 
-                    {/* Botones de Acción (Editar y Carnet) */}
-                    <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                    {/* Acciones */}
+                    <td style={{ padding: '12px 14px', textAlign: 'center' }}>
                       <div style={{ display: 'inline-flex', gap: '6px' }}>
                         <button
                           onClick={() => handleOpenEdit(m)}
                           style={{
-                            background: '#0E472A',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            padding: '6px 11px',
-                            borderRadius: '8px',
-                            fontWeight: 800,
-                            fontSize: '0.78rem',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px'
+                            background: '#FFFFFF',
+                            color: '#374151',
+                            border: '1px solid #D1D5DB',
+                            padding: '4px 9px',
+                            borderRadius: '6px',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
+                            cursor: 'pointer'
                           }}
                         >
-                          ✏️ Modificar
+                          Editar
                         </button>
                         <button
                           onClick={() => setSelectedMember(m)}
                           style={{
-                            background: '#FAF7F2',
-                            border: '1px solid #D99B00',
+                            background: '#FFFBEB',
+                            border: '1px solid #FCD34D',
                             color: '#92400E',
-                            padding: '6px 10px',
-                            borderRadius: '8px',
-                            fontWeight: 800,
-                            fontSize: '0.78rem',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
                             cursor: 'pointer'
                           }}
                         >
-                          🪪 Carnet
+                          Carnet
                         </button>
                       </div>
                     </td>
@@ -524,7 +518,7 @@ export default function PadronClient({ members: initialMembers = [] }) {
         </div>
       </div>
 
-      {/* ==================== MODAL DE MODIFICACIÓN / EDICIÓN ==================== */}
+      {/* ==================== MODAL DE EDICIÓN ==================== */}
       {editingMember && (
         <div style={{
           position: 'fixed',
@@ -532,7 +526,7 @@ export default function PadronClient({ members: initialMembers = [] }) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0,0,0,0.65)',
+          background: 'rgba(0,0,0,0.6)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -541,40 +535,40 @@ export default function PadronClient({ members: initialMembers = [] }) {
         }}>
           <div style={{
             background: '#FFFFFF',
-            borderRadius: '22px',
-            maxWidth: '540px',
+            borderRadius: '16px',
+            maxWidth: '500px',
             width: '100%',
             maxHeight: '90vh',
             overflowY: 'auto',
-            padding: '1.75rem',
+            padding: '1.5rem',
             position: 'relative',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-            border: '2px solid #0E472A'
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+            border: '1px solid #E5E7EB'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '2px solid #FAF7F2', paddingBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #E5E7EB', paddingBottom: '0.75rem' }}>
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0E472A', margin: 0 }}>
-                  ✏️ Modificar Datos del Socio
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1F2937', margin: 0 }}>
+                  Editar Datos del Socio
                 </h3>
                 <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
-                  Corrige cualquier error tipográfico o actualiza su información oficial.
+                  Actualiza o corrige los datos del integrante en el Padrón.
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingMember(null)}
-                style={{ background: '#F3F4F6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 900 }}
+                style={{ background: '#F3F4F6', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', fontWeight: 700 }}
               >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleSaveEdit}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 
                 {/* Nombre Completo */}
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                     Nombres y Apellidos:
                   </label>
                   <input
@@ -582,14 +576,14 @@ export default function PadronClient({ members: initialMembers = [] }) {
                     required
                     value={editingMember.name}
                     onChange={e => setEditingMember({ ...editingMember, name: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                    style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
                   />
                 </div>
 
                 {/* DNI y Teléfono */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       DNI (8 dígitos):
                     </label>
                     <input
@@ -597,18 +591,18 @@ export default function PadronClient({ members: initialMembers = [] }) {
                       maxLength={8}
                       value={editingMember.dni}
                       onChange={e => setEditingMember({ ...editingMember, dni: e.target.value.replace(/\D/g, '').slice(0, 8) })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Celular / WhatsApp:
                     </label>
                     <input
                       type="text"
                       value={editingMember.phone}
                       onChange={e => setEditingMember({ ...editingMember, phone: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', fontWeight: 700, outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.9rem', outline: 'none' }}
                     />
                   </div>
                 </div>
@@ -616,28 +610,28 @@ export default function PadronClient({ members: initialMembers = [] }) {
                 {/* Rol y Talla */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Rol / Membresía:
                     </label>
                     <select
                       value={editingMember.memberType}
                       onChange={e => setEditingMember({ ...editingMember, memberType: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 8px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none' }}
                     >
-                      <option value="SOCIO">💃 Danzante</option>
-                      <option value="MUSICO">🎺 Músico</option>
-                      <option value="DIRECTIVO">👑 Directivo</option>
+                      <option value="SOCIO">Danzante</option>
+                      <option value="MUSICO">Músico</option>
+                      <option value="DIRECTIVO">Directivo</option>
                     </select>
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Talla de Vestuario:
                     </label>
                     <select
                       value={editingMember.clothingSize}
                       onChange={e => setEditingMember({ ...editingMember, clothingSize: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 8px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none' }}
                     >
                       <option value="S">S</option>
                       <option value="M">M</option>
@@ -651,13 +645,13 @@ export default function PadronClient({ members: initialMembers = [] }) {
                 {/* Año de Ingreso y Sexo */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Año de Afiliación:
                     </label>
                     <select
                       value={editingMember.affiliationYear}
                       onChange={e => setEditingMember({ ...editingMember, affiliationYear: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 8px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none' }}
                     >
                       <option value="2027">2027</option>
                       <option value="2026">2026</option>
@@ -670,13 +664,13 @@ export default function PadronClient({ members: initialMembers = [] }) {
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Género:
                     </label>
                     <select
                       value={editingMember.gender}
                       onChange={e => setEditingMember({ ...editingMember, gender: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.9rem', fontWeight: 700, background: '#FFFFFF', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 8px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', background: '#FFFFFF', outline: 'none' }}
                     >
                       <option value="VARON">Varón</option>
                       <option value="MUJER">Mujer</option>
@@ -687,33 +681,33 @@ export default function PadronClient({ members: initialMembers = [] }) {
                 {/* Distrito y Dirección */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Distrito:
                     </label>
                     <input
                       type="text"
                       value={editingMember.district}
                       onChange={e => setEditingMember({ ...editingMember, district: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                       Dirección / Ref:
                     </label>
                     <input
                       type="text"
                       value={editingMember.address}
                       onChange={e => setEditingMember({ ...editingMember, address: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
                     />
                   </div>
                 </div>
 
-                {/* Disciplinas / Talentos e Instrumento */}
+                {/* Disciplinas / Talentos */}
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                     Talentos & Disciplinas:
                   </label>
                   <input
@@ -721,28 +715,28 @@ export default function PadronClient({ members: initialMembers = [] }) {
                     value={editingMember.talents}
                     onChange={e => setEditingMember({ ...editingMember, talents: e.target.value })}
                     placeholder="Ej. Danza, Música, Canto"
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                    style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
                   />
                 </div>
 
                 {editingMember.memberType === 'MUSICO' && (
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#92400E', display: 'block', marginBottom: '3px' }}>
-                      🎺 Instrumento Musical:
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#B45309', display: 'block', marginBottom: '3px' }}>
+                      Instrumento Musical:
                     </label>
                     <input
                       type="text"
                       value={editingMember.musicalInstrument}
                       onChange={e => setEditingMember({ ...editingMember, musicalInstrument: e.target.value })}
                       placeholder="Ej. Mandolina, Quena, Trompeta"
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #F59E0B', fontSize: '0.88rem', background: '#FEF3C7', outline: 'none' }}
+                      style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #FCD34D', background: '#FEF3C7', fontSize: '0.88rem', outline: 'none' }}
                     />
                   </div>
                 )}
 
                 {/* Familiares */}
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#374151', display: 'block', marginBottom: '3px' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563', display: 'block', marginBottom: '3px' }}>
                     Familiares en Comparsa (Opcional):
                   </label>
                   <input
@@ -750,17 +744,17 @@ export default function PadronClient({ members: initialMembers = [] }) {
                     value={editingMember.relativesDetail}
                     onChange={e => setEditingMember({ ...editingMember, relativesDetail: e.target.value, hasRelatives: Boolean(e.target.value) })}
                     placeholder="Ej. Hermano de Carlos Taboada"
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1.5px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
+                    style={{ width: '100%', height: '40px', padding: '0 12px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '0.88rem', outline: 'none' }}
                   />
                 </div>
 
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '1.5rem' }}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '1.25rem' }}>
                 <button
                   type="button"
                   onClick={() => setEditingMember(null)}
-                  style={{ flex: 1, padding: '0.85rem', background: '#F3F4F6', color: '#374151', border: 'none', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}
+                  style={{ flex: 1, height: '44px', background: '#F3F4F6', color: '#4B5563', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   Cancelar
                 </button>
@@ -769,17 +763,16 @@ export default function PadronClient({ members: initialMembers = [] }) {
                   disabled={saveLoading}
                   style={{
                     flex: 2,
-                    padding: '0.85rem',
-                    background: 'linear-gradient(135deg, #0E472A 0%, #13603A 100%)',
+                    height: '44px',
+                    background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                     color: '#FFFFFF',
-                    border: '1px solid #D99B00',
-                    borderRadius: '12px',
-                    fontWeight: 900,
-                    cursor: saveLoading ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 14px rgba(14, 71, 42, 0.3)'
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    cursor: saveLoading ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  {saveLoading ? 'Guardando...' : '💾 Guardar Cambios'}
+                  {saveLoading ? 'Guardando...' : 'Guardar Cambios'}
                 </button>
               </div>
             </form>
@@ -804,13 +797,13 @@ export default function PadronClient({ members: initialMembers = [] }) {
         }}>
           <div style={{
             background: '#FFFFFF',
-            borderRadius: '24px',
-            maxWidth: '400px',
+            borderRadius: '20px',
+            maxWidth: '380px',
             width: '100%',
             padding: '1.5rem',
             textAlign: 'center',
             position: 'relative',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.3)'
+            boxShadow: '0 20px 50px rgba(0,0,0,0.25)'
           }}>
             <button
               onClick={() => setSelectedMember(null)}
@@ -821,35 +814,35 @@ export default function PadronClient({ members: initialMembers = [] }) {
                 background: '#F3F4F6',
                 border: 'none',
                 borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                fontSize: '1rem',
+                width: '30px',
+                height: '30px',
+                fontSize: '0.9rem',
                 cursor: 'pointer',
-                fontWeight: 900
+                fontWeight: 800
               }}
             >
               ✕
             </button>
 
-            {/* Carnet de Lujo en Modal */}
+            {/* Carnet */}
             <div style={{
-              background: 'linear-gradient(135deg, #002F18 0%, #0E472A 65%, #1C1917 100%)',
+              background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
               color: '#FFFFFF',
-              borderRadius: '20px',
+              borderRadius: '18px',
               padding: '1.5rem',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.25)',
-              border: '2.5px solid #D99B00',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.2)',
+              border: '2px solid #D97706',
               textAlign: 'center',
               marginTop: '0.5rem'
             }}>
-              <div style={{ fontSize: '0.68rem', letterSpacing: '1.8px', textTransform: 'uppercase', color: '#FCD34D', fontWeight: 800, marginBottom: '0.35rem' }}>
+              <div style={{ fontSize: '0.68rem', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#FCD34D', fontWeight: 800, marginBottom: '0.35rem' }}>
                 CARNET DIGITAL OFICIAL • 2027
               </div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: 1.15, marginBottom: '0.85rem' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 900, fontFamily: 'var(--font-playfair, serif)', color: '#FFFFFF', lineHeight: '1.15', marginBottom: '0.85rem' }}>
                 CANGALLO SEÑORIAL
               </div>
 
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #FCD34D', margin: '0 auto 0.75rem auto', background: '#FFFFFF' }}>
+              <div style={{ width: '76px', height: '76px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #FCD34D', margin: '0 auto 0.75rem auto', background: '#FFFFFF' }}>
                 <img src={selectedMember.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
 
@@ -858,32 +851,32 @@ export default function PadronClient({ members: initialMembers = [] }) {
               </div>
               <div style={{
                 display: 'inline-block',
-                background: 'rgba(217, 155, 0, 0.25)',
+                background: 'rgba(217, 119, 6, 0.25)',
                 border: '1px solid #FCD34D',
                 color: '#FCD34D',
                 fontSize: '0.85rem',
-                fontWeight: 900,
+                fontWeight: 800,
                 letterSpacing: '1px',
                 padding: '2px 10px',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 marginBottom: '0.5rem'
               }}>
                 CÓDIGO: {selectedMember.affiliationYear || '2027'}{selectedMember.dni}
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#E5E7EB', fontWeight: 600, marginBottom: '0.85rem' }}>
+              <div style={{ fontSize: '0.8rem', color: '#E5E7EB', marginBottom: '0.85rem' }}>
                 DNI: {selectedMember.dni} &bull; Talla: {selectedMember.clothingSize || 'L'}
               </div>
 
-              <div style={{ background: '#FFFFFF', padding: '8px', borderRadius: '14px', display: 'inline-block', marginBottom: '0.75rem' }}>
+              <div style={{ background: '#FFFFFF', padding: '8px', borderRadius: '12px', display: 'inline-block', marginBottom: '0.75rem' }}>
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${selectedMember.qr_code_hash}`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${selectedMember.qr_code_hash}`}
                   alt="QR"
-                  style={{ width: '130px', height: '130px', display: 'block' }}
+                  style={{ width: '120px', height: '120px', display: 'block' }}
                 />
               </div>
 
-              <div style={{ fontSize: '0.75rem', color: '#A7F3D0', fontWeight: 700 }}>
-                {selectedMember.memberType === 'MUSICO' ? '🎺 Músico de Banda' : selectedMember.memberType === 'DIRECTIVO' ? '👑 Comité Directivo' : '💃 Socio Danzante'} &bull; Cangallo Señorial
+              <div style={{ fontSize: '0.75rem', color: '#FCD34D', fontWeight: 700 }}>
+                {selectedMember.memberType === 'MUSICO' ? 'Músico de Banda' : selectedMember.memberType === 'DIRECTIVO' ? 'Comité Directivo' : 'Socio Danzante'} &bull; Cangallo Señorial
               </div>
             </div>
 
@@ -892,13 +885,13 @@ export default function PadronClient({ members: initialMembers = [] }) {
               style={{
                 marginTop: '1rem',
                 width: '100%',
-                padding: '0.75rem',
-                background: '#0E472A',
+                padding: '0.7rem',
+                background: '#1F2937',
                 color: '#FFFFFF',
                 border: 'none',
-                borderRadius: '12px',
-                fontWeight: 800,
-                fontSize: '0.92rem',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.9rem',
                 cursor: 'pointer'
               }}
             >
