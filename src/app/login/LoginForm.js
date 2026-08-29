@@ -17,9 +17,52 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
   const [regEmail, setRegEmail] = useState('');
   const [regRole, setRegRole] = useState('MEMBER');
   const [regError, setRegError] = useState(null);
+  const [dniLoading, setDniLoading] = useState(false);
+  const [dniStatus, setDniStatus] = useState(null); // { type: 'success' | 'warning' | 'info', message: string }
 
   const [loading, setLoading] = useState(false);
   const [showQuickSelect, setShowQuickSelect] = useState(false);
+
+  // Manejador inteligente de consulta DNI al completar 8 dígitos
+  const handleDniChange = async (val) => {
+    const clean = val.replace(/\D/g, '').slice(0, 8);
+    setRegDni(clean);
+    setDniStatus(null);
+    setRegError(null);
+
+    if (clean.length === 8) {
+      setDniLoading(true);
+      try {
+        const res = await fetch(`/api/dni/consultar?dni=${clean}`);
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          if (data.alreadyRegistered) {
+            setDniStatus({
+              type: 'warning',
+              message: `⚠️ ${data.message || 'Este DNI ya está registrado.'}`
+            });
+            if (data.name) setRegName(data.name);
+          } else if (data.name) {
+            setRegName(data.name);
+            setDniStatus({
+              type: 'success',
+              message: `✅ Identidad Verificada: ${data.name}`
+            });
+          } else {
+            setDniStatus({
+              type: 'info',
+              message: 'ℹ️ Ingresa tus nombres y apellidos para completar el registro.'
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Error al consultar DNI:', err);
+      } finally {
+        setDniLoading(false);
+      }
+    }
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -303,38 +346,78 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
             </div>
           )}
 
+          {/* Campo DNI Primero con Verificación Automática */}
           <div style={{ marginBottom: '0.9rem' }}>
-            <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.3rem' }}>
-              Nombre y Apellidos Completos:
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="Ej. Carmen Rosa Mendoza"
-              value={regName}
-              onChange={e => setRegName(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '12px', border: '1px solid var(--glass-border)', background: 'var(--bg-primary)', fontSize: '0.9rem', color: 'var(--text-primary)', outline: 'none' }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '0.9rem' }}>
-            <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.3rem' }}>
-              Nº de DNI (8 dígitos):
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                Nº de DNI (8 dígitos):
+              </label>
+              {dniLoading && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-asistencia)', fontWeight: 600 }}>
+                  🔍 Validando DNI...
+                </span>
+              )}
+            </div>
             <input
               type="text"
               required
               maxLength={8}
-              placeholder="Ej. 74839201"
+              placeholder="Escribe tu DNI (Ej. 74839201)"
               value={regDni}
-              onChange={e => setRegDni(e.target.value.replace(/\D/g, ''))}
-              style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '12px', border: '1px solid var(--glass-border)', background: 'var(--bg-primary)', fontSize: '0.9rem', color: 'var(--text-primary)', outline: 'none' }}
+              onChange={e => handleDniChange(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.8rem 0.9rem',
+                borderRadius: '12px',
+                border: dniStatus?.type === 'success' ? '1.5px solid #10B981' : '1px solid var(--glass-border)',
+                background: 'var(--bg-primary)',
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                letterSpacing: '1px',
+                color: 'var(--text-primary)',
+                outline: 'none'
+              }}
+            />
+            {dniStatus && (
+              <div style={{
+                marginTop: '0.35rem',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                color: dniStatus.type === 'success' ? '#059669' : dniStatus.type === 'warning' ? '#D97706' : 'var(--text-secondary)'
+              }}>
+                {dniStatus.message}
+              </div>
+            )}
+          </div>
+
+          {/* Campo Nombres y Apellidos Autocompletado */}
+          <div style={{ marginBottom: '0.9rem' }}>
+            <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.3rem' }}>
+              Nombres y Apellidos Completos:
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Se autocompleta con tu DNI"
+              value={regName}
+              onChange={e => setRegName(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem 0.9rem',
+                borderRadius: '12px',
+                border: '1px solid var(--glass-border)',
+                background: regName ? '#F0FDF4' : 'var(--bg-primary)',
+                fontSize: '0.9rem',
+                fontWeight: regName ? 600 : 400,
+                color: 'var(--text-primary)',
+                outline: 'none'
+              }}
             />
           </div>
 
           <div style={{ marginBottom: '0.9rem' }}>
             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.3rem' }}>
-              Celular / WhatsApp (Para notificación):
+              Celular / WhatsApp (Para coordinaciones):
             </label>
             <input
               type="tel"
@@ -355,8 +438,8 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
               onChange={e => setRegRole(e.target.value)}
               style={{ width: '100%', padding: '0.75rem 0.9rem', borderRadius: '12px', border: '1px solid var(--glass-border)', fontSize: '0.9rem', background: 'white', color: 'var(--text-primary)', outline: 'none' }}
             >
-              <option value="MEMBER">Socio Activo (Bailarín de Comparsa)</option>
-              <option value="MUSICIAN">Músico de Banda de Acompañamiento</option>
+              <option value="MEMBER">Socio Activo (Danzante / Bailarín)</option>
+              <option value="MUSICIAN">Músico de Banda / Orquesta</option>
             </select>
           </div>
 
@@ -374,7 +457,7 @@ export default function LoginForm({ users: propsUsers, initialUsers, initialMode
               boxShadow: '0 4px 14px rgba(19, 96, 58, 0.35)'
             }}
           >
-            {loading ? 'Enviando Solicitud...' : 'Enviar Solicitud a la Directiva 🚀'}
+            {loading ? 'Procesando Empadronamiento...' : 'Completar Empadronamiento y Generar QR 🚀'}
           </button>
         </form>
       )}
