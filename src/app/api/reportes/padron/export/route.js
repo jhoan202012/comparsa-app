@@ -35,6 +35,7 @@ export async function GET(request) {
 
     // Construir CSV compatible con Microsoft Excel (UTF-8 con BOM)
     const headers = [
+      'CÓDIGO DE SOCIO',
       'DNI',
       'NOMBRES Y APELLIDOS',
       'CELULAR / WHATSAPP',
@@ -66,6 +67,7 @@ export async function GET(request) {
     };
 
     const rows = users.map(u => [
+      escapeCsv(`${u.affiliationYear || '2027'}-${u.dni || ''}`),
       escapeCsv(u.dni || ''),
       escapeCsv(u.name || ''),
       escapeCsv(u.phone || ''),

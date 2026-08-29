@@ -821,11 +821,25 @@ export default function EmpadronamientoClient() {
                 <img src={savedUser.avatarUrl || '/images/634076865_1346800880815499_5762101862002171797_n.jpg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
 
-              {/* Nombre y DNI */}
+              {/* Nombre, Código de Socio y DNI */}
               <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.2rem' }}>
                 {savedUser.name}
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#FCD34D', fontWeight: 700, marginBottom: '0.85rem' }}>
+              <div style={{
+                display: 'inline-block',
+                background: 'rgba(217, 155, 0, 0.25)',
+                border: '1px solid #FCD34D',
+                color: '#FCD34D',
+                fontSize: '0.82rem',
+                fontWeight: 900,
+                letterSpacing: '1px',
+                padding: '2px 10px',
+                borderRadius: '8px',
+                marginBottom: '0.5rem'
+              }}>
+                CÓDIGO: {savedUser.affiliationYear || '2027'}-{savedUser.dni}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#E5E7EB', fontWeight: 600, marginBottom: '0.85rem' }}>
                 DNI: {savedUser.dni} &bull; Talla: {savedUser.clothingSize || 'L'}
               </div>
 

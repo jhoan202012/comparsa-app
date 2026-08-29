@@ -109,7 +109,21 @@ export default function QRClient({ initialUser, initialActiveEvent, initialAtten
             </div>
 
             <h3 className={styles.name}>{initialUser.name}</h3>
-            <p className={styles.role}>{initialUser.role === 'MUSICIAN' ? 'Músico Exonerado' : 'Socio Activo'}</p>
+            <div style={{
+              display: 'inline-block',
+              background: '#FEF3C7',
+              border: '1px solid #F59E0B',
+              color: '#92400E',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              letterSpacing: '1px',
+              padding: '2px 10px',
+              borderRadius: '8px',
+              margin: '0.2rem auto 0.4rem auto'
+            }}>
+              CÓDIGO: {initialUser.affiliationYear || '2027'}-{initialUser.dni || ''}
+            </div>
+            <p className={styles.role}>{initialUser.role === 'MUSICIAN' ? '🎺 Músico de Banda' : initialUser.role === 'ADMIN' ? '👑 Directiva' : '💃 Socio Danzante'}</p>
 
             <div style={{ marginTop: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-asistencia)', display: 'inline-block' }}></span>
