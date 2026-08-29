@@ -17,8 +17,8 @@ import {
 export default function BottomNav({ userRole }) {
   const pathname = usePathname();
 
-  // No mostrar la barra de navegación en la pantalla de login o si no hay usuario
-  if (pathname === '/login' || !userRole) return null;
+  // No mostrar la barra de navegación en login, empadronamiento o si no hay usuario logueado
+  if (pathname === '/login' || pathname === '/empadronamiento' || !userRole) return null;
 
   return (
     <nav className={styles.bottomNav}>

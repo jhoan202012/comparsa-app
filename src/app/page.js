@@ -11,13 +11,15 @@ export default async function Home() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('auth_user_id')?.value;
 
+  // 🛡️ CANDADO DE FASE 1 (CENSO INSTITUCIONAL): 
+  // Los visitantes públicos solo ven el Empadronamiento Oficial 2027.
   if (!userId) {
-    return <ClientRedirect to="/login" />;
+    return <ClientRedirect to="/empadronamiento" />;
   }
 
   const user = await getDbUser(userId);
   if (!user) {
-    return <ClientRedirect to="/login" />;
+    return <ClientRedirect to="/empadronamiento" />;
   }
 
   let unreadFeedbackCount = 0;
