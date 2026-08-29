@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // 🛡️ CONTROL ANTIFRAUDE & RATE LIMITING (Control de intentos por IP)
-// Almacena en memoria los intentos por IP para evitar que gente "viva" use la plataforma para raspar datos
 const ipRequestCounts = new Map();
 
 function checkRateLimit(ip) {
   const now = Date.now();
   const windowMs = 60 * 1000; // Ventana de 1 minuto
-  const maxRequests = 6; // Máximo 6 consultas de DNI por minuto por celular/IP
+  const maxRequests = 8; // Máximo 8 consultas de DNI por minuto por IP
 
   const record = ipRequestCounts.get(ip);
 
@@ -51,12 +50,10 @@ function inferGenderFromName(firstName) {
 
 export async function GET(request) {
   try {
-    // Obtener IP del cliente para aplicar el límite de seguridad
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
     const clientIp = (forwardedFor ? forwardedFor.split(',')[0] : realIp) || '127.0.0.1';
 
-    // 🛡️ 1. CANDADO DE SEGURIDAD: Verificar Límite de Velocidad (Anti-Scraping)
     const rateLimit = checkRateLimit(clientIp);
     if (!rateLimit.allowed) {
       return NextResponse.json({
@@ -71,21 +68,49 @@ export async function GET(request) {
       return NextResponse.json({ error: 'El DNI debe tener 8 dígitos numéricos' }, { status: 400 });
     }
 
-    // 2. Buscar en Base de Datos Local
+    // 1. Buscar si ya está empadronado en la Base de Datos Local
     const existingUser = await prisma.user.findUnique({
       where: { dni },
       select: {
         id: true,
+        dni: true,
         name: true,
+        phone: true,
         role: true,
         status: true,
         birthDate: true,
         gender: true,
-        district: true
+        district: true,
+        affiliationYear: true,
+        clothingSize: true,
+        avatarUrl: true,
+        qr_code_hash: true,
+        memberType: true,
+        talents: true
       }
     });
 
-    // 3. Consultar API Externa de Identidad (Token protegido en servidor)
+    if (existingUser) {
+      const parts = existingUser.name.split(' ');
+      const nombres = parts.length > 2 ? parts.slice(0, parts.length - 2).join(' ') : parts[0] || existingUser.name;
+      const apellidos = parts.length > 2 ? parts.slice(parts.length - 2).join(' ') : parts.slice(1).join(' ') || '';
+
+      return NextResponse.json({
+        success: true,
+        alreadyRegistered: true,
+        source: 'LOCAL_DB',
+        name: existingUser.name,
+        nombres,
+        apellidos,
+        birthDate: existingUser.birthDate || '',
+        gender: existingUser.gender === 'MUJER' ? 'Femenino' : 'Masculino',
+        district: existingUser.district || '',
+        user: existingUser,
+        message: `¡Hola ${existingUser.name}! Tu DNI ya se encuentra registrado y activo en el Padrón Oficial.`
+      });
+    }
+
+    // 2. Consultar API Externa de Identidad si es nuevo socio
     let externalData = null;
     try {
       const token = process.env.DNI_API_TOKEN || '';
@@ -129,37 +154,9 @@ export async function GET(request) {
         }
       }
     } catch (e) {
-      // Continuar con base de datos o fallback
+      // Continuar con fallback
     }
 
-    // Si ya existe en base de datos local
-    if (existingUser) {
-      const parts = existingUser.name.split(' ');
-      const nombres = externalData?.nombres || (parts.length > 2 ? parts.slice(0, parts.length - 2).join(' ') : parts[0] || existingUser.name);
-      const apellidos = externalData?.apellidos || (parts.length > 2 ? parts.slice(parts.length - 2).join(' ') : parts.slice(1).join(' ') || '');
-      const birthDate = existingUser.birthDate || externalData?.birthDate || '';
-      const gender = existingUser.gender === 'MUJER' 
-        ? 'Femenino' 
-        : existingUser.gender === 'VARON' 
-        ? 'Masculino' 
-        : (externalData?.gender || inferGenderFromName(nombres));
-
-      return NextResponse.json({
-        success: true,
-        source: 'LOCAL_DB',
-        name: existingUser.name,
-        nombres,
-        apellidos,
-        birthDate,
-        gender,
-        district: existingUser.district || externalData?.district || '',
-        alreadyRegistered: true,
-        status: existingUser.status,
-        message: 'Socio registrado en el padrón.'
-      });
-    }
-
-    // Si es un socio nuevo
     if (externalData) {
       return NextResponse.json({
         success: true,
@@ -169,7 +166,6 @@ export async function GET(request) {
       });
     }
 
-    // Fallback manual
     return NextResponse.json({
       success: true,
       source: 'MANUAL_FALLBACK',

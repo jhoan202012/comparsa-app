@@ -41,6 +41,7 @@ export default function EmpadronamientoClient() {
 
   // Paso 5: Resultado / Carnet Generado
   const [savedUser, setSavedUser] = useState(null);
+  const [alreadyRegisteredUser, setAlreadyRegisteredUser] = useState(null);
 
   // Consulta Inteligente DNI con Desglose y Bloqueo
   const handleDniInput = async (val) => {
@@ -48,6 +49,7 @@ export default function EmpadronamientoClient() {
     setDni(clean);
     setDniVerified(false);
     setIsLocked(false);
+    setAlreadyRegisteredUser(null);
     setErrorMsg(null);
 
     if (clean.length === 8) {
@@ -57,6 +59,12 @@ export default function EmpadronamientoClient() {
         const data = await res.json();
 
         if (res.ok && data.success) {
+          if (data.alreadyRegistered && data.user) {
+            setAlreadyRegisteredUser(data.user);
+            setDniVerified(true);
+            return;
+          }
+
           if (data.nombres || data.name) {
             setNombres(data.nombres || data.name);
             setApellidos(data.apellidos || '');
@@ -253,146 +261,218 @@ export default function EmpadronamientoClient() {
               )}
             </div>
 
-            {/* Banner de Bloqueo de Seguridad */}
-            {isLocked && (
-              <div style={{
-                background: '#ECFDF5',
-                border: '1px solid #A7F3D0',
-                borderRadius: '12px',
-                padding: '0.65rem 0.9rem',
-                marginBottom: '1.1rem',
-                fontSize: '0.78rem',
-                color: '#065F46',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                🔒 <strong>Datos Oficiales Bloqueados:</strong> La información obtenida de tu DNI no puede ser modificada para garantizar la validez del padrón.
-              </div>
-            )}
+            {/* Si el socio ya está empadronado en el sistema */}
+            {alreadyRegisteredUser ? (
+              <div style={{ background: '#FAF7F2', border: '2px solid #10B981', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', marginTop: '1.25rem' }}>
+                <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#D1FAE5', color: '#059669', fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.65rem auto' }}>
+                  ✓
+                </div>
+                <h3 style={{ fontSize: '1.25rem', color: '#13603A', fontWeight: 900, margin: '0 0 0.25rem 0' }}>
+                  ¡Ya te encuentras Empadronado!
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: '#4B5563', margin: '0 0 0.75rem 0' }}>
+                  Hola <strong>{alreadyRegisteredUser.name}</strong>, tu registro oficial para el <strong>Carnaval 2027</strong> ya está activo.
+                </p>
+                
+                <div style={{
+                  display: 'inline-block',
+                  background: '#FEF3C7',
+                  border: '1.5px solid #F59E0B',
+                  color: '#92400E',
+                  padding: '4px 14px',
+                  borderRadius: '10px',
+                  fontWeight: 900,
+                  fontSize: '0.95rem',
+                  letterSpacing: '1px',
+                  marginBottom: '1.25rem'
+                }}>
+                  CÓDIGO OFICIAL: {alreadyRegisteredUser.affiliationYear || '2027'}{alreadyRegisteredUser.dni}
+                </div>
 
-            {/* Nombres y Apellidos Desglosados */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.1rem' }}>
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Nombre: <span style={{ color: '#DC2626' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej. Jhoan"
-                  value={nombres}
-                  readOnly={isLocked}
-                  onChange={e => setNombres(e.target.value)}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSavedUser(alreadyRegisteredUser);
+                      setStep(5);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem',
+                      background: 'linear-gradient(135deg, #13603A 0%, #0E472A 100%)',
+                      color: '#FFFFFF',
+                      borderRadius: '12px',
+                      border: 'none',
+                      fontWeight: 800,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(19, 96, 58, 0.3)'
+                    }}
+                  >
+                    📱 Ver / Descargar Mi Carnet QR ➔
+                  </button>
+                  <Link
+                    href="/login"
+                    style={{
+                      display: 'block',
+                      padding: '0.75rem',
+                      background: '#FFFFFF',
+                      color: '#13603A',
+                      border: '1.5px solid #13603A',
+                      borderRadius: '12px',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    🔑 Ingresar a Mi Perfil en la App
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Banner de Bloqueo de Seguridad */}
+                {isLocked && (
+                  <div style={{
+                    background: '#ECFDF5',
+                    border: '1px solid #A7F3D0',
+                    borderRadius: '12px',
+                    padding: '0.65rem 0.9rem',
+                    marginBottom: '1.1rem',
+                    fontSize: '0.78rem',
+                    color: '#065F46',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    🔒 <strong>Datos Oficiales Bloqueados:</strong> La información obtenida de tu DNI no puede ser modificada para garantizar la validez del padrón.
+                  </div>
+                )}
+
+                {/* Nombres y Apellidos Desglosados */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.1rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                      Nombre: <span style={{ color: '#DC2626' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Jhoan"
+                      value={nombres}
+                      readOnly={isLocked}
+                      onChange={e => setNombres(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.8rem',
+                        borderRadius: '12px',
+                        border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                        fontSize: '0.95rem',
+                        fontWeight: 700,
+                        background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                        color: isLocked ? '#065F46' : '#111827',
+                        cursor: isLocked ? 'not-allowed' : 'text',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                      Apellidos: <span style={{ color: '#DC2626' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Taboada Huaman"
+                      value={apellidos}
+                      readOnly={isLocked}
+                      onChange={e => setApellidos(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.8rem',
+                        borderRadius: '12px',
+                        border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
+                        fontSize: '0.95rem',
+                        fontWeight: 700,
+                        background: isLocked ? '#F0FDF4' : '#FFFFFF',
+                        color: isLocked ? '#065F46' : '#111827',
+                        cursor: isLocked ? 'not-allowed' : 'text',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Sexo y Fecha de Nacimiento */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                      Sexo / Género:
+                    </label>
+                    <select
+                      value={gender}
+                      onChange={e => setGender(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.8rem',
+                        borderRadius: '12px',
+                        border: '1px solid #D1D5DB',
+                        fontSize: '0.95rem',
+                        fontWeight: 700,
+                        background: '#FFFFFF',
+                        color: '#111827',
+                        outline: 'none'
+                      }}
+                    >
+                      <option value="Masculino">Varón</option>
+                      <option value="Femenino">Mujer</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
+                      Fecha de Nacimiento:
+                    </label>
+                    <input
+                      type="date"
+                      value={birthDate}
+                      onChange={e => setBirthDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 0.8rem',
+                        borderRadius: '12px',
+                        border: '1px solid #D1D5DB',
+                        fontSize: '0.95rem',
+                        fontWeight: 700,
+                        background: '#FFFFFF',
+                        color: '#111827',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={!dni || !nombres}
+                  onClick={() => setStep(2)}
                   style={{
                     width: '100%',
-                    padding: '0.8rem',
-                    borderRadius: '12px',
-                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
-                    fontSize: '0.95rem',
+                    padding: '0.9rem',
+                    borderRadius: '14px',
+                    background: (!dni || !nombres) ? '#9CA3AF' : '#13603A',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    fontSize: '1rem',
                     fontWeight: 700,
-                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                    color: isLocked ? '#065F46' : '#111827',
-                    cursor: isLocked ? 'not-allowed' : 'text',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Apellidos: <span style={{ color: '#DC2626' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej. Taboada Huaman"
-                  value={apellidos}
-                  readOnly={isLocked}
-                  onChange={e => setApellidos(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    borderRadius: '12px',
-                    border: isLocked ? '1.5px solid #10B981' : '1px solid #D1D5DB',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    background: isLocked ? '#F0FDF4' : '#FFFFFF',
-                    color: isLocked ? '#065F46' : '#111827',
-                    cursor: isLocked ? 'not-allowed' : 'text',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Sexo y Fecha de Nacimiento */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Sexo / Género:
-                </label>
-                <select
-                  value={gender}
-                  onChange={e => setGender(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    borderRadius: '12px',
-                    border: '1px solid #D1D5DB',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    background: '#FFFFFF',
-                    color: '#111827',
-                    outline: 'none'
+                    cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 12px rgba(19, 96, 58, 0.25)'
                   }}
                 >
-                  <option value="Masculino">Varón</option>
-                  <option value="Femenino">Mujer</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'block', marginBottom: '0.35rem' }}>
-                  Fecha de Nacimiento:
-                </label>
-                <input
-                  type="date"
-                  value={birthDate}
-                  onChange={e => setBirthDate(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 0.8rem',
-                    borderRadius: '12px',
-                    border: '1px solid #D1D5DB',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    background: '#FFFFFF',
-                    color: '#111827',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-            </div>
-
-            <button
-              type="button"
-              disabled={!dni || !nombres}
-              onClick={() => setStep(2)}
-              style={{
-                width: '100%',
-                padding: '0.9rem',
-                borderRadius: '14px',
-                background: (!dni || !nombres) ? '#9CA3AF' : '#13603A',
-                color: '#FFFFFF',
-                border: 'none',
-                fontSize: '1rem',
-                fontWeight: 700,
-                cursor: (!dni || !nombres) ? 'not-allowed' : 'pointer',
-                boxShadow: '0 4px 12px rgba(19, 96, 58, 0.25)'
-              }}
-            >
-              Continuar al Paso 2 ➔
-            </button>
+                  Continuar al Paso 2 ➔
+                </button>
+              </>
+            )}
           </div>
         )}
 
