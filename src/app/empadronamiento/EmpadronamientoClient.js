@@ -43,6 +43,42 @@ export default function EmpadronamientoClient() {
   const [savedUser, setSavedUser] = useState(null);
   const [alreadyRegisteredUser, setAlreadyRegisteredUser] = useState(null);
 
+  // ==================== ESTADOS DE ACCESO DIRECTIVA ====================
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminError, setAdminError] = useState(null);
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setAdminError(null);
+    setAdminLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/directiva-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: adminUsername,
+          password: adminPassword
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        window.location.href = '/padron';
+      } else {
+        setAdminError(data.error || 'Credenciales de directiva incorrectas.');
+      }
+    } catch (err) {
+      console.error(err);
+      setAdminError('Error al conectar con el servidor.');
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   // Consulta Inteligente DNI con Desglose y Bloqueo
   const handleDniInput = async (val) => {
     const clean = val.replace(/\D/g, '').slice(0, 8);
@@ -179,7 +215,7 @@ export default function EmpadronamientoClient() {
       {/* ==================== GOOGLE STITCH APP HEADER ==================== */}
       {step < 5 && (
         <div style={{ marginBottom: '1.75rem' }}>
-          {/* Top Bar con Botón Volver y Paso */}
+          {/* Top Bar con Botón Volver, Paso y Acceso Directiva */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             {step > 1 ? (
               <button
@@ -203,25 +239,7 @@ export default function EmpadronamientoClient() {
                 ←
               </button>
             ) : (
-              <Link
-                href="/"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  border: '1.5px solid #E5E7EB',
-                  background: '#FFFFFF',
-                  color: '#002F18',
-                  fontSize: '1.1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textDecoration: 'none',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
-                }}
-              >
-                ←
-              </Link>
+              <div style={{ width: '40px' }} />
             )}
 
             <div style={{
@@ -238,7 +256,33 @@ export default function EmpadronamientoClient() {
               PASO {step} DE 4
             </div>
 
-            <div style={{ width: '40px' }} />
+            {/* Botón Protegido para la Directiva */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowAdminModal(true);
+                setAdminError(null);
+              }}
+              title="Acceso restringido para el Comité Directivo"
+              style={{
+                height: '36px',
+                padding: '0 12px',
+                borderRadius: '9999px',
+                border: '1.5px solid #D99B00',
+                background: '#FAF7F2',
+                color: '#7D5800',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <span>🔒</span> Directiva
+            </button>
           </div>
 
           {/* Barra de Progreso Fina de Stitch */}
@@ -375,7 +419,7 @@ export default function EmpadronamientoClient() {
                 )}
               </div>
 
-              {/* Mensaje si el usuario ya está empadronado: ULTRA LIMPIO */}
+              {/* Mensaje si el usuario ya está empadronado */}
               {alreadyRegisteredUser ? (
                 <div style={{
                   marginTop: '1.25rem',
@@ -667,10 +711,10 @@ export default function EmpadronamientoClient() {
             </div>
           )}
 
-          {/* ==================== PASO 3: MEMBRESÍA & FAMILIA (STITCH TACTILE TILES) ==================== */}
+          {/* ==================== PASO 3: MEMBRESÍA & FAMILIA ==================== */}
           {step === 3 && (
             <div>
-              {/* Selector de Rol en Tarjetas de Lujo */}
+              {/* Selector de Rol */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.6rem' }}>
                   Selecciona tu Rol Institucional:
@@ -856,7 +900,7 @@ export default function EmpadronamientoClient() {
                 </div>
               )}
 
-              {/* Selector de Talla de Vestuario (Pills) */}
+              {/* Selector de Talla de Vestuario */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '0.5rem' }}>
                   Talla de Vestuario para Carnaval 2027:
@@ -916,7 +960,7 @@ export default function EmpadronamientoClient() {
                 />
               </div>
 
-              {/* Fotografía al Final (Módulo Stitch Avatar Upload) */}
+              {/* Fotografía al Final */}
               <div style={{
                 marginBottom: '1.75rem',
                 background: '#FFF8F5',
@@ -1002,7 +1046,7 @@ export default function EmpadronamientoClient() {
             </form>
           )}
 
-          {/* ==================== PASO 5: CARNET DIGITAL OFICIAL (GOOGLE STITCH LUXURY SPEC) ==================== */}
+          {/* ==================== PASO 5: CARNET DIGITAL OFICIAL ==================== */}
           {step === 5 && savedUser && (
             <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
               <div style={{
@@ -1028,7 +1072,7 @@ export default function EmpadronamientoClient() {
                 Ya eres parte del <strong>Padrón Oficial Carnaval 2027</strong> de Cangallo Señorial.
               </p>
 
-              {/* Tarjeta de Lujo del Carnet (Stitch Spec) */}
+              {/* Tarjeta de Lujo del Carnet */}
               <div style={{
                 background: 'linear-gradient(135deg, #002F18 0%, #0E472A 70%, #1A3624 100%)',
                 color: '#FFFFFF',
@@ -1093,29 +1137,195 @@ export default function EmpadronamientoClient() {
               </p>
 
               <div style={{ maxWidth: '380px', margin: '0 auto' }}>
-                <Link
-                  href="/login"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep(1);
+                    setDni('');
+                    setNombres('');
+                    setApellidos('');
+                    setSavedUser(null);
+                  }}
                   style={{
-                    display: 'block',
-                    padding: '1rem',
-                    background: 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
-                    color: '#FFFFFF',
-                    borderRadius: '16px',
-                    fontWeight: 900,
-                    textDecoration: 'none',
-                    fontSize: '1rem',
-                    border: '1px solid #D99B00',
-                    boxShadow: '0 8px 24px rgba(0, 47, 24, 0.3)'
+                    width: '100%',
+                    padding: '0.9rem',
+                    background: '#FAF7F2',
+                    color: '#002F18',
+                    borderRadius: '14px',
+                    fontWeight: 800,
+                    border: '1.5px solid #D99B00',
+                    cursor: 'pointer'
                   }}
                 >
-                  Ir a Mi Perfil en la App ➔
-                </Link>
+                  ← Empadronar a Otro Integrante
+                </button>
               </div>
             </div>
           )}
 
         </div>
       </div>
+
+      {/* ==================== MODAL DE ACCESO DIRECTIVA ==================== */}
+      {showAdminModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          padding: '1.25rem'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '24px',
+            maxWidth: '420px',
+            width: '100%',
+            padding: '2rem 1.75rem',
+            position: 'relative',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
+            border: '2px solid #D99B00',
+            textAlign: 'center'
+          }}>
+            <button
+              type="button"
+              onClick={() => setShowAdminModal(false)}
+              style={{
+                position: 'absolute',
+                top: '14px',
+                right: '14px',
+                background: '#F3F4F6',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                fontSize: '1rem',
+                fontWeight: 900,
+                cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+
+            <div style={{
+              width: '54px',
+              height: '54px',
+              borderRadius: '50%',
+              background: '#FEF3C7',
+              border: '2px solid #FCD34D',
+              color: '#D99B00',
+              fontSize: '1.8rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 0.75rem auto'
+            }}>
+              🔒
+            </div>
+
+            <h3 style={{
+              fontFamily: 'var(--font-playfair, serif)',
+              fontSize: '1.45rem',
+              fontWeight: 900,
+              color: '#002F18',
+              margin: '0 0 0.35rem 0'
+            }}>
+              Acceso de Directiva
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '0 0 1.5rem 0' }}>
+              Ingresa las credenciales autorizadas para consultar el Padrón General y descargar reportes.
+            </p>
+
+            {adminError && (
+              <div style={{
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                background: '#FEE2E2',
+                border: '1px solid #EF4444',
+                color: '#B91C1C',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 700
+              }}>
+                ⚠️ {adminError}
+              </div>
+            )}
+
+            <form onSubmit={handleAdminLogin} style={{ textAlign: 'left' }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '0.35rem' }}>
+                  Usuario:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. administrador"
+                  value={adminUsername}
+                  onChange={e => setAdminUsername(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '12px',
+                    border: '1.5px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    outline: 'none',
+                    background: '#FFF8F5'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '0.35rem' }}>
+                  Contraseña:
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••••••"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '12px',
+                    border: '1.5px solid #D1D5DB',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    outline: 'none',
+                    background: '#FFF8F5'
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={adminLoading}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  borderRadius: '14px',
+                  background: adminLoading ? '#CBD5E1' : 'linear-gradient(135deg, #002F18 0%, #0E472A 100%)',
+                  color: '#FFFFFF',
+                  border: '1px solid #D99B00',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                  cursor: adminLoading ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 8px 20px rgba(0, 47, 24, 0.3)'
+                }}
+              >
+                {adminLoading ? 'Verificando...' : 'Ingresar al Padrón Oficial ➔'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

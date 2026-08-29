@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import PadronClient from './PadronClient';
 
@@ -7,6 +9,23 @@ export const metadata = {
 };
 
 export default async function PadronPage() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get('auth_user_id')?.value;
+
+  // Si no está autenticado como administrador, redirigir al portal de empadronamiento
+  if (!userId) {
+    redirect('/empadronamiento');
+  }
+
+  const admin = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true }
+  });
+
+  if (!admin || admin.role !== 'ADMIN') {
+    redirect('/empadronamiento');
+  }
+
   const members = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
     select: {

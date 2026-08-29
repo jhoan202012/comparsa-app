@@ -229,6 +229,28 @@ export default function PadronClient({ members: initialMembers = [] }) {
             >
               📥 Descargar Backup en Excel (.xlsx)
             </a>
+
+            <button
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/empadronamiento';
+              }}
+              style={{
+                background: 'rgba(255,255,255,0.12)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255,255,255,0.3)',
+                padding: '0.75rem 1rem',
+                borderRadius: '14px',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              🚪 Salir
+            </button>
           </div>
         </div>
       </div>
